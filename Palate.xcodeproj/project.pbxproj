@@ -6,13 +6,32 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5DAA10F92F7FF5EB0049DA64 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 5DAA10F82F7FF5EB0049DA64 /* FirebaseAuth */; };
+		5DAA10FB2F7FF5EB0049DA64 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 5DAA10FA2F7FF5EB0049DA64 /* FirebaseFirestore */; };
+		5DAA10FD2F7FF5EB0049DA64 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 5DAA10FC2F7FF5EB0049DA64 /* FirebaseStorage */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		5D13A3352F7EEBD00058AFEE /* Palate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Palate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5D90006F2F8A48E2007A8234 /* Exceptions for "Palate" folder in "Palate" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5D13A3342F7EEBD00058AFEE /* Palate */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5D13A3372F7EEBD00058AFEE /* Palate */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5D90006F2F8A48E2007A8234 /* Exceptions for "Palate" folder in "Palate" target */,
+			);
 			path = Palate;
 			sourceTree = "<group>";
 		};
@@ -23,6 +42,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5DAA10F92F7FF5EB0049DA64 /* FirebaseAuth in Frameworks */,
+				5DAA10FB2F7FF5EB0049DA64 /* FirebaseFirestore in Frameworks */,
+				5DAA10FD2F7FF5EB0049DA64 /* FirebaseStorage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,7 +76,7 @@
 			buildPhases = (
 				5D13A3312F7EEBD00058AFEE /* Sources */,
 				5D13A3322F7EEBD00058AFEE /* Frameworks */,
-				5D13A3332F7EEBD00058AFEE /* Resources */,
+				5D90006E2F8A48E2007A8234 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -65,6 +87,9 @@
 			);
 			name = Palate;
 			packageProductDependencies = (
+				5DAA10F82F7FF5EB0049DA64 /* FirebaseAuth */,
+				5DAA10FA2F7FF5EB0049DA64 /* FirebaseFirestore */,
+				5DAA10FC2F7FF5EB0049DA64 /* FirebaseStorage */,
 			);
 			productName = Palate;
 			productReference = 5D13A3352F7EEBD00058AFEE /* Palate.app */;
@@ -94,6 +119,9 @@
 			);
 			mainGroup = 5D13A32C2F7EEBD00058AFEE;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				5DAA10F72F7FF5EB0049DA64 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5D13A3362F7EEBD00058AFEE /* Products */;
 			projectDirPath = "";
@@ -105,7 +133,7 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		5D13A3332F7EEBD00058AFEE /* Resources */ = {
+		5D90006E2F8A48E2007A8234 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -253,17 +281,19 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Palate/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = add.Palate;
+				PRODUCT_BUNDLE_IDENTIFIER = com.myapp.Palate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -284,17 +314,19 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Palate/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = add.Palate;
+				PRODUCT_BUNDLE_IDENTIFIER = com.myapp.Palate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -328,6 +360,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5DAA10F72F7FF5EB0049DA64 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.11.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5DAA10F82F7FF5EB0049DA64 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5DAA10F72F7FF5EB0049DA64 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		5DAA10FA2F7FF5EB0049DA64 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5DAA10F72F7FF5EB0049DA64 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		5DAA10FC2F7FF5EB0049DA64 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5DAA10F72F7FF5EB0049DA64 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5D13A32D2F7EEBD00058AFEE /* Project object */;
 }
