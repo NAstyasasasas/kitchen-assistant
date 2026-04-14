@@ -45,10 +45,20 @@ struct AuthCoordinatorView: UIViewControllerRepresentable {
         let coordinator = AuthCoordinator(navigationController: navigationController)
         coordinator.onAuthSuccess = onAuthSuccess
         coordinator.start()
+        
+        context.coordinator.authCoordinator = coordinator
         return navigationController
     }
     
     func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {}
+    
+    func makeCoordinator() -> Coordinator {
+            Coordinator()
+    }
+        
+    class Coordinator: NSObject {
+        var authCoordinator: AuthCoordinator?
+    }
 }
 
 struct MainTabViewContainer: View {
@@ -61,8 +71,18 @@ struct MainCoordinatorView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         let coordinator = MainCoordinator()
         coordinator.start()
+        
+        context.coordinator.mainCoordinator = coordinator
         return coordinator.rootViewController
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+        
+    class Coordinator: NSObject {
+        var mainCoordinator: MainCoordinator?
+    }
 }
