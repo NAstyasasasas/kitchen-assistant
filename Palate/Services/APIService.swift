@@ -5,6 +5,10 @@
 
 import Foundation
 
+struct APIConstants {
+    static let baseURL = "https://www.themealdb.com/api/json/v1/1"
+}
+
 enum APIError: Error {
     case invalidURL
     case noData
@@ -13,7 +17,7 @@ enum APIError: Error {
 
 class APIService {
     static let shared = APIService()
-    private let baseURL = "https://www.themealdb.com/api/json/v1/1"
+    private let baseURL = APIConstants.baseURL
     
     private init() {}
     
