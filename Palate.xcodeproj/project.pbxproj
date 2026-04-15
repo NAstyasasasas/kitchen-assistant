@@ -16,22 +16,9 @@
 		5D13A3352F7EEBD00058AFEE /* Palate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Palate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		5D90006F2F8A48E2007A8234 /* Exceptions for "Palate" folder in "Palate" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 5D13A3342F7EEBD00058AFEE /* Palate */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5D13A3372F7EEBD00058AFEE /* Palate */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				5D90006F2F8A48E2007A8234 /* Exceptions for "Palate" folder in "Palate" target */,
-			);
 			path = Palate;
 			sourceTree = "<group>";
 		};

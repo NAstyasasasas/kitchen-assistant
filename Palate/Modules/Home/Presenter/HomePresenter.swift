@@ -6,6 +6,10 @@
 import SwiftUI
 import Combine
 
+protocol HomePresenterProtocol: AnyObject {
+    func didSelectRecipe(_ recipeId: String)
+}
+
 final class HomePresenter: ObservableObject {
     @Published var filteredRecipes: [Recipe] = []
     @Published var searchResults: [Recipe] = []
@@ -15,7 +19,7 @@ final class HomePresenter: ObservableObject {
     @Published var errorMessage: String?
     
     private let interactor: HomeInteractorProtocol
-    private var coordinator: MainCoordinator?
+    private weak var coordinator: MainCoordinator?
     private var currentTask: Task<Void, Never>?
     
     init(interactor: HomeInteractorProtocol = HomeInteractor(),
@@ -32,83 +36,6 @@ final class HomePresenter: ObservableObject {
         }
         currentTask = task
         await task.value
-    }
-    
-    private func performLoadRecipes() async {
-        await MainActor.run {
-            isLoading = true
-            errorMessage = nil
-        }
-        
-        defer {
-            Task { @MainActor in
-                isLoading = false
-            }
-        }
-        
-        do {
-            var recipes: [Recipe] = []
-            
-            if let cuisine = selectedCuisine, let mealType = selectedMealType {
-                
-                let areaRecipes = try await interactor.fetchRecipesByArea(cuisine.apiArea)
-                
-                let ingredientKeyword = mealType.searchKeywords.first ?? mealType.apiCategory.lowercased()
-                let ingredientRecipes = try await interactor.fetchRecipesByIngredient(ingredientKeyword)
-                
-                let areaIds = Set(areaRecipes.map { $0.id })
-                let ingredientIds = Set(ingredientRecipes.map { $0.id })
-                let commonIds = areaIds.intersection(ingredientIds)
-                
-                recipes = areaRecipes.filter { commonIds.contains($0.id) }
-                
-                
-            } else if let cuisine = selectedCuisine {
-                recipes = try await interactor.fetchRecipesByArea(cuisine.apiArea)
-                
-            } else if let mealType = selectedMealType {
-                let ingredientKeyword = mealType.searchKeywords.first ?? mealType.apiCategory.lowercased()
-                recipes = try await interactor.fetchRecipesByIngredient(ingredientKeyword)
-                
-            } else {
-                let randomQueries = ["Chicken", "Pasta", "Rice", "Beef", "Fish"]
-                let randomQuery = randomQueries.randomElement() ?? "Chicken"
-                recipes = try await interactor.searchRecipes(query: randomQuery)
-            }
-            
-            if Task.isCancelled { return }
-            
-            if recipes.isEmpty {
-                await MainActor.run {
-                    if let cuisine = selectedCuisine, let mealType = selectedMealType {
-                        errorMessage = "Нет рецептов с '\(mealType.rawValue)' в '\(cuisine.rawValue)' кухне"
-                    } else if let cuisine = selectedCuisine {
-                        errorMessage = "Нет рецептов для кухни '\(cuisine.rawValue)'"
-                    } else if let mealType = selectedMealType {
-                        errorMessage = "Нет рецептов с '\(mealType.rawValue)'"
-                    } else {
-                        errorMessage = "Нет рецептов. Попробуйте другие фильтры"
-                    }
-                    filteredRecipes = []
-                }
-                return
-            }
-            
-            if Task.isCancelled { return }
-            
-            await MainActor.run {
-                filteredRecipes = Array(recipes.shuffled().prefix(30))
-                print("✅ Загружено рецептов: \(filteredRecipes.count)")
-                errorMessage = nil
-            }
-            
-        } catch {
-            if Task.isCancelled { return }
-            await MainActor.run {
-                errorMessage = "Ошибка загрузки. Проверьте подключение к интернету"
-                filteredRecipes = []
-            }
-        }
     }
     
     func searchRecipes(query: String) async {
@@ -160,4 +87,88 @@ final class HomePresenter: ObservableObject {
     func didSelectRecipe(_ recipeId: String) {
         coordinator?.showRecipeDetail(recipeId: recipeId)
     }
+    
+    private func performLoadRecipes() async {
+        await MainActor.run {
+            isLoading = true
+            errorMessage = nil
+        }
+        
+        defer {
+            Task { @MainActor in
+                isLoading = false
+            }
+        }
+        
+        do {
+            let recipes = try await fetchRecipesWithFilters()
+            
+            if Task.isCancelled { return }
+            
+            if recipes.isEmpty {
+                await handleEmptyRecipes()
+                return
+            }
+            
+            if Task.isCancelled { return }
+            
+            await MainActor.run {
+                filteredRecipes = Array(recipes.shuffled().prefix(30))
+                errorMessage = nil
+            }
+            
+        } catch {
+            if Task.isCancelled { return }
+            await MainActor.run {
+                errorMessage = "Ошибка загрузки. Проверьте подключение к интернету"
+                filteredRecipes = []
+            }
+        }
+    }
+    
+    private func fetchRecipesWithFilters() async throws -> [Recipe] {
+        if let cuisine = selectedCuisine, let mealType = selectedMealType {
+            async let areaRecipes = interactor.fetchRecipesByArea(cuisine.apiArea)
+            let ingredientKeyword = mealType.searchKeywords.first ?? mealType.apiCategory.lowercased()
+            async let ingredientRecipes = interactor.fetchRecipesByIngredient(ingredientKeyword)
+            
+            let area = try await areaRecipes
+            let ingredient = try await ingredientRecipes
+            
+            let areaIds = Set(area.map { $0.id })
+            let ingredientIds = Set(ingredient.map { $0.id })
+            let commonIds = areaIds.intersection(ingredientIds)
+            
+            return area.filter { commonIds.contains($0.id) }
+            
+        } else if let cuisine = selectedCuisine {
+            return try await interactor.fetchRecipesByArea(cuisine.apiArea)
+            
+        } else if let mealType = selectedMealType {
+            let ingredientKeyword = mealType.searchKeywords.first ?? mealType.apiCategory.lowercased()
+            return try await interactor.fetchRecipesByIngredient(ingredientKeyword)
+            
+        } else {
+            let randomQueries = ["Chicken", "Pasta", "Rice", "Beef", "Fish"]
+            let randomQuery = randomQueries.randomElement() ?? "Chicken"
+            return try await interactor.searchRecipes(query: randomQuery)
+        }
+    }
+    
+    private func handleEmptyRecipes() async {
+        await MainActor.run {
+            if let cuisine = selectedCuisine, let mealType = selectedMealType {
+                errorMessage = "Нет рецептов с '\(mealType.rawValue)' в '\(cuisine.rawValue)' кухне"
+            } else if let cuisine = selectedCuisine {
+                errorMessage = "Нет рецептов для кухни '\(cuisine.rawValue)'"
+            } else if let mealType = selectedMealType {
+                errorMessage = "Нет рецептов с '\(mealType.rawValue)'"
+            } else {
+                errorMessage = "Нет рецептов. Попробуйте другие фильтры"
+            }
+            filteredRecipes = []
+        }
+    }
 }
+
+extension HomePresenter: HomePresenterProtocol {}
