@@ -6,7 +6,11 @@
 import Foundation
 import FirebaseAuth
 
-class AuthService {
+private enum FirebaseAuthErrorCode {
+    static let emailAlreadyInUse = 17007
+}
+
+actor AuthService {
     static let shared = AuthService()
     private let auth = Auth.auth()
     
@@ -37,7 +41,7 @@ class AuthService {
             try await changeRequest.commitChanges()
             return AppUser(from: result.user)
         } catch let error as NSError {
-            if error.code == 17007 {
+            if error.code == FirebaseAuthErrorCode.emailAlreadyInUse {
                 throw AuthError.emailAlreadyInUse
             }
             throw AuthError.networkError
@@ -48,12 +52,12 @@ class AuthService {
         try auth.signOut()
     }
     
-    var currentUser: AppUser? {
+    func getCurrentUser() -> AppUser? {
         guard let user = auth.currentUser else { return nil }
         return AppUser(from: user)
     }
     
-    var isAuthenticated: Bool {
+    func getIsAuthenticated() -> Bool {
         return auth.currentUser != nil
     }
 }

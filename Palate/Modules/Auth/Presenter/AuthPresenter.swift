@@ -19,8 +19,10 @@ final class AuthPresenter: ObservableObject {
          coordinator: AuthCoordinator?) {
         self.interactor = interactor
         self.coordinator = coordinator
-        self.isAuthenticated = interactor.isAuthenticated
-        self.currentUser = interactor.currentUser
+        Task {
+            self.isAuthenticated = await interactor.isAuthenticated()
+            self.currentUser = await interactor.getCurrentUser()
+        }
     }
     
     func register(email: String, password: String, confirmPassword: String, displayName: String) async {

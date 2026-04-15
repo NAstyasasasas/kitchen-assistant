@@ -9,8 +9,8 @@ protocol AuthInteractorProtocol {
     func register(email: String, password: String, confirmPassword: String, displayName: String) async throws -> AppUser
     func login(email: String, password: String) async throws -> AppUser
     func signOut() throws
-    var isAuthenticated: Bool { get }
-    var currentUser: AppUser? { get }
+    func isAuthenticated() async -> Bool
+    func getCurrentUser() async -> AppUser?
 }
 
 final class AuthInteractor: AuthInteractorProtocol {
@@ -28,11 +28,11 @@ final class AuthInteractor: AuthInteractorProtocol {
         try authService.signOut()
     }
     
-    var isAuthenticated: Bool {
-        authService.isAuthenticated
+    func isAuthenticated() async -> Bool {
+        await authService.getIsAuthenticated()
     }
-    
-    var currentUser: AppUser? {
-        authService.currentUser
+        
+    func getCurrentUser() async -> AppUser? {
+        await authService.getCurrentUser()
     }
 }
