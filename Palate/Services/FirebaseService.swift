@@ -13,7 +13,7 @@ class FirebaseService {
     private init() {}
     
     func saveUserRecipe(_ userRecipe: UserRecipe) async throws {
-        guard let userId = AuthService.shared.currentUser?.id else {
+        guard let userId = await AuthService.shared.getCurrentUser()?.id else {
             throw AuthError.networkError
         }
         let data: [String: Any] = [
@@ -35,7 +35,7 @@ class FirebaseService {
     }
     
     func getUserRecipes(status: RecipeStatus?) async throws -> [UserRecipe] {
-        guard let userId = AuthService.shared.currentUser?.id else {
+        guard let userId = await AuthService.shared.getCurrentUser()?.id else {
             return []
         }
         
@@ -72,7 +72,7 @@ class FirebaseService {
     }
     
     func updateRecipeStatus(recipeId: String, newStatus: RecipeStatus, notes: String? = nil, rating: Int? = nil) async throws {
-        guard let userId = AuthService.shared.currentUser?.id else { return }
+        guard let userId = await AuthService.shared.getCurrentUser()?.id else { return }
         
         var updates: [String: Any] = [
             "status": newStatus.rawValue,
@@ -99,7 +99,7 @@ class FirebaseService {
     }
 
     func deleteUserRecipe(recipeId: String) async throws {
-        guard let userId = AuthService.shared.currentUser?.id else { return }
+        guard let userId = await AuthService.shared.getCurrentUser()?.id else { return }
         
         try await db.collection("users")
             .document(userId)
