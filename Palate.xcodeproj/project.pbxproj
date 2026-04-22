@@ -61,6 +61,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5D13A3402F7EEBD10058AFEE /* Build configuration list for PBXNativeTarget "Palate" */;
 			buildPhases = (
+				5DE765942F98F9C3008353BF /* SwiftLint */,
 				5D13A3312F7EEBD00058AFEE /* Sources */,
 				5D13A3322F7EEBD00058AFEE /* Frameworks */,
 				5D90006E2F8A48E2007A8234 /* Resources */,
@@ -128,6 +129,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5DE765942F98F9C3008353BF /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5D13A3312F7EEBD00058AFEE /* Sources */ = {
