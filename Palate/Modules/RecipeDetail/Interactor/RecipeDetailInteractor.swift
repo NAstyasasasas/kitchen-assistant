@@ -22,7 +22,7 @@ final class RecipeDetailInteractor: RecipeDetailInteractorProtocol {
     }
     
     func addToWantToCook(recipeId: String) async throws {
-        guard let userId = authService.currentUser?.id else {
+        guard let userId = await authService.getCurrentUser()?.id else {
             throw AuthError.networkError
         }
         
@@ -41,7 +41,7 @@ final class RecipeDetailInteractor: RecipeDetailInteractorProtocol {
     }
     
     func checkRecipeStatus(recipeId: String) async throws -> (wantToCook: Bool, cooked: Bool) {
-        guard let userId = authService.currentUser?.id else {
+        guard let userId = await authService.getCurrentUser()?.id else {
             return (false, false)
         }
         
