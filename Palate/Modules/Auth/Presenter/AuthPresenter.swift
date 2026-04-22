@@ -13,7 +13,7 @@ final class AuthPresenter: ObservableObject {
     @Published var currentUser: AppUser?
     
     private let interactor: AuthInteractorProtocol
-    private var coordinator: AuthCoordinator?
+    private weak var coordinator: AuthCoordinator?
     
     init(interactor: AuthInteractorProtocol = AuthInteractor(),
          coordinator: AuthCoordinator?) {
