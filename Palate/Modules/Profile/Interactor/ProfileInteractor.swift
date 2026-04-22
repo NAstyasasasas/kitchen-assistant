@@ -29,6 +29,6 @@ final class ProfileInteractor: ProfileInteractorProtocol {
     }
     
     var currentUser: AppUser? {
-        authService.currentUser
+        authService.getCurrentUser()
     }
 }
