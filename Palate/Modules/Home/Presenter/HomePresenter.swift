@@ -15,7 +15,7 @@ final class HomePresenter: ObservableObject {
     @Published var errorMessage: String?
     
     private let interactor: HomeInteractorProtocol
-    private var coordinator: MainCoordinator?
+    private weak var coordinator: MainCoordinator?
     private var currentTask: Task<Void, Never>?
     
     init(interactor: HomeInteractorProtocol = HomeInteractor(),

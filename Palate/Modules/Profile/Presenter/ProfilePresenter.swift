@@ -14,7 +14,7 @@ final class ProfilePresenter: ObservableObject {
     @Published var isLoading = false
     
     private let interactor: ProfileInteractorProtocol
-    private var coordinator: MainCoordinator?
+    private weak var coordinator: MainCoordinator?
     
     init(interactor: ProfileInteractorProtocol = ProfileInteractor(),
          coordinator: MainCoordinator?) {
