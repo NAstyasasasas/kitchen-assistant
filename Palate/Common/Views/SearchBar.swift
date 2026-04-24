@@ -14,7 +14,7 @@ struct SearchBar: View {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.gray)
             
-            TextField("Поиск рецептов...", text: $text)
+            TextField("search_placeholder".localized, text: $text)
                 .onSubmit(onSearch)
             
             if !text.isEmpty {

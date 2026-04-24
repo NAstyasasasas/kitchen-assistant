@@ -29,22 +29,22 @@ struct ProfileView: View {
                     .padding(.vertical, 8)
                 }
                 
-                Section("Статистика") {
+                Section("statistics".localized) {
                     HStack(spacing: 16) {
                         StatCard(
-                            title: "Приготовлено",
+                            title: "cooked".localized,
                             value: "\(presenter.cookedCount)",
                             color: .accentGreen
                         )
                         
                         StatCard(
-                            title: "В планах",
+                            title: "in_plan".localized,
                             value: "\(presenter.wantToCookCount)",
                             color: .accentPurple
                         )
                         
                         StatCard(
-                            title: "Своих",
+                            title: "custom".localized,
                             value: "\(presenter.customRecipesCount)",
                             color: .gray
                         )
@@ -52,8 +52,8 @@ struct ProfileView: View {
                     .padding(.vertical, 8)
                 }
                 
-                Section("Настройки") {
-                    Toggle("Темная тема", isOn: .constant(false))
+                Section("settings".localized) {
+                    Toggle("dark_theme".localized, isOn: .constant(false))
                 }
                 
                 Section {
@@ -62,14 +62,14 @@ struct ProfileView: View {
                     }) {
                         HStack {
                             Spacer()
-                            Text("Выйти")
+                            Text("sign_out".localized)
                                 .foregroundColor(.red)
                             Spacer()
                         }
                     }
                 }
             }
-            .navigationTitle("Профиль")
+            .navigationTitle("profile".localized)
             .task {
                 await presenter.loadStats()
             }

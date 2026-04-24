@@ -37,7 +37,7 @@ final class AuthPresenter: ObservableObject {
         } catch let authError as AuthError {
             errorMessage = authError.errorDescription
         } catch {
-            errorMessage = "Ошибка регистрации"
+            errorMessage = "registration_error".localized
         }
     }
     
@@ -53,7 +53,7 @@ final class AuthPresenter: ObservableObject {
         } catch let authError as AuthError {
             errorMessage = authError.errorDescription
         } catch {
-            errorMessage = "Ошибка входа"
+            errorMessage = "login_error".localized
         }
     }
     
@@ -63,7 +63,7 @@ final class AuthPresenter: ObservableObject {
             isAuthenticated = false
             currentUser = nil
         } catch {
-            errorMessage = "Ошибка выхода"
+            errorMessage = "sign_out_error".localized
         }
     }
     

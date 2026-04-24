@@ -10,15 +10,40 @@
 		5DAA10F92F7FF5EB0049DA64 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 5DAA10F82F7FF5EB0049DA64 /* FirebaseAuth */; };
 		5DAA10FB2F7FF5EB0049DA64 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 5DAA10FA2F7FF5EB0049DA64 /* FirebaseFirestore */; };
 		5DAA10FD2F7FF5EB0049DA64 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 5DAA10FC2F7FF5EB0049DA64 /* FirebaseStorage */; };
+		5DE766052F98FF71008353BF /* LibreTranslate in Frameworks */ = {isa = PBXBuildFile; productRef = 5DE766042F98FF71008353BF /* LibreTranslate */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		5D13A3352F7EEBD00058AFEE /* Palate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Palate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5DE766912F9B77FE008353BF /* Exceptions for "Palate" folder in "Palate" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5D13A3342F7EEBD00058AFEE /* Palate */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		5DE766922F9B77FE008353BF /* Exceptions for "Palate" folder in "Copy Bundle Resources" phase from "Palate" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 5D90006E2F8A48E2007A8234 /* Resources */;
+			membershipExceptions = (
+				"Resourses/String+Localized.swift",
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5D13A3372F7EEBD00058AFEE /* Palate */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5DE766912F9B77FE008353BF /* Exceptions for "Palate" folder in "Palate" target */,
+				5DE766922F9B77FE008353BF /* Exceptions for "Palate" folder in "Copy Bundle Resources" phase from "Palate" target */,
+			);
 			path = Palate;
 			sourceTree = "<group>";
 		};
@@ -31,6 +56,7 @@
 			files = (
 				5DAA10F92F7FF5EB0049DA64 /* FirebaseAuth in Frameworks */,
 				5DAA10FB2F7FF5EB0049DA64 /* FirebaseFirestore in Frameworks */,
+				5DE766052F98FF71008353BF /* LibreTranslate in Frameworks */,
 				5DAA10FD2F7FF5EB0049DA64 /* FirebaseStorage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -61,6 +87,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5D13A3402F7EEBD10058AFEE /* Build configuration list for PBXNativeTarget "Palate" */;
 			buildPhases = (
+				5DE766172F9B6D62008353BF /* SwiftGen */,
 				5D13A3312F7EEBD00058AFEE /* Sources */,
 				5D13A3322F7EEBD00058AFEE /* Frameworks */,
 				5D90006E2F8A48E2007A8234 /* Resources */,
@@ -77,6 +104,7 @@
 				5DAA10F82F7FF5EB0049DA64 /* FirebaseAuth */,
 				5DAA10FA2F7FF5EB0049DA64 /* FirebaseFirestore */,
 				5DAA10FC2F7FF5EB0049DA64 /* FirebaseStorage */,
+				5DE766042F98FF71008353BF /* LibreTranslate */,
 			);
 			productName = Palate;
 			productReference = 5D13A3352F7EEBD00058AFEE /* Palate.app */;
@@ -103,11 +131,15 @@
 			knownRegions = (
 				en,
 				Base,
+				"en-GB",
+				ru,
+				"en-AU",
 			);
 			mainGroup = 5D13A32C2F7EEBD00058AFEE;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				5DAA10F72F7FF5EB0049DA64 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				5DE766032F98FF71008353BF /* XCRemoteSwiftPackageReference "libretranslate" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5D13A3362F7EEBD00058AFEE /* Products */;
@@ -128,6 +160,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5DE766172F9B6D62008353BF /* SwiftGen */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftGen;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\"\n\nCONFIG_FILE=\"${PROJECT_DIR}/swiftgen.yml\"\n\nif [ -f \"$CONFIG_FILE\" ]; then\n    echo \"SwiftGen: Found config at $CONFIG_FILE\"\n    swiftgen config run --config \"$CONFIG_FILE\"\nelse\n    echo \"warning: SwiftGen config file not found at $CONFIG_FILE. Skipping.\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5D13A3312F7EEBD00058AFEE /* Sources */ = {
@@ -199,6 +252,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -255,6 +309,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -268,6 +323,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Palate/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -300,6 +356,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Palate/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -355,6 +412,14 @@
 				minimumVersion = 12.11.0;
 			};
 		};
+		5DE766032F98FF71008353BF /* XCRemoteSwiftPackageReference "libretranslate" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/wacumov/libretranslate.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -372,6 +437,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5DAA10F72F7FF5EB0049DA64 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		5DE766042F98FF71008353BF /* LibreTranslate */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5DE766032F98FF71008353BF /* XCRemoteSwiftPackageReference "libretranslate" */;
+			productName = LibreTranslate;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

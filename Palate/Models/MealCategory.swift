@@ -6,14 +6,14 @@
 import Foundation
 
 enum CuisineType: String, CaseIterable, Identifiable {
-    case italian = "Итальянская"
-    case chinese = "Китайская"
-    case mexican = "Мексиканская"
-    case japanese = "Японская"
-    case french = "Французская"
-    case american = "Американская"
-    case thai = "Тайская"
-    case indian = "Индийская"
+    case italian
+    case chinese
+    case mexican
+    case japanese
+    case french
+    case american
+    case thai
+    case indian
     
     var id: String { rawValue }
     
@@ -29,20 +29,47 @@ enum CuisineType: String, CaseIterable, Identifiable {
         case .indian: return "Indian"
         }
     }
+    
+    var localizedName: String {
+        switch self {
+        case .italian: return "italian".localized
+        case .chinese: return "chinese".localized
+        case .mexican: return "mexican".localized
+        case .japanese: return "japanese".localized
+        case .french: return "french".localized
+        case .american: return "american".localized
+        case .thai: return "thai".localized
+        case .indian: return "indian".localized
+        }
+    }
 }
 
 enum MealType: String, CaseIterable, Identifiable {
-    case beef = "Говядина"
-    case chicken = "Курица"
-    case pork = "Свинина"
-    case lamb = "Баранина"
-    case seafood = "Морепродукты"
-    case vegetarian = "Вегетарианское"
-    case pasta = "Паста"
-    case dessert = "Десерты"
-    case breakfast = "Завтраки"
+    case beef
+    case chicken
+    case pork
+    case lamb
+    case seafood
+    case vegetarian
+    case pasta
+    case dessert
+    case breakfast
     
     var id: String { rawValue }
+    
+    var localizedName: String {
+        switch self {
+        case .beef: return "beef".localized
+        case .chicken: return "chicken".localized
+        case .pork: return "pork".localized
+        case .lamb: return "lamb".localized
+        case .seafood: return "seafood".localized
+        case .vegetarian: return "vegetarian".localized
+        case .pasta: return "pasta".localized
+        case .dessert: return "dessert".localized
+        case .breakfast: return "breakfast".localized
+        }
+    }
     
     var apiCategory: String {
         switch self {
@@ -60,57 +87,15 @@ enum MealType: String, CaseIterable, Identifiable {
 
     var searchKeywords: [String] {
         switch self {
-        case .beef:
-            return ["beef", "steak", "meat", "ground beef", "mince", "brisket", "ribeye", "sirloin"]
-            
-        case .chicken:
-            return ["chicken", "hen", "poultry", "chicken breast", "thigh", "drumstick", "wing"]
-            
-        case .pork:
-            return ["pork", "bacon", "ham", "sausage", "pancetta", "chorizo", "pork chop", "pork belly"]
-            
-        case .lamb:
-            return ["lamb", "mutton", "lamb chop", "lamb leg"]
-            
-        case .seafood:
-            return [
-                "seafood", "fish", "salmon", "tuna", "cod", "trout", "mackerel", "sardine",
-                "shrimp", "prawn", "crab", "lobster", "mussel", "oyster", "clam", "scallop",
-                "calamari", "squid", "octopus", "crayfish", "caviar", "ikra",
-                "sea bass", "halibut", "haddock", "pollock", "catfish", "tilapia",
-                "anchovy", "eel", "unagi", "sashimi", "sushi"
-            ]
-            
-        case .vegetarian:
-            return [
-                "vegetarian", "vegan", "tofu", "mushroom", "vegetable", "plant-based",
-                "lentil", "bean", "chickpea", "broccoli", "spinach", "zucchini",
-                "eggplant", "cauliflower", "carrot", "potato", "avocado"
-            ]
-            
-        case .pasta:
-            return [
-                "pasta", "spaghetti", "noodle", "macaroni", "fettuccine", "lasagna",
-                "penne", "rigatoni", "ramen", "udon", "soba", "vermicelli"
-            ]
-            
-        case .dessert:
-            return [
-                "dessert", "cake", "chocolate", "sweet", "pie", "cookie", "biscuit",
-                "ice cream", "pudding", "custard", "brownie", "muffin", "cupcake",
-                "donut", "pastry", "croissant", "cinnamon", "vanilla", "caramel",
-                "honey", "sugar", "cream", "cheesecake", "tiramisu", "mousse",
-                "souffle", "crepe", "waffle", "pancake", "gelato", "sorbet",
-                "milkshake", "smoothie", "fruit", "berry", "strawberry", "chocolate chip"
-            ]
-            
-        case .breakfast:
-            return [
-                "breakfast", "pancake", "omelette", "scrambled", "french toast",
-                "cereal", "oatmeal", "porridge", "granola", "toast", "muffin",
-                "bagel", "croissant", "yogurt", "smoothie", "eggs", "bacon",
-                "sausage", "hash brown", "waffle", "crepe"
-            ]
+        case .beef: return ["beef", "steak", "meat", "ground beef", "mince", "brisket", "ribeye", "sirloin"]
+        case .chicken: return ["chicken", "hen", "poultry", "chicken breast", "thigh", "drumstick", "wing"]
+        case .pork: return ["pork", "bacon", "ham", "sausage", "pancetta", "chorizo", "pork chop", "pork belly"]
+        case .lamb: return ["lamb", "mutton", "lamb chop", "lamb leg"]
+        case .seafood: return ["seafood", "fish", "salmon", "tuna", "cod", "trout", "mackerel", "sardine", "shrimp", "prawn", "crab", "lobster", "mussel", "oyster", "clam", "scallop", "calamari", "squid", "octopus", "crayfish", "caviar", "ikra", "sea bass", "halibut", "haddock", "pollock", "catfish", "tilapia", "anchovy", "eel", "unagi", "sashimi", "sushi"]
+        case .vegetarian: return ["vegetarian", "vegan", "tofu", "mushroom", "vegetable", "plant-based", "lentil", "bean", "chickpea", "broccoli", "spinach", "zucchini", "eggplant", "cauliflower", "carrot", "potato", "avocado"]
+        case .pasta: return ["pasta", "spaghetti", "noodle", "macaroni", "fettuccine", "lasagna", "penne", "rigatoni", "ramen", "udon", "soba", "vermicelli"]
+        case .dessert: return ["dessert", "cake", "chocolate", "sweet", "pie", "cookie", "biscuit", "ice cream", "pudding", "custard", "brownie", "muffin", "cupcake", "donut", "pastry", "croissant", "cinnamon", "vanilla", "caramel", "honey", "sugar", "cream", "cheesecake", "tiramisu", "mousse", "souffle", "crepe", "waffle", "pancake", "gelato", "sorbet", "milkshake", "smoothie", "fruit", "berry", "strawberry", "chocolate chip"]
+        case .breakfast: return ["breakfast", "pancake", "omelette", "scrambled", "french toast", "cereal", "oatmeal", "porridge", "granola", "toast", "muffin", "bagel", "croissant", "yogurt", "smoothie", "eggs", "bacon", "sausage", "hash brown", "waffle", "crepe"]
         }
     }
 }
@@ -133,42 +118,60 @@ enum MealDBCategory: String, CaseIterable, Identifiable {
     
     var id: String { rawValue }
     
-    var displayName: String {
+    var localizedName: String {
         switch self {
-        case .beef: return "Говядина"
-        case .chicken: return "Курица"
-        case .dessert: return "Десерты"
-        case .lamb: return "Баранина"
-        case .miscellaneous: return "Разное"
-        case .pasta: return "Паста"
-        case .pork: return "Свинина"
-        case .seafood: return "Морепродукты"
-        case .side: return "Гарниры"
-        case .starter: return "Закуски"
-        case .vegan: return "Веганское"
-        case .vegetarian: return "Вегетарианское"
-        case .breakfast: return "Завтраки"
-        case .goat: return "Козлятина"
+        case .beef: return "beef".localized
+        case .chicken: return "chicken".localized
+        case .dessert: return "dessert".localized
+        case .lamb: return "lamb".localized
+        case .miscellaneous: return "miscellaneous".localized
+        case .pasta: return "pasta".localized
+        case .pork: return "pork".localized
+        case .seafood: return "seafood".localized
+        case .side: return "side".localized
+        case .starter: return "starter".localized
+        case .vegan: return "vegan".localized
+        case .vegetarian: return "vegetarian".localized
+        case .breakfast: return "breakfast".localized
+        case .goat: return "goat".localized
         }
     }
 }
 
 enum IngredientFilter: String, CaseIterable, Identifiable {
-    case chicken = "Курица"
-    case beef = "Говядина"
-    case pork = "Свинина"
-    case fish = "Рыба"
-    case shrimp = "Креветки"
-    case egg = "Яйца"
-    case cheese = "Сыр"
-    case tomato = "Помидоры"
-    case potato = "Картофель"
-    case rice = "Рис"
-    case pasta = "Паста"
-    case salmon = "Лосось"
-    case caviar = "Икра"
+    case chicken
+    case beef
+    case pork
+    case fish
+    case shrimp
+    case egg
+    case cheese
+    case tomato
+    case potato
+    case rice
+    case pasta
+    case salmon
+    case caviar
     
     var id: String { rawValue }
+    
+    var localizedName: String {
+        switch self {
+        case .chicken: return "chicken".localized
+        case .beef: return "beef".localized
+        case .pork: return "pork".localized
+        case .fish: return "fish".localized
+        case .shrimp: return "shrimp".localized
+        case .egg: return "egg".localized
+        case .cheese: return "cheese".localized
+        case .tomato: return "tomato".localized
+        case .potato: return "potato".localized
+        case .rice: return "rice".localized
+        case .pasta: return "pasta".localized
+        case .salmon: return "salmon".localized
+        case .caviar: return "caviar".localized
+        }
+    }
     
     var apiQuery: String {
         switch self {

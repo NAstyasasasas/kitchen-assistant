@@ -3,6 +3,7 @@
 //  Palate
 //
 
+import Foundation
 import SwiftUI
 
 struct StartView: View {
@@ -26,11 +27,11 @@ struct StartView: View {
                 Spacer(minLength: 380)
                 
                 VStack(spacing: 16) {
-                    Text("Palate")
+                    Text("welcome_title".localized)
                         .font(.custom("Condiment-Regular", size: 40))
                         .foregroundColor(.white)
                     
-                    Text("Уютное приложение для тех,\nкто любит готовить, экспериментировать\nс рецептами и сохранять кулинарные впечатления")
+                    Text("welcome_subtitle".localized)
                         .font(.body)
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
@@ -41,7 +42,7 @@ struct StartView: View {
                     Button {
                         presenter.showRegister()
                     } label: {
-                        Text("Регистрация")
+                        Text("register".localized)
                             .fontWeight(.semibold)
                             .frame(maxWidth: 150)
                             .padding()
@@ -53,7 +54,7 @@ struct StartView: View {
                     Button {
                         presenter.showLogin()
                     } label: {
-                        Text("Войти")
+                        Text("login".localized)
                             .fontWeight(.semibold)
                             .frame(maxWidth: 150)
                             .padding()

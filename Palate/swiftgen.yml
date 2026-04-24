@@ -1,0 +1,12 @@
+input_dir: Palate/Resourses
+output_dir: Palate/Generated/
+
+strings:
+  inputs:
+    - Resourses
+  outputs:
+    - templateName: structured-swift5
+      output: Strings.swift
+      params:
+        enumName: L10n
+        publicAccess: true

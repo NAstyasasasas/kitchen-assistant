@@ -3,6 +3,7 @@
 //  Palate
 //
 
+import Foundation
 import SwiftUI
 
 struct LoginView: View {
@@ -18,19 +19,19 @@ struct LoginView: View {
                 .frame(height: 300)
             
             VStack(spacing: 16) {
-                Text("Palate")
+                Text("welcome_title".localized)
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.accentPurple)
                     .padding(.bottom, 10)
                 
-                TextField("Email", text: $email)
+                TextField("email".localized, text: $email)
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(12)
                     .autocapitalization(.none)
                     .keyboardType(.emailAddress)
                 
-                SecureField("Пароль", text: $password)
+                SecureField("password".localized, text: $password)
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(12)
@@ -47,7 +48,7 @@ struct LoginView: View {
                         ProgressView()
                             .tint(.white)
                     } else {
-                        Text("ВОЙТИ")
+                        Text("login".localized.uppercased())
                             .fontWeight(.semibold)
                     }
                 }
@@ -58,7 +59,7 @@ struct LoginView: View {
                 .cornerRadius(14)
                 .disabled(presenter.isLoading)
                 
-                Button("Нет аккаунта? Зарегистрироваться") {
+                Button("no_account".localized) {
                     presenter.showRegister()
                 }
                 .font(.caption)
@@ -72,7 +73,7 @@ struct LoginView: View {
             Spacer()
         }
         .background(Color(.systemGray6))
-        .alert("Ошибка входа", isPresented: .constant(presenter.errorMessage != nil)) {
+        .alert("error_general".localized, isPresented: .constant(presenter.errorMessage != nil)) {
             Button("OK") {
                 presenter.errorMessage = nil
             }

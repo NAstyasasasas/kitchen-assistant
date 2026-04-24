@@ -3,6 +3,7 @@
 //  Palate
 //
 
+import Foundation
 import SwiftUI
 
 struct RegisterView: View {
@@ -20,12 +21,12 @@ struct RegisterView: View {
                 .frame(height: 300)
             
             VStack(spacing: 16) {
-                TextField("Имя", text: $name)
+                TextField("name".localized, text: $name)
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(12)
                 
-                TextField("Email", text: $email)
+                TextField("email".localized, text: $email)
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(12)
@@ -33,18 +34,18 @@ struct RegisterView: View {
                     .keyboardType(.emailAddress)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    SecureField("Пароль", text: $password)
+                    SecureField("password".localized, text: $password)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(12)
                     
-                    Text("Минимум 6 символов")
+                    Text("min_password".localized)
                         .font(.caption)
                         .foregroundColor(password.count >= 6 ? .green : .gray)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    SecureField("Подтвердите пароль", text: $confirmPassword)
+                    SecureField("confirm_password".localized, text: $confirmPassword)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(12)
@@ -54,7 +55,7 @@ struct RegisterView: View {
                             Image(systemName: password == confirmPassword ? "checkmark.circle.fill" : "xmark.circle.fill")
                                 .font(.caption)
                                 .foregroundColor(password == confirmPassword ? .green : .red)
-                            Text(password == confirmPassword ? "Пароли совпадают" : "Пароли не совпадают")
+                            Text(password == confirmPassword ? "passwords_match".localized : "passwords_dont_match".localized)
                                 .font(.caption)
                                 .foregroundColor(password == confirmPassword ? .green : .red)
                         }
@@ -73,7 +74,7 @@ struct RegisterView: View {
                         ProgressView()
                             .tint(.white)
                     } else {
-                        Text("ЗАРЕГИСТРИРОВАТЬСЯ")
+                        Text("register".localized.uppercased())
                             .fontWeight(.semibold)
                     }
                 }
@@ -84,7 +85,7 @@ struct RegisterView: View {
                 .cornerRadius(12)
                 .disabled(!isValid || presenter.isLoading)
                 
-                Button("Уже есть аккаунт? Войти") {
+                Button("already_have_account".localized) {
                     presenter.showLogin()
                 }
                 .font(.caption)
@@ -98,7 +99,7 @@ struct RegisterView: View {
             Spacer()
         }
         .background(Color(.systemGray6))
-        .alert("Ошибка", isPresented: .constant(presenter.errorMessage != nil)) {
+        .alert("error_general".localized, isPresented: .constant(presenter.errorMessage != nil)) {
             Button("OK") {
                 presenter.errorMessage = nil
             }

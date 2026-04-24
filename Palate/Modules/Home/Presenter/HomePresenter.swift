@@ -62,14 +62,14 @@ final class HomePresenter: ObservableObject {
             if Task.isCancelled { return }
             await MainActor.run {
                 if results.isEmpty {
-                    errorMessage = "Ничего не найдено по запросу '\(query)'"
+                    errorMessage = "no_results".localized + " '\(query)'"
                 }
                 searchResults = results
             }
         } catch {
             if Task.isCancelled { return }
             await MainActor.run {
-                errorMessage = "Ошибка поиска. Проверьте подключение"
+                errorMessage = "search_error".localized
                 searchResults = []
             }
         }
@@ -120,7 +120,7 @@ final class HomePresenter: ObservableObject {
         } catch {
             if Task.isCancelled { return }
             await MainActor.run {
-                errorMessage = "Ошибка загрузки. Проверьте подключение к интернету"
+                errorMessage = "error_loading_recipes".localized
                 filteredRecipes = []
             }
         }
@@ -158,13 +158,13 @@ final class HomePresenter: ObservableObject {
     private func handleEmptyRecipes() async {
         await MainActor.run {
             if let cuisine = selectedCuisine, let mealType = selectedMealType {
-                errorMessage = "Нет рецептов с '\(mealType.rawValue)' в '\(cuisine.rawValue)' кухне"
+                errorMessage = "no_recipes_with_filters".localized + " '\(mealType.localizedName)' " + "in_cuisine".localized + " '\(cuisine.localizedName)'"
             } else if let cuisine = selectedCuisine {
-                errorMessage = "Нет рецептов для кухни '\(cuisine.rawValue)'"
+                errorMessage = "no_recipes_with_filters".localized + " '\(cuisine.localizedName)'"
             } else if let mealType = selectedMealType {
-                errorMessage = "Нет рецептов с '\(mealType.rawValue)'"
+                errorMessage = "no_recipes_with_filters".localized + " '\(mealType.localizedName)'"
             } else {
-                errorMessage = "Нет рецептов. Попробуйте другие фильтры"
+                errorMessage = "no_recipes".localized
             }
             filteredRecipes = []
         }

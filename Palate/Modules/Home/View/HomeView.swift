@@ -3,6 +3,7 @@
 //  Palate
 //
 
+import Foundation
 import SwiftUI
 
 struct FilterChip: View {
@@ -59,7 +60,7 @@ struct HomeEmptyState: View {
             Text(message)
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
-            Text("Попробуйте изменить фильтры")
+            Text("try_change_filters".localized)
                 .font(.caption)
                 .foregroundColor(.gray)
         }
@@ -85,7 +86,7 @@ struct HomeView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
                             FilterChip(
-                                title: "Все",
+                                title: "all".localized,
                                 isSelected: presenter.selectedCuisine == nil && presenter.selectedMealType == nil
                             ) {
                                 presenter.resetFilters()
@@ -93,7 +94,7 @@ struct HomeView: View {
                             
                             ForEach(CuisineType.allCases.prefix(6)) { cuisine in
                                 FilterChip(
-                                    title: cuisine.rawValue,
+                                    title: cuisine.localizedName,
                                     isSelected: presenter.selectedCuisine == cuisine
                                 ) {
                                     if presenter.selectedCuisine == cuisine {
@@ -116,7 +117,7 @@ struct HomeView: View {
                             .padding(.top, 50)
                     } else if !presenter.searchResults.isEmpty && !searchText.isEmpty {
                         VStack(alignment: .leading, spacing: 16) {
-                            Text("Результаты поиска")
+                            Text("search_results".localized)
                                 .font(.headline)
                                 .padding(.horizontal)
                             
@@ -125,12 +126,12 @@ struct HomeView: View {
                             }
                         }
                     } else if presenter.filteredRecipes.isEmpty {
-                        HomeEmptyState(message: presenter.errorMessage ?? "Нет рецептов")
+                        HomeEmptyState(message: presenter.errorMessage ?? "no_recipes".localized)
                     } else {
                         VStack(alignment: .leading, spacing: 16) {
                             HStack {
                                 if let cuisine = presenter.selectedCuisine {
-                                    Text(cuisine.rawValue)
+                                    Text(cuisine.localizedName)
                                         .font(.title3)
                                         .fontWeight(.bold)
                                 } else if let mealType = presenter.selectedMealType {
@@ -138,7 +139,7 @@ struct HomeView: View {
                                         .font(.title3)
                                         .fontWeight(.bold)
                                 } else {
-                                    Text("Рекомендации")
+                                    Text("recommendations".localized)
                                         .font(.title3)
                                         .fontWeight(.bold)
                                 }
@@ -164,7 +165,7 @@ struct HomeView: View {
                 .padding(.vertical)
             }
             .background(Color(.systemGray6))
-            .navigationTitle("Palate")
+            .navigationTitle("home".localized)
             .task {
                 await presenter.loadRecipes()
             }
@@ -193,7 +194,7 @@ struct FilterSheetView: View {
                         tempCuisine = nil
                     } label: {
                         HStack {
-                            Text("Любая кухня")
+                            Text("any_cuisine".localized)
                                 .fontWeight(.medium)
                             Spacer()
                             if tempCuisine == nil {
@@ -209,7 +210,7 @@ struct FilterSheetView: View {
                             tempCuisine = cuisine
                         } label: {
                             HStack {
-                                Text(cuisine.rawValue)
+                                Text(cuisine.localizedName)
                                 Spacer()
                                 if tempCuisine == cuisine {
                                     Image(systemName: "checkmark")
@@ -222,7 +223,7 @@ struct FilterSheetView: View {
                 } header: {
                     HStack {
                         Image(systemName: "fork.knife")
-                        Text("Кухня")
+                        Text("cuisine".localized)
                     }
                 }
                 
@@ -231,7 +232,7 @@ struct FilterSheetView: View {
                         tempMealType = nil
                     } label: {
                         HStack {
-                            Text("Любой тип")
+                            Text("any_type".localized)
                                 .fontWeight(.medium)
                             Spacer()
                             if tempMealType == nil {
@@ -247,7 +248,7 @@ struct FilterSheetView: View {
                             tempMealType = mealType
                         } label: {
                             HStack {
-                                Text(mealType.rawValue)
+                                Text(mealType.localizedName)
                                 Spacer()
                                 if tempMealType == mealType {
                                     Image(systemName: "checkmark")
@@ -260,7 +261,7 @@ struct FilterSheetView: View {
                 } header: {
                     HStack {
                         Image(systemName: "carrot")
-                        Text("Тип блюда")
+                        Text("meal_type".localized)
                     }
                 }
                 
@@ -269,18 +270,18 @@ struct FilterSheetView: View {
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
                                 if let cuisine = tempCuisine {
-                                    Text("Кухня: \(cuisine.rawValue)")
+                                    Text("\(cuisine.localizedName)")
                                         .font(.caption)
                                         .foregroundColor(.accentPurple)
                                 }
                                 if let mealType = tempMealType {
-                                    Text("Тип: \(mealType.rawValue)")
+                                    Text("\(mealType.localizedName)")
                                         .font(.caption)
                                         .foregroundColor(.accentPurple)
                                 }
                             }
                             Spacer()
-                            Text("Активны")
+                            Text("active".localized)
                                 .font(.caption)
                                 .foregroundColor(.green)
                         }
@@ -294,14 +295,14 @@ struct FilterSheetView: View {
                     } label: {
                         HStack {
                             Spacer()
-                            Text("Сбросить все фильтры")
+                            Text("reset_filters".localized)
                                 .foregroundColor(.red)
                             Spacer()
                         }
                     }
                 }
             }
-            .navigationTitle("Фильтры")
+            .navigationTitle("filters".localized)
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 tempCuisine = presenter.selectedCuisine
@@ -309,12 +310,12 @@ struct FilterSheetView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Отмена") {
+                    Button("cancel".localized) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Применить") {
+                    Button("apply".localized) {
                         presenter.selectedCuisine = tempCuisine
                         presenter.selectedMealType = tempMealType
                         Task {

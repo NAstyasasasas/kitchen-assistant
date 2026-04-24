@@ -27,39 +27,40 @@ final class MainCoordinator: Coordinator {
         let tabView = TabView {
             planView
                 .tabItem {
-                    Label("План", systemImage: "calendar")
+                    Label("plan".localized, systemImage: "calendar")
+                    
                 }
             
             myRecipesView
                 .tabItem {
-                    Label("Мои", systemImage: "book.fill")
+                    Label("my".localized, systemImage: "book.fill")
                 }
             
             homeView
                 .tabItem {
-                    Label("Главная", systemImage: "magnifyingglass")
+                    Label("home".localized, systemImage: "magnifyingglass")
                 }
-            
+                    
             shoppingListView
-                .tabItem {
-                    Label("Покупки", systemImage: "cart.fill")
-                }
-            
+                    .tabItem {
+                        Label("shopping_list".localized, systemImage: "cart.fill")
+                    }
+                    
             profileView
                 .tabItem {
-                    Label("Профиль", systemImage: "person.fill")
+                    Label("profile".localized, systemImage: "person.fill")
                 }
+            }
+            .accentColor(.accentPurple)
+            
+            let hostingController = UIHostingController(rootView: tabView)
+            rootViewController = hostingController
         }
-        .accentColor(.accentPurple)
         
-        let hostingController = UIHostingController(rootView: tabView)
-        rootViewController = hostingController
+        func showRecipeDetail(recipeId: String) {
+            let presenter = RecipeDetailPresenter(recipeId: recipeId, coordinator: self)
+            let detailView = RecipeDetailView(presenter: presenter)
+            let hostingController = UIHostingController(rootView: detailView)
+            rootViewController?.present(hostingController, animated: true)
+        }
     }
-    
-    func showRecipeDetail(recipeId: String) {
-        let presenter = RecipeDetailPresenter(recipeId: recipeId, coordinator: self)
-        let detailView = RecipeDetailView(presenter: presenter)
-        let hostingController = UIHostingController(rootView: detailView)
-        rootViewController?.present(hostingController, animated: true)
-    }
-}
