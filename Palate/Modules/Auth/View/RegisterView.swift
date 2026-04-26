@@ -21,12 +21,12 @@ struct RegisterView: View {
                 .frame(height: 300)
             
             VStack(spacing: 16) {
-                TextField("name".localized, text: $name)
+                TextField(L10n.name, text: $name)
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(12)
                 
-                TextField("email".localized, text: $email)
+                TextField(L10n.email, text: $email)
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(12)
@@ -34,18 +34,18 @@ struct RegisterView: View {
                     .keyboardType(.emailAddress)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    SecureField("password".localized, text: $password)
+                    SecureField(L10n.password, text: $password)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(12)
                     
-                    Text("min_password".localized)
+                    Text(L10n.minPassword)
                         .font(.caption)
                         .foregroundColor(password.count >= 6 ? .green : .gray)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    SecureField("confirm_password".localized, text: $confirmPassword)
+                    SecureField(L10n.confirmPassword, text: $confirmPassword)
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(12)
@@ -55,7 +55,7 @@ struct RegisterView: View {
                             Image(systemName: password == confirmPassword ? "checkmark.circle.fill" : "xmark.circle.fill")
                                 .font(.caption)
                                 .foregroundColor(password == confirmPassword ? .green : .red)
-                            Text(password == confirmPassword ? "passwords_match".localized : "passwords_dont_match".localized)
+                            Text(password == confirmPassword ? L10n.passwordsMatch : L10n.passwordsDontMatch)
                                 .font(.caption)
                                 .foregroundColor(password == confirmPassword ? .green : .red)
                         }
@@ -74,7 +74,7 @@ struct RegisterView: View {
                         ProgressView()
                             .tint(.white)
                     } else {
-                        Text("register".localized.uppercased())
+                        Text(L10n.register.uppercased())
                             .fontWeight(.semibold)
                     }
                 }
@@ -85,7 +85,7 @@ struct RegisterView: View {
                 .cornerRadius(12)
                 .disabled(!isValid || presenter.isLoading)
                 
-                Button("already_have_account".localized) {
+                Button(L10n.alreadyHaveAccount) {
                     presenter.showLogin()
                 }
                 .font(.caption)
@@ -99,7 +99,7 @@ struct RegisterView: View {
             Spacer()
         }
         .background(Color(.systemGray6))
-        .alert("error_general".localized, isPresented: .constant(presenter.errorMessage != nil)) {
+        .alert(L10n.errorGeneral, isPresented: .constant(presenter.errorMessage != nil)) {
             Button("OK") {
                 presenter.errorMessage = nil
             }

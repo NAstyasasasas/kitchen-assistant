@@ -1,12 +1,8 @@
-input_dir: Palate/Resourses
-output_dir: Palate/Generated/
-
 strings:
-  inputs:
-    - Resourses
+  inputs: Palate/SwiftGen/en.lproj/Localizable.strings
   outputs:
     - templateName: structured-swift5
-      output: Strings.swift
+      output: Palate/Generated/L10n.swift
       params:
         enumName: L10n
         publicAccess: true

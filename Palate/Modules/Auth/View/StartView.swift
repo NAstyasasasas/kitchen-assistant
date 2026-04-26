@@ -27,11 +27,11 @@ struct StartView: View {
                 Spacer(minLength: 380)
                 
                 VStack(spacing: 16) {
-                    Text("welcome_title".localized)
+                    Text(L10n.welcomeTitle)
                         .font(.custom("Condiment-Regular", size: 40))
                         .foregroundColor(.white)
                     
-                    Text("welcome_subtitle".localized)
+                    Text(L10n.welcomeSubtitle)
                         .font(.body)
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
@@ -42,7 +42,7 @@ struct StartView: View {
                     Button {
                         presenter.showRegister()
                     } label: {
-                        Text("register".localized)
+                        Text(L10n.register)
                             .fontWeight(.semibold)
                             .frame(maxWidth: 150)
                             .padding()
@@ -54,7 +54,7 @@ struct StartView: View {
                     Button {
                         presenter.showLogin()
                     } label: {
-                        Text("login".localized)
+                        Text(L10n.login)
                             .fontWeight(.semibold)
                             .frame(maxWidth: 150)
                             .padding()

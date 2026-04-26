@@ -9,7 +9,7 @@ struct ShoppingListView: View {
     @StateObject var presenter: ShoppingListPresenter
     
     var body: some View {
-        Text("shopping_list".localized)
-        .navigationTitle("shopping_list".localized)
+        Text(L10n.shoppingList)
+            .navigationTitle(L10n.shoppingList)
     }
 }

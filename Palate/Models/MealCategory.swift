@@ -32,14 +32,14 @@ enum CuisineType: String, CaseIterable, Identifiable {
     
     var localizedName: String {
         switch self {
-        case .italian: return "italian".localized
-        case .chinese: return "chinese".localized
-        case .mexican: return "mexican".localized
-        case .japanese: return "japanese".localized
-        case .french: return "french".localized
-        case .american: return "american".localized
-        case .thai: return "thai".localized
-        case .indian: return "indian".localized
+        case .italian: return L10n.italian
+        case .chinese: return L10n.chinese
+        case .mexican: return L10n.mexican
+        case .japanese: return L10n.japanese
+        case .french: return L10n.french
+        case .american: return L10n.american
+        case .thai: return L10n.thai
+        case .indian: return L10n.indian
         }
     }
 }
@@ -59,15 +59,15 @@ enum MealType: String, CaseIterable, Identifiable {
     
     var localizedName: String {
         switch self {
-        case .beef: return "beef".localized
-        case .chicken: return "chicken".localized
-        case .pork: return "pork".localized
-        case .lamb: return "lamb".localized
-        case .seafood: return "seafood".localized
-        case .vegetarian: return "vegetarian".localized
-        case .pasta: return "pasta".localized
-        case .dessert: return "dessert".localized
-        case .breakfast: return "breakfast".localized
+        case .beef: return L10n.beef
+        case .chicken: return L10n.chicken
+        case .pork: return L10n.pork
+        case .lamb: return L10n.lamb
+        case .seafood: return L10n.seafood
+        case .vegetarian: return L10n.vegetarian
+        case .pasta: return L10n.pasta
+        case .dessert: return L10n.dessert
+        case .breakfast: return L10n.breakfast
         }
     }
     
@@ -120,20 +120,20 @@ enum MealDBCategory: String, CaseIterable, Identifiable {
     
     var localizedName: String {
         switch self {
-        case .beef: return "beef".localized
-        case .chicken: return "chicken".localized
-        case .dessert: return "dessert".localized
-        case .lamb: return "lamb".localized
-        case .miscellaneous: return "miscellaneous".localized
-        case .pasta: return "pasta".localized
-        case .pork: return "pork".localized
-        case .seafood: return "seafood".localized
-        case .side: return "side".localized
-        case .starter: return "starter".localized
-        case .vegan: return "vegan".localized
-        case .vegetarian: return "vegetarian".localized
-        case .breakfast: return "breakfast".localized
-        case .goat: return "goat".localized
+        case .beef: return L10n.beef
+        case .chicken: return L10n.chicken
+        case .dessert: return L10n.dessert
+        case .lamb: return L10n.lamb
+        case .miscellaneous: return L10n.miscellaneous
+        case .pasta: return L10n.pasta
+        case .pork: return L10n.pork
+        case .seafood: return L10n.seafood
+        case .side: return L10n.side
+        case .starter: return L10n.starter
+        case .vegan: return L10n.vegan
+        case .vegetarian: return L10n.vegetarian
+        case .breakfast: return L10n.breakfast
+        case .goat: return L10n.goat
         }
     }
 }
@@ -157,19 +157,19 @@ enum IngredientFilter: String, CaseIterable, Identifiable {
     
     var localizedName: String {
         switch self {
-        case .chicken: return "chicken".localized
-        case .beef: return "beef".localized
-        case .pork: return "pork".localized
-        case .fish: return "fish".localized
-        case .shrimp: return "shrimp".localized
-        case .egg: return "egg".localized
-        case .cheese: return "cheese".localized
-        case .tomato: return "tomato".localized
-        case .potato: return "potato".localized
-        case .rice: return "rice".localized
-        case .pasta: return "pasta".localized
-        case .salmon: return "salmon".localized
-        case .caviar: return "caviar".localized
+        case .chicken: return L10n.chicken
+        case .beef: return L10n.beef
+        case .pork: return L10n.pork
+        case .fish: return L10n.fish
+        case .shrimp: return L10n.shrimp
+        case .egg: return L10n.egg
+        case .cheese: return L10n.cheese
+        case .tomato: return L10n.tomato
+        case .potato: return L10n.potato
+        case .rice: return L10n.rice
+        case .pasta: return L10n.pasta
+        case .salmon: return L10n.salmon
+        case .caviar: return L10n.caviar
         }
     }
     

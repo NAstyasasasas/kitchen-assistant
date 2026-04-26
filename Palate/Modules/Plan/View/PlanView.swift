@@ -3,13 +3,14 @@
 //  Palate
 //
 
+
 import SwiftUI
 
 struct PlanView: View {
     var body: some View {
         NavigationView {
-            Text("plan_title".localized)
-            .navigationTitle("plan".localized)
+            Text(L10n.planTitle)
+            .navigationTitle(L10n.plan)
         }
     }
 }

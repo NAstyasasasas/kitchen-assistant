@@ -27,28 +27,28 @@ final class MainCoordinator: Coordinator {
         let tabView = TabView {
             planView
                 .tabItem {
-                    Label("plan".localized, systemImage: "calendar")
+                    Label(L10n.plan, systemImage: "calendar")
                     
                 }
             
             myRecipesView
                 .tabItem {
-                    Label("my".localized, systemImage: "book.fill")
+                    Label(L10n.my, systemImage: "book.fill")
                 }
             
             homeView
                 .tabItem {
-                    Label("home".localized, systemImage: "magnifyingglass")
+                    Label(L10n.home, systemImage: "magnifyingglass")
                 }
                     
             shoppingListView
                     .tabItem {
-                        Label("shopping_list".localized, systemImage: "cart.fill")
+                        Label(L10n.shoppingList, systemImage: "cart.fill")
                     }
                     
             profileView
                 .tabItem {
-                    Label("profile".localized, systemImage: "person.fill")
+                    Label(L10n.profile, systemImage: "person.fill")
                 }
             }
             .accentColor(.accentPurple)

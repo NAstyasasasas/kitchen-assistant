@@ -29,22 +29,22 @@ struct ProfileView: View {
                     .padding(.vertical, 8)
                 }
                 
-                Section("statistics".localized) {
+                Section(L10n.statistics) {
                     HStack(spacing: 16) {
                         StatCard(
-                            title: "cooked".localized,
+                            title: L10n.cooked,
                             value: "\(presenter.cookedCount)",
                             color: .accentGreen
                         )
                         
                         StatCard(
-                            title: "in_plan".localized,
+                            title: L10n.inPlan,
                             value: "\(presenter.wantToCookCount)",
                             color: .accentPurple
                         )
                         
                         StatCard(
-                            title: "custom".localized,
+                            title: L10n.custom,
                             value: "\(presenter.customRecipesCount)",
                             color: .gray
                         )
@@ -52,8 +52,8 @@ struct ProfileView: View {
                     .padding(.vertical, 8)
                 }
                 
-                Section("settings".localized) {
-                    Toggle("dark_theme".localized, isOn: .constant(false))
+                Section(L10n.settings) {
+                    Toggle(L10n.darkTheme, isOn: .constant(false))
                 }
                 
                 Section {
@@ -62,14 +62,14 @@ struct ProfileView: View {
                     }) {
                         HStack {
                             Spacer()
-                            Text("sign_out".localized)
+                            Text(L10n.signOut)
                                 .foregroundColor(.red)
                             Spacer()
                         }
                     }
                 }
             }
-            .navigationTitle("profile".localized)
+            .navigationTitle(L10n.profile)
             .task {
                 await presenter.loadStats()
             }

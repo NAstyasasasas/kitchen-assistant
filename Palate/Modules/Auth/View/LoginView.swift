@@ -19,19 +19,19 @@ struct LoginView: View {
                 .frame(height: 300)
             
             VStack(spacing: 16) {
-                Text("welcome_title".localized)
+                Text(L10n.welcomeTitle)
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.accentPurple)
                     .padding(.bottom, 10)
                 
-                TextField("email".localized, text: $email)
+                TextField(L10n.email, text: $email)
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(12)
                     .autocapitalization(.none)
                     .keyboardType(.emailAddress)
                 
-                SecureField("password".localized, text: $password)
+                SecureField(L10n.password, text: $password)
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(12)
@@ -48,7 +48,7 @@ struct LoginView: View {
                         ProgressView()
                             .tint(.white)
                     } else {
-                        Text("login".localized.uppercased())
+                        Text(L10n.login.uppercased())
                             .fontWeight(.semibold)
                     }
                 }
@@ -59,7 +59,7 @@ struct LoginView: View {
                 .cornerRadius(14)
                 .disabled(presenter.isLoading)
                 
-                Button("no_account".localized) {
+                Button(L10n.noAccount) {
                     presenter.showRegister()
                 }
                 .font(.caption)
@@ -73,7 +73,7 @@ struct LoginView: View {
             Spacer()
         }
         .background(Color(.systemGray6))
-        .alert("error_general".localized, isPresented: .constant(presenter.errorMessage != nil)) {
+        .alert(L10n.errorGeneral, isPresented: .constant(presenter.errorMessage != nil)) {
             Button("OK") {
                 presenter.errorMessage = nil
             }

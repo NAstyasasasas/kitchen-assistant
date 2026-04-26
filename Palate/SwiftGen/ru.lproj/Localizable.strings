@@ -1,0 +1,126 @@
+//
+//  Localizable.strings
+//  Palate
+//
+//  Created by Анастасия on 25.04.2026.
+//
+
+
+// MARK: - Главный экран
+"all" = "Все";
+"active" = "Активны";
+"apply" = "Применить";
+"cancel" = "Отмена";
+"cuisine" = "Кухня";
+"filters" = "Фильтры";
+"meal_type" = "Тип блюда";
+"no_recipes" = "Нет рецептов";
+"no_recipes_with_filters" = "Нет рецептов с";
+"in_cuisine" = "в кухне";
+"recommendations" = "Рекомендации";
+"reset_filters" = "Сбросить все фильтры";
+"search_placeholder" = "Поиск рецептов...";
+"search_results" = "Результаты поиска";
+"try_change_filters" = "Попробуйте изменить фильтры";
+"any_cuisine" = "Любая кухня";
+"any_type" = "Любой тип";
+
+// MARK: - Кухни
+"italian" = "Итальянская";
+"chinese" = "Китайская";
+"mexican" = "Мексиканская";
+"japanese" = "Японская";
+"french" = "Французская";
+"american" = "Американская";
+"thai" = "Тайская";
+"indian" = "Индийская";
+
+// MARK: - Типы блюд
+"beef" = "Говядина";
+"chicken" = "Курица";
+"pork" = "Свинина";
+"lamb" = "Баранина";
+"seafood" = "Морепродукты";
+"vegetarian" = "Вегетарианское";
+"pasta" = "Паста";
+"dessert" = "Десерты";
+"breakfast" = "Завтраки";
+
+// MARK: - Профиль
+"cooked" = "Приготовлено";
+"custom" = "Своих";
+"dark_theme" = "Тёмная тема";
+"in_plan" = "В планах";
+"my_recipes" = "Мои рецепты";
+"profile" = "Профиль";
+"settings" = "Настройки";
+"sign_out" = "Выйти";
+"statistics" = "Статистика";
+
+// MARK: - Детали рецепта
+"add_to_cart" = "В список";
+"ingredients" = "Ингредиенты";
+"instructions" = "Приготовление";
+"no_instructions" = "Инструкция не найдена";
+"want_to_cook" = "Хочу приготовить";
+
+// MARK: - Авторизация
+"already_have_account" = "Уже есть аккаунт? Войти";
+"confirm_password" = "Подтвердите пароль";
+"email" = "Email";
+"login" = "Войти";
+"min_password" = "Минимум 6 символов";
+"name" = "Имя";
+"no_account" = "Нет аккаунта? Зарегистрироваться";
+"password" = "Пароль";
+"passwords_dont_match" = "Пароли не совпадают";
+"passwords_match" = "Пароли совпадают";
+"register" = "Регистрация";
+
+// MARK: - Приветственный экран
+"welcome_title" = "Palate";
+"welcome_subtitle" = "Уютное приложение для тех, кто любит готовить, экспериментировать с рецептами и сохранять кулинарные впечатления";
+
+// MARK: - Ошибки
+"add_to_cart_error" = "Ошибка добавления";
+"error_email_in_use" = "Email уже зарегистрирован";
+"error_general" = "Что-то пошло не так";
+"error_invalid_credentials" = "Неверный email или пароль";
+"error_loading_recipes" = "Ошибка загрузки. Проверьте подключение к интернету";
+"error_network" = "Ошибка сети";
+"error_weak_password" = "Пароль должен быть не менее 6 символов";
+"load_recipe_error" = "Ошибка загрузки рецепта";
+"login_error" = "Ошибка входа";
+"mark_as_cooked_error" = "Ошибка отметки";
+"no_results" = "Ничего не найдено по запросу";
+"registration_error" = "Ошибка регистрации";
+"search_error" = "Ошибка поиска. Проверьте подключение";
+"sign_out_error" = "Ошибка выхода";
+
+// MARK: - Таббары
+"home" = "Главная";
+"my" = "Мои";
+"plan" = "План";
+"plan_title" = "План питания";
+"shopping_list" = "Список покупок";
+
+// MARK: - MealDBCategory
+"miscellaneous" = "Разное";
+"side" = "Гарниры";
+"starter" = "Закуски";
+"vegan" = "Веганское";
+"goat" = "Козлятина";
+
+// MARK: - IngredientFilter
+"caviar" = "Икра";
+"cheese" = "Сыр";
+"egg" = "Яйца";
+"fish" = "Рыба";
+"potato" = "Картофель";
+"rice" = "Рис";
+"salmon" = "Лосось";
+"shrimp" = "Креветки";
+"tomato" = "Помидоры";
+
+"my_recipes" = "Мои рецепты";
+"plan_title" = "План питания";

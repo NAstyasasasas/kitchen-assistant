@@ -60,7 +60,7 @@ struct HomeEmptyState: View {
             Text(message)
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
-            Text("try_change_filters".localized)
+            Text(L10n.tryChangeFilters)
                 .font(.caption)
                 .foregroundColor(.gray)
         }
@@ -86,7 +86,7 @@ struct HomeView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
                             FilterChip(
-                                title: "all".localized,
+                                title: L10n.all,
                                 isSelected: presenter.selectedCuisine == nil && presenter.selectedMealType == nil
                             ) {
                                 presenter.resetFilters()
@@ -94,7 +94,7 @@ struct HomeView: View {
                             
                             ForEach(CuisineType.allCases.prefix(6)) { cuisine in
                                 FilterChip(
-                                    title: cuisine.localizedName,
+                                    title: L10n.cuisine,
                                     isSelected: presenter.selectedCuisine == cuisine
                                 ) {
                                     if presenter.selectedCuisine == cuisine {
@@ -117,7 +117,7 @@ struct HomeView: View {
                             .padding(.top, 50)
                     } else if !presenter.searchResults.isEmpty && !searchText.isEmpty {
                         VStack(alignment: .leading, spacing: 16) {
-                            Text("search_results".localized)
+                            Text(L10n.searchResults)
                                 .font(.headline)
                                 .padding(.horizontal)
                             
@@ -126,12 +126,12 @@ struct HomeView: View {
                             }
                         }
                     } else if presenter.filteredRecipes.isEmpty {
-                        HomeEmptyState(message: presenter.errorMessage ?? "no_recipes".localized)
+                        HomeEmptyState(message: presenter.errorMessage ?? L10n.noRecipes)
                     } else {
                         VStack(alignment: .leading, spacing: 16) {
                             HStack {
                                 if let cuisine = presenter.selectedCuisine {
-                                    Text(cuisine.localizedName)
+                                    Text(L10n.cuisine)
                                         .font(.title3)
                                         .fontWeight(.bold)
                                 } else if let mealType = presenter.selectedMealType {
@@ -139,7 +139,7 @@ struct HomeView: View {
                                         .font(.title3)
                                         .fontWeight(.bold)
                                 } else {
-                                    Text("recommendations".localized)
+                                    Text(L10n.recommendations)
                                         .font(.title3)
                                         .fontWeight(.bold)
                                 }
@@ -165,7 +165,7 @@ struct HomeView: View {
                 .padding(.vertical)
             }
             .background(Color(.systemGray6))
-            .navigationTitle("home".localized)
+            .navigationTitle(L10n.home)
             .task {
                 await presenter.loadRecipes()
             }
@@ -194,7 +194,7 @@ struct FilterSheetView: View {
                         tempCuisine = nil
                     } label: {
                         HStack {
-                            Text("any_cuisine".localized)
+                            Text(L10n.anyCuisine)
                                 .fontWeight(.medium)
                             Spacer()
                             if tempCuisine == nil {
@@ -210,7 +210,7 @@ struct FilterSheetView: View {
                             tempCuisine = cuisine
                         } label: {
                             HStack {
-                                Text(cuisine.localizedName)
+                                Text(L10n.cuisine)
                                 Spacer()
                                 if tempCuisine == cuisine {
                                     Image(systemName: "checkmark")
@@ -223,7 +223,7 @@ struct FilterSheetView: View {
                 } header: {
                     HStack {
                         Image(systemName: "fork.knife")
-                        Text("cuisine".localized)
+                        Text(L10n.cuisine)
                     }
                 }
                 
@@ -232,7 +232,7 @@ struct FilterSheetView: View {
                         tempMealType = nil
                     } label: {
                         HStack {
-                            Text("any_type".localized)
+                            Text(L10n.anyType)
                                 .fontWeight(.medium)
                             Spacer()
                             if tempMealType == nil {
@@ -248,7 +248,7 @@ struct FilterSheetView: View {
                             tempMealType = mealType
                         } label: {
                             HStack {
-                                Text(mealType.localizedName)
+                                Text(L10n.mealType)
                                 Spacer()
                                 if tempMealType == mealType {
                                     Image(systemName: "checkmark")
@@ -261,7 +261,7 @@ struct FilterSheetView: View {
                 } header: {
                     HStack {
                         Image(systemName: "carrot")
-                        Text("meal_type".localized)
+                        Text(L10n.mealType)
                     }
                 }
                 
@@ -270,18 +270,18 @@ struct FilterSheetView: View {
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
                                 if let cuisine = tempCuisine {
-                                    Text("\(cuisine.localizedName)")
+                                    Text("\(L10n.cuisine)")
                                         .font(.caption)
                                         .foregroundColor(.accentPurple)
                                 }
                                 if let mealType = tempMealType {
-                                    Text("\(mealType.localizedName)")
+                                    Text("\(L10n.mealType)")
                                         .font(.caption)
                                         .foregroundColor(.accentPurple)
                                 }
                             }
                             Spacer()
-                            Text("active".localized)
+                            Text(L10n.active)
                                 .font(.caption)
                                 .foregroundColor(.green)
                         }
@@ -295,14 +295,14 @@ struct FilterSheetView: View {
                     } label: {
                         HStack {
                             Spacer()
-                            Text("reset_filters".localized)
+                            Text(L10n.resetFilters)
                                 .foregroundColor(.red)
                             Spacer()
                         }
                     }
                 }
             }
-            .navigationTitle("filters".localized)
+            .navigationTitle(L10n.filters)
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 tempCuisine = presenter.selectedCuisine
@@ -310,12 +310,12 @@ struct FilterSheetView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("cancel".localized) {
+                    Button(L10n.cancel) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("apply".localized) {
+                    Button(L10n.apply) {
                         presenter.selectedCuisine = tempCuisine
                         presenter.selectedMealType = tempMealType
                         Task {

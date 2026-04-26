@@ -42,7 +42,7 @@ struct RecipeDetailView: View {
                         
                         HStack(spacing: 16) {
                             ActionButton(
-                                title: "want_to_cook".localized,
+                                title: L10n.wantToCook,
                                 icon: "bookmark",
                                 color: .accentPurple,
                                 isActive: presenter.isInWantToCook
@@ -53,7 +53,7 @@ struct RecipeDetailView: View {
                             }
                             
                             ActionButton(
-                                title: "add_to_cart".localized,
+                                title: L10n.addToCart,
                                 icon: "cart.badge.plus",
                                 color: .accentGreen,
                                 isActive: false
@@ -62,14 +62,14 @@ struct RecipeDetailView: View {
                         }
                         .padding(.vertical)
                         
-                        Text("ingredients".localized)
+                        Text(L10n.ingredients)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.top, 8)
                         
                         IngredientsView(ingredients: recipe.ingredients)
                         
-                        Text("instructions".localized)
+                        Text(L10n.instructions)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.top, 8)
@@ -77,7 +77,7 @@ struct RecipeDetailView: View {
                         if let instructions = recipe.instructions, !instructions.isEmpty {
                             InstructionsView(instructions: instructions)
                         } else {
-                            Text("no_instructions".localized)
+                            Text(L10n.noInstructions)
                                 .foregroundColor(.gray)
                                 .padding()
                         }
@@ -90,7 +90,7 @@ struct RecipeDetailView: View {
         .task {
             await presenter.loadRecipe()
         }
-        .alert("error_general".localized, isPresented: .constant(presenter.errorMessage != nil)) {
+        .alert(L10n.errorGeneral, isPresented: .constant(presenter.errorMessage != nil)) {
             Button("OK") {
                 presenter.errorMessage = nil
             }

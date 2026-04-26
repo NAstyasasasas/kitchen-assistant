@@ -62,14 +62,14 @@ final class HomePresenter: ObservableObject {
             if Task.isCancelled { return }
             await MainActor.run {
                 if results.isEmpty {
-                    errorMessage = "no_results".localized + " '\(query)'"
+                    errorMessage = L10n.noResults + " '\(query)'"
                 }
                 searchResults = results
             }
         } catch {
             if Task.isCancelled { return }
             await MainActor.run {
-                errorMessage = "search_error".localized
+                errorMessage = L10n.searchError
                 searchResults = []
             }
         }
@@ -120,7 +120,7 @@ final class HomePresenter: ObservableObject {
         } catch {
             if Task.isCancelled { return }
             await MainActor.run {
-                errorMessage = "error_loading_recipes".localized
+                errorMessage = L10n.errorLoadingRecipes
                 filteredRecipes = []
             }
         }
@@ -158,13 +158,13 @@ final class HomePresenter: ObservableObject {
     private func handleEmptyRecipes() async {
         await MainActor.run {
             if let cuisine = selectedCuisine, let mealType = selectedMealType {
-                errorMessage = "no_recipes_with_filters".localized + " '\(mealType.localizedName)' " + "in_cuisine".localized + " '\(cuisine.localizedName)'"
+                errorMessage = L10n.noRecipesWithFilters + " '\(L10n.mealType)' " + L10n.inCuisine + " '\(L10n.cuisine)'"
             } else if let cuisine = selectedCuisine {
-                errorMessage = "no_recipes_with_filters".localized + " '\(cuisine.localizedName)'"
+                errorMessage = L10n.noRecipesWithFilters + " '\(L10n.cuisine)'"
             } else if let mealType = selectedMealType {
-                errorMessage = "no_recipes_with_filters".localized + " '\(mealType.localizedName)'"
+                errorMessage = L10n.noRecipesWithFilters + " '\(L10n.mealType)'"
             } else {
-                errorMessage = "no_recipes".localized
+                errorMessage = L10n.noRecipes
             }
             filteredRecipes = []
         }
