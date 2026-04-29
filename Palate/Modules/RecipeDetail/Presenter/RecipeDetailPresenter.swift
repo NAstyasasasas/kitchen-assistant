@@ -36,7 +36,7 @@ final class RecipeDetailPresenter: ObservableObject {
             isInWantToCook = status.wantToCook
             isInCooked = status.cooked
         } catch {
-            errorMessage = "Ошибка загрузки рецепта"
+            errorMessage = L10n.loadRecipeError
         }
     }
     
@@ -45,7 +45,7 @@ final class RecipeDetailPresenter: ObservableObject {
             try await interactor.addToWantToCook(recipeId: recipeId)
             isInWantToCook = true
         } catch {
-            errorMessage = "Ошибка добавления"
+            errorMessage = L10n.addToCartError
         }
     }
     
@@ -55,7 +55,7 @@ final class RecipeDetailPresenter: ObservableObject {
             isInCooked = true
             isInWantToCook = false
         } catch {
-            errorMessage = "Ошибка отметки"
+            errorMessage = L10n.markAsCookedError
         }
     }
 }

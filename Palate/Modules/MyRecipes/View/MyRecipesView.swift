@@ -9,7 +9,7 @@ struct MyRecipesView: View {
     @StateObject var presenter: MyRecipesPresenter
     
     var body: some View {
-        Text("Мои рецепты")
-            .navigationTitle("Мои рецепты")
+        Text(L10n.myRecipes)
+            .navigationTitle(L10n.myRecipes)
     }
 }

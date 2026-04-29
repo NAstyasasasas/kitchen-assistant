@@ -1,5 +1,5 @@
 {
-  "originHash" : "a1569f9895aa2be8e24832f98525d5da4eb90b5d158a82691c15b47eb72a13d7",
+  "originHash" : "249288883108492dc156ea76bc2a4b57617f7ecb922319e7c195bfc1ef5c4a5b",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -98,6 +98,15 @@
       "state" : {
         "revision" : "a0bc79961d7be727d258d33d5a6b2f1023270ba1",
         "version" : "1.22.5"
+      }
+    },
+    {
+      "identity" : "libretranslate",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/wacumov/libretranslate.git",
+      "state" : {
+        "revision" : "16c4f108a589089dc5a247d5047bd216638c1f68",
+        "version" : "0.2.0"
       }
     },
     {

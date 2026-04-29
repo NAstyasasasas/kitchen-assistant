@@ -1,0 +1,8 @@
+strings:
+  inputs: Palate/SwiftGen/en.lproj/Localizable.strings
+  outputs:
+    - templateName: structured-swift5
+      output: Palate/Generated/L10n.swift
+      params:
+        enumName: L10n
+        publicAccess: true

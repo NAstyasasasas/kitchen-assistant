@@ -29,22 +29,22 @@ struct ProfileView: View {
                     .padding(.vertical, 8)
                 }
                 
-                Section("Статистика") {
+                Section(L10n.statistics) {
                     HStack(spacing: 16) {
                         StatCard(
-                            title: "Приготовлено",
+                            title: L10n.cooked,
                             value: "\(presenter.cookedCount)",
                             color: .accentGreen
                         )
                         
                         StatCard(
-                            title: "В планах",
+                            title: L10n.inPlan,
                             value: "\(presenter.wantToCookCount)",
                             color: .accentPurple
                         )
                         
                         StatCard(
-                            title: "Своих",
+                            title: L10n.custom,
                             value: "\(presenter.customRecipesCount)",
                             color: .gray
                         )
@@ -52,8 +52,8 @@ struct ProfileView: View {
                     .padding(.vertical, 8)
                 }
                 
-                Section("Настройки") {
-                    Toggle("Темная тема", isOn: .constant(false))
+                Section(L10n.settings) {
+                    Toggle(L10n.darkTheme, isOn: .constant(false))
                 }
                 
                 Section {
@@ -62,14 +62,14 @@ struct ProfileView: View {
                     }) {
                         HStack {
                             Spacer()
-                            Text("Выйти")
+                            Text(L10n.signOut)
                                 .foregroundColor(.red)
                             Spacer()
                         }
                     }
                 }
             }
-            .navigationTitle("Профиль")
+            .navigationTitle(L10n.profile)
             .task {
                 await presenter.loadStats()
             }
