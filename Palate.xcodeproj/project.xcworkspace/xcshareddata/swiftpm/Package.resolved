@@ -101,6 +101,15 @@
       }
     },
     {
+      "identity" : "libretranslate",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/wacumov/libretranslate.git",
+      "state" : {
+        "revision" : "16c4f108a589089dc5a247d5047bd216638c1f68",
+        "version" : "0.2.0"
+      }
+    },
+    {
       "identity" : "nanopb",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/nanopb.git",

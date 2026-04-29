@@ -62,14 +62,14 @@ final class HomePresenter: ObservableObject {
             if Task.isCancelled { return }
             await MainActor.run {
                 if results.isEmpty {
-                    errorMessage = "Ничего не найдено по запросу '\(query)'"
+                    errorMessage = L10n.noResults + " '\(query)'"
                 }
                 searchResults = results
             }
         } catch {
             if Task.isCancelled { return }
             await MainActor.run {
-                errorMessage = "Ошибка поиска. Проверьте подключение"
+                errorMessage = L10n.searchError
                 searchResults = []
             }
         }
@@ -120,7 +120,7 @@ final class HomePresenter: ObservableObject {
         } catch {
             if Task.isCancelled { return }
             await MainActor.run {
-                errorMessage = "Ошибка загрузки. Проверьте подключение к интернету"
+                errorMessage = L10n.errorLoadingRecipes
                 filteredRecipes = []
             }
         }
@@ -158,13 +158,13 @@ final class HomePresenter: ObservableObject {
     private func handleEmptyRecipes() async {
         await MainActor.run {
             if let cuisine = selectedCuisine, let mealType = selectedMealType {
-                errorMessage = "Нет рецептов с '\(mealType.rawValue)' в '\(cuisine.rawValue)' кухне"
+                errorMessage = L10n.noRecipesWithFilters + " '\(L10n.mealType)' " + L10n.inCuisine + " '\(L10n.cuisine)'"
             } else if let cuisine = selectedCuisine {
-                errorMessage = "Нет рецептов для кухни '\(cuisine.rawValue)'"
+                errorMessage = L10n.noRecipesWithFilters + " '\(L10n.cuisine)'"
             } else if let mealType = selectedMealType {
-                errorMessage = "Нет рецептов с '\(mealType.rawValue)'"
+                errorMessage = L10n.noRecipesWithFilters + " '\(L10n.mealType)'"
             } else {
-                errorMessage = "Нет рецептов. Попробуйте другие фильтры"
+                errorMessage = L10n.noRecipes
             }
             filteredRecipes = []
         }

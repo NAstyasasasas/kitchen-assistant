@@ -1,0 +1,126 @@
+//
+//  Localizable.strings
+//  Palate
+//
+//  Created by Анастасия on 25.04.2026.
+//
+
+
+// MARK: - Главный экран
+"all" = "All";
+"active" = "Active";
+"apply" = "Apply";
+"cancel" = "Cancel";
+"cuisine" = "Cuisine";
+"filters" = "Filters";
+"meal_type" = "Meal type";
+"no_recipes" = "No recipes found";
+"no_recipes_with_filters" = "No recipes with";
+"in_cuisine" = "in cuisine";
+"recommendations" = "Recommendations";
+"reset_filters" = "Reset all filters";
+"search_placeholder" = "Search recipes...";
+"search_results" = "Search results";
+"try_change_filters" = "Try changing filters";
+"any_cuisine" = "Any cuisine";
+"any_type" = "Any type";
+
+// MARK: - Кухни
+"italian" = "Italian";
+"chinese" = "Chinese";
+"mexican" = "Mexican";
+"japanese" = "Japanese";
+"french" = "French";
+"american" = "American";
+"thai" = "Thai";
+"indian" = "Indian";
+
+// MARK: - Типы блюд
+"beef" = "Beef";
+"chicken" = "Chicken";
+"pork" = "Pork";
+"lamb" = "Lamb";
+"seafood" = "Seafood";
+"vegetarian" = "Vegetarian";
+"pasta" = "Pasta";
+"dessert" = "Dessert";
+"breakfast" = "Breakfast";
+
+// MARK: - Профиль
+"cooked" = "Cooked";
+"custom" = "Custom";
+"dark_theme" = "Dark theme";
+"in_plan" = "In plan";
+"my_recipes" = "My recipes";
+"profile" = "Profile";
+"settings" = "Settings";
+"sign_out" = "Sign Out";
+"statistics" = "Statistics";
+
+// MARK: - Детали рецепта
+"add_to_cart" = "Add to cart";
+"ingredients" = "Ingredients";
+"instructions" = "Instructions";
+"no_instructions" = "Instructions not found";
+"want_to_cook" = "Want to cook";
+
+// MARK: - Авторизация
+"already_have_account" = "Already have an account? Login";
+"confirm_password" = "Confirm password";
+"email" = "Email";
+"login" = "Login";
+"min_password" = "Minimum 6 characters";
+"name" = "Name";
+"no_account" = "No account? Register";
+"password" = "Password";
+"passwords_dont_match" = "Passwords do not match";
+"passwords_match" = "Passwords match";
+"register" = "Register";
+
+// MARK: - Приветственный экран
+"welcome_title" = "Palate";
+"welcome_subtitle" = "Cozy app for those who love to cook, experiment with recipes and save culinary experiences";
+
+// MARK: - Ошибки
+"add_to_cart_error" = "Error adding to cart";
+"error_email_in_use" = "Email already registered";
+"error_general" = "Something went wrong";
+"error_invalid_credentials" = "Invalid email or password";
+"error_loading_recipes" = "Failed to load recipes. Check internet connection";
+"error_network" = "Network error";
+"error_weak_password" = "Password must be at least 6 characters";
+"load_recipe_error" = "Error loading recipe";
+"login_error" = "Login error";
+"mark_as_cooked_error" = "Error marking as cooked";
+"no_results" = "Nothing found for";
+"registration_error" = "Registration error";
+"search_error" = "Search error. Check connection";
+"sign_out_error" = "Sign out error";
+
+// MARK: - Таббары
+"home" = "Home";
+"my" = "My";
+"plan" = "Plan";
+"plan_title" = "Meal Plan";
+"shopping_list" = "Shopping list";
+
+// MARK: - MealDBCategory
+"miscellaneous" = "Miscellaneous";
+"side" = "Side";
+"starter" = "Starter";
+"vegan" = "Vegan";
+"goat" = "Goat";
+
+// MARK: - IngredientFilter
+"caviar" = "Caviar";
+"cheese" = "Cheese";
+"egg" = "Egg";
+"fish" = "Fish";
+"potato" = "Potato";
+"rice" = "Rice";
+"salmon" = "Salmon";
+"shrimp" = "Shrimp";
+"tomato" = "Tomato";
+
+"my_recipes" = "My recipes";
+"plan_title" = "Meal Plan";

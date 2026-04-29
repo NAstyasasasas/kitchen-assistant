@@ -42,7 +42,7 @@ struct RecipeDetailView: View {
                         
                         HStack(spacing: 16) {
                             ActionButton(
-                                title: "Хочу приготовить",
+                                title: L10n.wantToCook,
                                 icon: "bookmark",
                                 color: .accentPurple,
                                 isActive: presenter.isInWantToCook
@@ -53,7 +53,7 @@ struct RecipeDetailView: View {
                             }
                             
                             ActionButton(
-                                title: "В список",
+                                title: L10n.addToCart,
                                 icon: "cart.badge.plus",
                                 color: .accentGreen,
                                 isActive: false
@@ -62,14 +62,14 @@ struct RecipeDetailView: View {
                         }
                         .padding(.vertical)
                         
-                        Text("Ингредиенты")
+                        Text(L10n.ingredients)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.top, 8)
                         
                         IngredientsView(ingredients: recipe.ingredients)
                         
-                        Text("Приготовление")
+                        Text(L10n.instructions)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.top, 8)
@@ -77,7 +77,7 @@ struct RecipeDetailView: View {
                         if let instructions = recipe.instructions, !instructions.isEmpty {
                             InstructionsView(instructions: instructions)
                         } else {
-                            Text("Инструкция не найдена")
+                            Text(L10n.noInstructions)
                                 .foregroundColor(.gray)
                                 .padding()
                         }
@@ -90,7 +90,7 @@ struct RecipeDetailView: View {
         .task {
             await presenter.loadRecipe()
         }
-        .alert("Ошибка", isPresented: .constant(presenter.errorMessage != nil)) {
+        .alert(L10n.errorGeneral, isPresented: .constant(presenter.errorMessage != nil)) {
             Button("OK") {
                 presenter.errorMessage = nil
             }
