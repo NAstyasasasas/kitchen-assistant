@@ -124,3 +124,23 @@
 
 "my_recipes" = "Мои рецепты";
 "plan_title" = "План питания";
+
+"shopping_list_title" = "Список покупок";
+"add_item_name" = "Название";
+"add_item_quantity" = "Кол-во";
+"add_item_unit" = "Ед.";
+"shopping_list_empty" = "Список покупок пуст";
+"edit_quantity" = "Количество";
+"edit_unit" = "Единица (г, мл, шт, ст.л.)";
+"delete_all_confirm" = "Удалить всё?";
+"delete_all_message" = "Вы уверены, что хотите удалить все продукты?";
+"delete_item_confirm" = "Удалить продукт?";
+"delete_item_message" = "Это действие нельзя восстановить.";
+"cancel" = "Отмена";
+"delete" = "Удалить";
+"save" = "Сохранить";
+"edit_item" = "Редактировать";
+
+"recipe_confirmation_title" = "Подтверждение";
+"recipe_confirmation_add_again" = "Добавить ещё раз";
+"recipe_confirmation_message_simple" = "Продукты из этого рецепта уже есть в списке. Добавить ещё раз?";

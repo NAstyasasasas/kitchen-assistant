@@ -9,9 +9,6 @@
 public import Foundation
 public import CoreData
 
-
-public typealias ShoppingItemCoreDataPropertiesSet = NSSet
-
 extension ShoppingItem {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<ShoppingItem> {

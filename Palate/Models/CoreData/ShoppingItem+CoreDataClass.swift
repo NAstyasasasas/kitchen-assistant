@@ -9,8 +9,6 @@
 public import Foundation
 public import CoreData
 
-public typealias ShoppingItemCoreDataClassSet = NSSet
-
 @objc(ShoppingItem)
 public class ShoppingItem: NSManagedObject {
 

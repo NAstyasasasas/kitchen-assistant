@@ -10,13 +10,23 @@
 		5DAA10F92F7FF5EB0049DA64 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 5DAA10F82F7FF5EB0049DA64 /* FirebaseAuth */; };
 		5DAA10FB2F7FF5EB0049DA64 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 5DAA10FA2F7FF5EB0049DA64 /* FirebaseFirestore */; };
 		5DAA10FD2F7FF5EB0049DA64 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 5DAA10FC2F7FF5EB0049DA64 /* FirebaseStorage */; };
-		5DE768B92FA23D75008353BF /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 5DE768B82FA23D75008353BF /* Supabase */; };
 		5DE766052F98FF71008353BF /* LibreTranslate in Frameworks */ = {isa = PBXBuildFile; productRef = 5DE766042F98FF71008353BF /* LibreTranslate */; };
+		5DE768B92FA23D75008353BF /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 5DE768B82FA23D75008353BF /* Supabase */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		5D13A3352F7EEBD00058AFEE /* Palate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Palate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5DE76DCD2FA4E676008353BF /* Exceptions for "Palate" folder in "Palate" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5D13A3342F7EEBD00058AFEE /* Palate */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 		5DE768AD2FA23B3C008353BF /* Exceptions for "Palate" folder in "Copy Bundle Resources" phase from "Palate" target */ = {
@@ -32,6 +42,7 @@
 		5D13A3372F7EEBD00058AFEE /* Palate */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				5DE76DCD2FA4E676008353BF /* Exceptions for "Palate" folder in "Palate" target */,
 				5DE768AD2FA23B3C008353BF /* Exceptions for "Palate" folder in "Copy Bundle Resources" phase from "Palate" target */,
 			);
 			path = Palate;
@@ -343,7 +354,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Palate/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -377,7 +388,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Palate/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -434,20 +445,20 @@
 				minimumVersion = 12.11.0;
 			};
 		};
-		5DE768A92FA23B1F008353BF /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/supabase-community/supabase-swift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.5.1;
-			};
-		};
 		5DE766032F98FF71008353BF /* XCRemoteSwiftPackageReference "libretranslate" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/wacumov/libretranslate.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.2.0;
+			};
+		};
+		5DE768A92FA23B1F008353BF /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase-community/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -468,15 +479,15 @@
 			package = 5DAA10F72F7FF5EB0049DA64 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
 		};
-		5DE768B82FA23D75008353BF /* Supabase */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5DE768A92FA23B1F008353BF /* XCRemoteSwiftPackageReference "supabase-swift" */;
-			productName = Supabase;
-		};
 		5DE766042F98FF71008353BF /* LibreTranslate */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5DE766032F98FF71008353BF /* XCRemoteSwiftPackageReference "libretranslate" */;
 			productName = LibreTranslate;
+		};
+		5DE768B82FA23D75008353BF /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5DE768A92FA23B1F008353BF /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

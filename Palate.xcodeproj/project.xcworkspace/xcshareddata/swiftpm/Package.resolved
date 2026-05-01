@@ -1,5 +1,5 @@
 {
-  "originHash" : "6142c9a7f57de881971ae45907f860bb2961df5341f479f0dd01fde8b9b18d21",
+  "originHash" : "219beb212b0470c94f0d30719afee643c848a39d568d6f943ebd2c08e0bae945",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/supabase-community/supabase-swift",
       "state" : {
-        "revision" : "944dd5cbdbddcb565eb52056ea5a7fcbdc37519d",
-        "version" : "2.45.0"
+        "revision" : "dd29b624b9ceea87612d0b00457e1400f7d22c2e",
+        "version" : "2.46.0"
       }
     },
     {
