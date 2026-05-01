@@ -10,14 +10,14 @@ struct AppUser: Codable {
     let id: String
     let email: String
     let displayName: String?
-    let photoURL: String?
+    var avatarUrl: String?
     let createdAt: Date
     
     init(from firebaseUser: User) {
         self.id = firebaseUser.uid
         self.email = firebaseUser.email ?? ""
         self.displayName = firebaseUser.displayName
-        self.photoURL = firebaseUser.photoURL?.absoluteString
+        self.avatarUrl = nil
         self.createdAt = Date()
     }
 }
