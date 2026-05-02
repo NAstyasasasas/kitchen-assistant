@@ -28,7 +28,6 @@ final class MainCoordinator: Coordinator {
             planView
                 .tabItem {
                     Label(L10n.plan, systemImage: "calendar")
-                    
                 }
             
             myRecipesView
@@ -42,24 +41,30 @@ final class MainCoordinator: Coordinator {
                 }
                     
             shoppingListView
-                    .tabItem {
-                        Label(L10n.shoppingList, systemImage: "cart.fill")
-                    }
+                .tabItem {
+                    Label(L10n.shoppingList, systemImage: "cart.fill")
+                }
                     
             profileView
                 .tabItem {
                     Label(L10n.profile, systemImage: "person.fill")
                 }
-            }
-            .accentColor(.accentPurple)
-            
-            let hostingController = UIHostingController(rootView: tabView)
-            rootViewController = hostingController
         }
+        .accentColor(.accentPurple)
         
+        let hostingController = UIHostingController(rootView: tabView)
+        rootViewController = hostingController
+    }
+    
     func showRecipeDetail(recipeId: String) {
         let shoppingListPresenter = ShoppingListPresenter(coordinator: self)
-        let presenter = RecipeDetailPresenter(recipeId: recipeId, coordinator: self, shoppingListPresenter: shoppingListPresenter)
+        let myRecipesInteractor = MyRecipesInteractor()
+        let presenter = RecipeDetailPresenter(
+            recipeId: recipeId,
+            coordinator: self,
+            shoppingListPresenter: shoppingListPresenter,
+            myRecipesInteractor: myRecipesInteractor
+        )
         let detailView = RecipeDetailView(presenter: presenter, shoppingListPresenter: shoppingListPresenter)
         let hostingController = UIHostingController(rootView: detailView)
         rootViewController?.present(hostingController, animated: true)

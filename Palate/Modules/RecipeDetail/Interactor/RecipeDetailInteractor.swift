@@ -4,18 +4,24 @@
 //
 
 import Foundation
+import CoreData
+import FirebaseAuth
 
 protocol RecipeDetailInteractorProtocol {
     func fetchRecipeDetail(id: String) async throws -> Recipe
     func addToWantToCook(recipeId: String) async throws
     func markAsCooked(recipeId: String) async throws
     func checkRecipeStatus(recipeId: String) async throws -> (wantToCook: Bool, cooked: Bool)
+    func saveNotes(recipeId: String, notes: String) async throws
+    func saveRating(recipeId: String, rating: Int) async throws
+    
 }
 
 final class RecipeDetailInteractor: RecipeDetailInteractorProtocol {
     private let apiService = APIService.shared
-    private let firebaseService = FirebaseService.shared
+    private let userService = UserService.shared
     private let authService = AuthService.shared
+    private let coreData = CoreDataManager.shared
     
     func fetchRecipeDetail(id: String) async throws -> Recipe {
         return try await apiService.fetchRecipeDetail(id: id)
@@ -26,18 +32,35 @@ final class RecipeDetailInteractor: RecipeDetailInteractorProtocol {
             throw AuthError.networkError
         }
         
-        let userRecipe = UserRecipe(
-            userId: userId,
-            recipeId: recipeId,
-            recipeSource: .mealDB,
-            status: .wantToCook
-        )
+        let userRecipe = UserRecipe(context: coreData.viewContext)
+        userRecipe.id = UUID()
+        userRecipe.userId = userId
+        userRecipe.recipeId = recipeId
+        userRecipe.recipeSource = "mealDB"
+        userRecipe.status = "wantToCook"
+        userRecipe.dateAdded = Date()
+        userRecipe.synced = false
+        coreData.saveUserRecipe(userRecipe)
         
-        try await firebaseService.saveUserRecipe(userRecipe)
+        do {
+            try await userService.saveUserRecipe(userRecipe, userId: userId)
+            userRecipe.synced = true
+            coreData.saveContext()
+        } catch {
+            print("⚠️ Firebase save failed, will retry later: \(error)")
+        }
     }
     
     func markAsCooked(recipeId: String) async throws {
-        try await firebaseService.updateRecipeStatus(recipeId: recipeId, newStatus: .cooked)
+        guard let userId = await authService.getCurrentUser()?.id else { return }
+        
+        coreData.updateUserRecipeStatus(recipeId: recipeId, status: "cooked", dateCooked: Date())
+        
+        do {
+            try await userService.updateUserRecipeStatus(recipeId: recipeId, status: "cooked", dateCooked: Date())
+        } catch {
+            print("⚠️ Firebase update failed: \(error)")
+        }
     }
     
     func checkRecipeStatus(recipeId: String) async throws -> (wantToCook: Bool, cooked: Bool) {
@@ -45,10 +68,42 @@ final class RecipeDetailInteractor: RecipeDetailInteractorProtocol {
             return (false, false)
         }
         
-        let userRecipes = try await firebaseService.getUserRecipes(status: nil)
-        let wantToCook = userRecipes.contains { $0.recipeId == recipeId && $0.status == .wantToCook }
-        let cooked = userRecipes.contains { $0.recipeId == recipeId && $0.status == .cooked }
+        let userRecipes = coreData.fetchUserRecipes(byUserId: userId)
+        let wantToCook = userRecipes.contains { $0.recipeId == recipeId && $0.status == "wantToCook" }
+        let cooked = userRecipes.contains { $0.recipeId == recipeId && $0.status == "cooked" }
         
         return (wantToCook, cooked)
+    }
+    
+    func saveNotes(recipeId: String, notes: String) async throws {
+        guard let userId = await authService.getCurrentUser()?.id else { return }
+        
+        let userRecipes = coreData.fetchUserRecipes(byUserId: userId)
+        if let existing = userRecipes.first(where: { $0.recipeId == recipeId }) {
+            existing.notes = notes
+            coreData.saveContext()
+        }
+        
+        do {
+            try await userService.updateUserRecipeNotes(recipeId: recipeId, notes: notes)
+        } catch {
+            print("⚠️ Firebase notes update failed: \(error)")
+        }
+    }
+    
+    func saveRating(recipeId: String, rating: Int) async throws {
+        guard let userId = await authService.getCurrentUser()?.id else { return }
+        
+        let userRecipes = coreData.fetchUserRecipes(byUserId: userId)
+        if let existing = userRecipes.first(where: { $0.recipeId == recipeId }) {
+            existing.rating = Int64(rating)
+            coreData.saveContext()
+        }
+        
+        do {
+            try await userService.updateUserRecipeRating(recipeId: recipeId, rating: rating)
+        } catch {
+            print("⚠️ Firebase rating update failed: \(error)")
+        }
     }
 }

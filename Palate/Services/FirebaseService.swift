@@ -11,7 +11,7 @@ class FirebaseService {
     private let db = Firestore.firestore()
     
     private init() {}
-    
+    /*
     func saveUserRecipe(_ userRecipe: UserRecipe) async throws {
         guard let userId = await AuthService.shared.getCurrentUser()?.id else {
             throw AuthError.networkError
@@ -107,4 +107,5 @@ class FirebaseService {
             .document(recipeId)
             .delete()
     }
+     */
 }
