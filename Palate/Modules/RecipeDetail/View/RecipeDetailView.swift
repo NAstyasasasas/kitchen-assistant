@@ -97,7 +97,7 @@ struct RecipeDetailView: View {
                         
                         if let dateCooked = presenter.userRecipe?.dateCooked,
                            presenter.userRecipe?.status == "cooked" {
-                            Text("Приготовлено: \(dateCooked.formatted(date: .abbreviated, time: .omitted))")
+                            Text("\(L10n.cookedOn): \(dateCooked.formatted(date: .abbreviated, time: .omitted))")
                                 .font(.caption)
                                 .foregroundColor(.accentPurple)
                         }
@@ -122,7 +122,7 @@ struct RecipeDetailView: View {
                         
                         if presenter.userRecipe?.status == "cooked" {
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Мои заметки")
+                                Text(L10n.myNotes)
                                     .font(.headline)
                                 TextEditor(text: $presenter.notes)
                                     .frame(height: 120)

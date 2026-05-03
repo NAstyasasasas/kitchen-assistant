@@ -12,7 +12,7 @@ struct MyRecipesView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                Text("Моя коллекция")
+                Text(L10n.myCollection)
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -21,9 +21,9 @@ struct MyRecipesView: View {
                     .padding(.bottom, 8)
                 
                 Picker("", selection: $selectedTab) {
-                    Text("Хочу приготовить").tag(0)
-                    Text("Приготовлено").tag(1)
-                    Text("Мои рецепты").tag(2)
+                    Text(L10n.wantToCook).tag(0)
+                    Text(L10n.cooked).tag(1)
+                    Text(L10n.myRecipes).tag(2)
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding(.horizontal)
@@ -49,7 +49,7 @@ struct MyRecipesView: View {
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if presenter.wantToCookRecipes.isEmpty {
-            emptyStateView(text: "Нет рецептов, которые вы хотите приготовить")
+            emptyStateView(text: L10n.noRecipesWant)
         } else {
             ScrollView {
                 LazyVStack(spacing: 4) {
@@ -75,7 +75,7 @@ struct MyRecipesView: View {
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if presenter.cookedRecipes.isEmpty {
-            emptyStateView(text: "Нет приготовленных рецептов")
+            emptyStateView(text: L10n.noRecipesCooked)
         } else {
             ScrollView {
                 LazyVStack(spacing: 4) {
@@ -105,8 +105,8 @@ struct MyRecipesView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if presenter.myRecipes.isEmpty {
             VStack {
-                emptyStateView(text: "У вас пока нет своих рецептов")
-                Button("Создать рецепт") {
+                emptyStateView(text: L10n.noRecipesCustom)
+                Button(L10n.createRecipe) {
                     // TODO: переход на CreateRecipeView
                 }
                 .buttonStyle(.borderedProminent)
@@ -181,7 +181,7 @@ struct WantToCookCard: View {
                 Spacer()
                 
                 Button(action: onCook) {
-                    Text("Готово")
+                    Text(L10n.cooked)
                         .font(.caption)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
@@ -265,7 +265,7 @@ struct CookedCard: View {
                     }
 
                     if let date = dateCooked {
-                        Text("Приготовлено: \(date.formatted(date: .abbreviated, time: .omitted))")
+                        Text("\(L10n.cookedOn): \(date.formatted(date: .abbreviated, time: .omitted))")
                             .font(.caption2)
                             .foregroundColor(.gray)
                     }
