@@ -56,17 +56,31 @@ final class MainCoordinator: Coordinator {
         rootViewController = hostingController
     }
     
-    func showRecipeDetail(recipeId: String) {
+    func showRecipeDetail(recipeId: String, source: RecipeSource = .mealDB) {
         let shoppingListPresenter = ShoppingListPresenter(coordinator: self)
         let myRecipesInteractor = MyRecipesInteractor()
         let presenter = RecipeDetailPresenter(
             recipeId: recipeId,
+            source: source,
             coordinator: self,
             shoppingListPresenter: shoppingListPresenter,
             myRecipesInteractor: myRecipesInteractor
         )
         let detailView = RecipeDetailView(presenter: presenter, shoppingListPresenter: shoppingListPresenter)
         let hostingController = UIHostingController(rootView: detailView)
+        rootViewController?.present(hostingController, animated: true)
+    }
+    
+    func showCreateRecipe() {
+        let presenter = CreateRecipePresenter()
+        let view = CreateRecipeView(presenter: presenter)
+        let hostingController = UIHostingController(rootView: view)
+        rootViewController?.present(hostingController, animated: true)
+    }
+    func showEditRecipe(recipeId: String) {
+        let presenter = CreateRecipePresenter(mode: .edit(recipeId: recipeId))
+        let view = CreateRecipeView(presenter: presenter)
+        let hostingController = UIHostingController(rootView: view)
         rootViewController?.present(hostingController, animated: true)
     }
 }

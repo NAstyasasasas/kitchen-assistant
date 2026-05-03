@@ -22,12 +22,15 @@ final class RecipeDetailPresenter: ObservableObject {
     private weak var coordinator: MainCoordinator?
     private let shoppingListPresenter: ShoppingListPresenter?
     private let myRecipesInteractor: MyRecipesInteractorProtocol
+    private var recipeSource: RecipeSource = .mealDB
     
     init(recipeId: String,
+         source: RecipeSource = .mealDB,
          interactor: RecipeDetailInteractorProtocol = RecipeDetailInteractor(),
          coordinator: MainCoordinator?,
          shoppingListPresenter: ShoppingListPresenter,
          myRecipesInteractor: MyRecipesInteractorProtocol = MyRecipesInteractor()) {
+        self.recipeSource = source
         self.recipeId = recipeId
         self.interactor = interactor
         self.coordinator = coordinator
@@ -40,7 +43,7 @@ final class RecipeDetailPresenter: ObservableObject {
         defer { isLoading = false }
         
         do {
-            recipe = try await interactor.fetchRecipeDetail(id: recipeId)
+            recipe = try await interactor.fetchRecipeDetail(id: recipeId, source: recipeSource)
             let status = try await interactor.checkRecipeStatus(recipeId: recipeId)
             isInWantToCook = status.wantToCook
             isInCooked = status.cooked
@@ -61,8 +64,9 @@ final class RecipeDetailPresenter: ObservableObject {
     }
     
     func addToWantToCook() async {
+        let source = recipeSource == .custom ? "custom" : "mealDB"
         do {
-            try await myRecipesInteractor.saveRecipeStatus(recipeId: recipeId, status: "wantToCook", recipeSource: "mealDB")
+            try await myRecipesInteractor.saveRecipeStatus(recipeId: recipeId, status: "wantToCook", recipeSource: source)
             isInWantToCook = true
         } catch {
             errorMessage = L10n.addToCartError

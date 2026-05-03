@@ -8,12 +8,13 @@ import CoreData
 import FirebaseAuth
 
 protocol RecipeDetailInteractorProtocol {
-    func fetchRecipeDetail(id: String) async throws -> Recipe
+    func fetchRecipeDetail(id: String, source: RecipeSource) async throws -> Recipe
     func addToWantToCook(recipeId: String) async throws
     func markAsCooked(recipeId: String) async throws
     func checkRecipeStatus(recipeId: String) async throws -> (wantToCook: Bool, cooked: Bool)
     func saveNotes(recipeId: String, notes: String) async throws
     func saveRating(recipeId: String, rating: Int) async throws
+    
     
 }
 
@@ -23,8 +24,15 @@ final class RecipeDetailInteractor: RecipeDetailInteractorProtocol {
     private let authService = AuthService.shared
     private let coreData = CoreDataManager.shared
     
-    func fetchRecipeDetail(id: String) async throws -> Recipe {
-        return try await apiService.fetchRecipeDetail(id: id)
+    func fetchRecipeDetail(id: String, source: RecipeSource = .mealDB) async throws -> Recipe {
+        print("🔍 fetchRecipeDetail called with source: \(source), id: \(id)")
+        if source == .custom {
+            print("🔍 source: \(source), recipeId: \(id)")
+            return try await fetchCustomRecipeDetail(recipeId: id)
+        } else {
+            print("⚠️ Using API path (mealDB)")
+            return try await apiService.fetchRecipeDetail(id: id)
+        }
     }
     
     func addToWantToCook(recipeId: String) async throws {
@@ -105,5 +113,38 @@ final class RecipeDetailInteractor: RecipeDetailInteractorProtocol {
         } catch {
             print("⚠️ Firebase rating update failed: \(error)")
         }
+    }
+    
+    func fetchCustomRecipeDetail(recipeId: String) async throws -> Recipe {
+        guard let userId = await AuthService.shared.getCurrentUser()?.id else {
+            throw AuthError.networkError
+        }
+        
+        let customRecipes = CoreDataManager.shared.fetchCustomRecipes(byUserId: userId)
+        guard let custom = customRecipes.first(where: { $0.id?.uuidString == recipeId }) else {
+            throw APIError.noData
+        }
+        
+        var ingredients: [Ingredient] = []
+        if let customIngredients = custom.ingredients?.allObjects as? [CustomIngredient] {
+            for ing in customIngredients {
+                ingredients.append(Ingredient(
+                    name: ing.name ?? "",
+                    amount: ing.amount ?? "",
+                    unit: ing.unit ?? ""
+                ))
+            }
+        }
+        
+        return Recipe(
+            id: custom.id?.uuidString ?? recipeId,
+            source: .custom,
+            name: custom.name ?? "",
+            category: custom.category,
+            cuisine: custom.cuisine,
+            imageUrl: custom.imageUrl,
+            ingredients: ingredients,
+            instructions: custom.instructions
+        )
     }
 }

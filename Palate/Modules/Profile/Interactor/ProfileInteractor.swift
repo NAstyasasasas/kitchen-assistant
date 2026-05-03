@@ -23,7 +23,7 @@ final class ProfileInteractor: ProfileInteractorProtocol {
         let userRecipes = try await userService.fetchUserRecipes(userId: userId, status: nil)
         let cooked = userRecipes.filter { $0.status == "cooked" }.count
         let wantToCook = userRecipes.filter { $0.status == "wantToCook" }.count
-        let custom = 0 // позже
+        let custom = CoreDataManager.shared.fetchCustomRecipes(byUserId: userId).count
         
         return (cooked, wantToCook, custom)
     }

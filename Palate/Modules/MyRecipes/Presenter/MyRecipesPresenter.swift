@@ -15,7 +15,7 @@ final class MyRecipesPresenter: ObservableObject {
     @Published var errorMessage: String?
     
     private let interactor: MyRecipesInteractorProtocol
-    private let coordinator: MainCoordinator?
+    private weak var coordinator: MainCoordinator?
     
     init(interactor: MyRecipesInteractorProtocol = MyRecipesInteractor(),
          coordinator: MainCoordinator?) {
@@ -23,13 +23,19 @@ final class MyRecipesPresenter: ObservableObject {
         self.coordinator = coordinator
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(ratingDidChange),
-            name: .ratingDidChange,
+            selector: #selector(recipeDidSave),
+            name: NSNotification.Name("recipeDidSave"),
             object: nil
         )
     }
     
     @objc private func ratingDidChange() {
+        Task {
+            await loadData()
+        }
+    }
+    
+    @objc private func recipeDidSave() {
         Task {
             await loadData()
         }
@@ -53,6 +59,11 @@ final class MyRecipesPresenter: ObservableObject {
             
             let wantToCook = await interactor.fetchRecipes(status: "wantToCook")
             let cooked = await interactor.fetchRecipes(status: "cooked")
+            let custom = await interactor.fetchCustomRecipes()
+            
+            await MainActor.run {
+                self.myRecipes = custom
+            }
             
             await MainActor.run {
                 self.cookedUserRecipes = cooked
@@ -61,10 +72,6 @@ final class MyRecipesPresenter: ObservableObject {
             await fetchRecipeDetails(for: wantToCook, type: .wantToCook)
             await fetchRecipeDetails(for: cooked, type: .cooked)
         }
-    }
-    
-    func didSelectRecipe(_ recipeId: String) {
-        coordinator?.showRecipeDetail(recipeId: recipeId)
     }
     
     func markAsCooked(recipeId: String) {
@@ -87,6 +94,10 @@ final class MyRecipesPresenter: ObservableObject {
                 await MainActor.run { errorMessage = error.localizedDescription }
             }
         }
+    }
+    
+    func createRecipe() {
+        coordinator?.showCreateRecipe()
     }
     
     func updateRating(recipeId: String, rating: Int) {
@@ -130,7 +141,26 @@ final class MyRecipesPresenter: ObservableObject {
             }
         }
     }
+    
+    func didSelectRecipe(_ recipe: Recipe) {
+        coordinator?.showRecipeDetail(recipeId: recipe.id, source: recipe.source)
+    }
+    
+    func deleteCustomRecipe(recipeId: String) {
+        Task {
+            do {
+                try await interactor.deleteCustomRecipe(recipeId: recipeId)
+                await loadData()
+            } catch {
+                await MainActor.run { errorMessage = error.localizedDescription }
+            }
+        }
+    }
+    func editRecipe(_ recipe: Recipe) {
+        coordinator?.showEditRecipe(recipeId: recipe.id)
+    }
 }
+
 
 enum RecipeListType {
     case wantToCook, cooked, myRecipes

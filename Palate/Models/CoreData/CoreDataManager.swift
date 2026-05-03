@@ -86,4 +86,36 @@ final class CoreDataManager {
             print("❌ Failed to update rating: \(error)")
         }
     }
+    
+    func saveCustomRecipe(_ recipe: CustomRecipe) {
+        saveContext()
+    }
+
+    func fetchCustomRecipes(byUserId userId: String) -> [CustomRecipe] {
+        let request: NSFetchRequest<CustomRecipe> = CustomRecipe.fetchRequest()
+        request.predicate = NSPredicate(format: "userId == %@", userId)
+        request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
+        do {
+            return try viewContext.fetch(request)
+        } catch {
+            print("❌ Failed to fetch custom recipes: \(error)")
+            return []
+        }
+    }
+
+    func deleteCustomRecipe(_ recipe: CustomRecipe) {
+        viewContext.delete(recipe)
+        saveContext()
+    }
+
+    func fetchCustomIngredients(for recipeId: UUID) -> [CustomIngredient] {
+        let request: NSFetchRequest<CustomIngredient> = CustomIngredient.fetchRequest()
+        request.predicate = NSPredicate(format: "recipeId == %@", recipeId as CVarArg)
+        do {
+            return try viewContext.fetch(request)
+        } catch {
+            print("❌ Failed to fetch ingredients: \(error)")
+            return []
+        }
+    }
 }
