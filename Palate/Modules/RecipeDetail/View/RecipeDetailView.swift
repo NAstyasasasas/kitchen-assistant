@@ -17,71 +17,123 @@ struct RecipeDetailView: View {
                     .padding(.top, 100)
             } else if let recipe = presenter.recipe {
                 VStack(alignment: .leading, spacing: 0) {
-                    AsyncImage(url: URL(string: recipe.imageUrl ?? "")) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } placeholder: {
-                        Rectangle()
-                            .fill(Color.gray.opacity(0.3))
-                    }
-                    .frame(height: 300)
-                    .clipped()
-                    
-                    VStack(alignment: .leading, spacing: 16) {
-                        VStack(alignment: .leading, spacing: 8) {
+                    ZStack(alignment: .bottomLeading) {
+                        AsyncImage(url: URL(string: recipe.imageUrl ?? "")) { phase in
+                            if let image = phase.image {
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                            } else {
+                                Rectangle()
+                                    .fill(Color.gray.opacity(0.3))
+                            }
+                        }
+                        .frame(height: 300)
+                        .clipped()
+                        
+                        LinearGradient(
+                            colors: [.clear, .black.opacity(0.6)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 120)
+                        
+                        VStack(alignment: .leading, spacing: 4) {
                             Text(recipe.name)
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
+                                .foregroundColor(.white)
                             
                             if let cuisine = recipe.cuisine {
                                 Text(cuisine)
                                     .font(.subheadline)
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(.white.opacity(0.9))
                             }
                         }
-                        
-                        HStack(spacing: 16) {
-                            ActionButton(
-                                title: L10n.wantToCook,
-                                icon: "bookmark",
-                                color: .accentPurple,
-                                isActive: presenter.isInWantToCook
-                            ) {
-                                Task {
-                                    await presenter.addToWantToCook()
+                        .padding()
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 16) {
+                        if presenter.userRecipe?.status == "cooked" {
+                            HStack {
+                                ForEach(1..<6) { star in
+                                    Image(systemName: star <= presenter.rating ? "star.fill" : "star")
+                                        .foregroundColor(.yellow)
+                                        .onTapGesture {
+                                            presenter.rating = star
+                                            Task { await presenter.saveRating(star) }
+                                        }
                                 }
                             }
-                            
-                            ActionButton(
-                                title: L10n.addToCart,
-                                icon: "cart.badge.plus",
-                                color: .accentGreen,
-                                isActive: false
-                            ) {
-                                shoppingListPresenter.checkAndAddRecipe(recipe)
-                            }
+                            .padding(.top, 8)
                         }
-                        .padding(.vertical)
+                        
+                        if presenter.userRecipe?.status != "cooked" {
+                            HStack(spacing: 16) {
+                                ActionButton(
+                                    title: L10n.wantToCook,
+                                    icon: "bookmark",
+                                    color: .accentPurple,
+                                    isActive: presenter.isInWantToCook
+                                ) {
+                                    Task {
+                                        await presenter.addToWantToCook()
+                                    }
+                                }
+                                
+                                ActionButton(
+                                    title: L10n.addToCart,
+                                    icon: "cart.badge.plus",
+                                    color: .accentGreen,
+                                    isActive: false
+                                ) {
+                                    if let recipe = presenter.recipe {
+                                        shoppingListPresenter.checkAndAddRecipe(recipe)
+                                    }
+                                }
+                            }
+                            .padding(.vertical)
+                        }
+                        
+                        if let dateCooked = presenter.userRecipe?.dateCooked,
+                           presenter.userRecipe?.status == "cooked" {
+                            Text("Приготовлено: \(dateCooked.formatted(date: .abbreviated, time: .omitted))")
+                                .font(.caption)
+                                .foregroundColor(.accentPurple)
+                        }
                         
                         Text(L10n.ingredients)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.top, 8)
-                        
                         IngredientsView(ingredients: recipe.ingredients)
                         
                         Text(L10n.instructions)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.top, 8)
-                        
                         if let instructions = recipe.instructions, !instructions.isEmpty {
                             InstructionsView(instructions: instructions)
                         } else {
                             Text(L10n.noInstructions)
                                 .foregroundColor(.gray)
                                 .padding()
+                        }
+                        
+                        if presenter.userRecipe?.status == "cooked" {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Мои заметки")
+                                    .font(.headline)
+                                TextEditor(text: $presenter.notes)
+                                    .frame(height: 120)
+                                    .padding(8)
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(12)
+                                    .onChange(of: presenter.notes) { _ in
+                                        Task { await presenter.saveNotes(presenter.notes) }
+                                    }
+                            }
+                            .padding(.top, 8)
                         }
                     }
                     .padding()
@@ -91,6 +143,7 @@ struct RecipeDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .task {
             await presenter.loadRecipe()
+            await presenter.loadUserRecipeStatus()
         }
         .alert(L10n.errorGeneral, isPresented: .constant(presenter.errorMessage != nil)) {
             Button("OK") {
