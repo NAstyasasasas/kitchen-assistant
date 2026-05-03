@@ -144,3 +144,13 @@
 "recipe_confirmation_title" = "Подтверждение";
 "recipe_confirmation_add_again" = "Добавить ещё раз";
 "recipe_confirmation_message_simple" = "Продукты из этого рецепта уже есть в списке. Добавить ещё раз?";
+
+"my_collection" = "Моя коллекция";
+"want_to_cook" = "Хочу приготовить";
+"cooked" = "Приготовлено";
+"create_recipe" = "Создать рецепт";
+"no_recipes_want" = "Нет рецептов, которые вы хотите приготовить";
+"no_recipes_cooked" = "Нет приготовленных рецептов";
+"no_recipes_custom" = "У вас пока нет своих рецептов";
+"my_notes" = "Мои заметки";
+"cooked_on" = "Приготовлено";

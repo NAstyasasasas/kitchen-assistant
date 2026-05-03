@@ -142,3 +142,14 @@
 "recipe_confirmation_title" = "Confirmation";
 "recipe_confirmation_add_again" = "Add again";
 "recipe_confirmation_message_simple" = "Ingredients from this recipe are already in the list. Add again?";
+
+
+"my_collection" = "My Collection";
+"want_to_cook" = "Want to Cook";
+"cooked" = "Cooked";
+"create_recipe" = "Create Recipe";
+"no_recipes_want" = "No recipes you want to cook";
+"no_recipes_cooked" = "No cooked recipes";
+"no_recipes_custom" = "You don't have any custom recipes yet";
+"my_notes" = "My Notes";
+"cooked_on" = "Cooked on";

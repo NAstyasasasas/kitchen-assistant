@@ -52,6 +52,10 @@ public enum L10n {
   public static let confirmPassword = L10n.tr("Localizable", "confirm_password", fallback: "Confirm password")
   /// Cooked
   public static let cooked = L10n.tr("Localizable", "cooked", fallback: "Cooked")
+  /// Cooked on
+  public static let cookedOn = L10n.tr("Localizable", "cooked_on", fallback: "Cooked on")
+  /// Create Recipe
+  public static let createRecipe = L10n.tr("Localizable", "create_recipe", fallback: "Create Recipe")
   /// Cuisine
   public static let cuisine = L10n.tr("Localizable", "cuisine", fallback: "Cuisine")
   /// Custom
@@ -136,6 +140,10 @@ public enum L10n {
   public static let miscellaneous = L10n.tr("Localizable", "miscellaneous", fallback: "Miscellaneous")
   /// My
   public static let my = L10n.tr("Localizable", "my", fallback: "My")
+  /// My Collection
+  public static let myCollection = L10n.tr("Localizable", "my_collection", fallback: "My Collection")
+  /// My Notes
+  public static let myNotes = L10n.tr("Localizable", "my_notes", fallback: "My Notes")
   /// My recipes
   public static let myRecipes = L10n.tr("Localizable", "my_recipes", fallback: "My recipes")
   /// Name
@@ -146,6 +154,12 @@ public enum L10n {
   public static let noInstructions = L10n.tr("Localizable", "no_instructions", fallback: "Instructions not found")
   /// No recipes found
   public static let noRecipes = L10n.tr("Localizable", "no_recipes", fallback: "No recipes found")
+  /// No cooked recipes
+  public static let noRecipesCooked = L10n.tr("Localizable", "no_recipes_cooked", fallback: "No cooked recipes")
+  /// You don't have any custom recipes yet
+  public static let noRecipesCustom = L10n.tr("Localizable", "no_recipes_custom", fallback: "You don't have any custom recipes yet")
+  /// No recipes you want to cook
+  public static let noRecipesWant = L10n.tr("Localizable", "no_recipes_want", fallback: "No recipes you want to cook")
   /// No recipes with
   public static let noRecipesWithFilters = L10n.tr("Localizable", "no_recipes_with_filters", fallback: "No recipes with")
   /// Nothing found for
@@ -224,8 +238,8 @@ public enum L10n {
   public static let vegan = L10n.tr("Localizable", "vegan", fallback: "Vegan")
   /// Vegetarian
   public static let vegetarian = L10n.tr("Localizable", "vegetarian", fallback: "Vegetarian")
-  /// Want to cook
-  public static let wantToCook = L10n.tr("Localizable", "want_to_cook", fallback: "Want to cook")
+  /// Want to Cook
+  public static let wantToCook = L10n.tr("Localizable", "want_to_cook", fallback: "Want to Cook")
   /// Cozy app for those who love to cook, experiment with recipes and save culinary experiences
   public static let welcomeSubtitle = L10n.tr("Localizable", "welcome_subtitle", fallback: "Cozy app for those who love to cook, experiment with recipes and save culinary experiences")
   /// Palate
