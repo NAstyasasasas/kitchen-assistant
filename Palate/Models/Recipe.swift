@@ -129,4 +129,17 @@ struct Category: Codable, Identifiable {
 
 struct RecipesResponse: Codable {
     let meals: [Recipe]?
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        if let mealsArray = try? container.decode([Recipe].self, forKey: .meals) {
+            meals = mealsArray
+        } else {
+            meals = []
+        }
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case meals
+    }
 }

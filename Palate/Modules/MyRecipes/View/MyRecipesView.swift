@@ -58,7 +58,7 @@ struct MyRecipesView: View {
                             recipe: recipe,
                             onCook: { presenter.markAsCooked(recipeId: recipe.id) },
                             onDelete: { presenter.deleteRecipe(recipeId: recipe.id, from: "wantToCook") },
-                            onTap: { presenter.didSelectRecipe(recipe.id) }
+                            onTap: { presenter.didSelectRecipe(recipe) }
                         )
                         .padding(.horizontal, 16)
                         .padding(.vertical, 2)
@@ -86,7 +86,7 @@ struct MyRecipesView: View {
                             dateCooked: userRecipe.dateCooked,
                             onNotes: { /* показать заметки */ },
                             onDelete: { presenter.deleteRecipe(recipeId: recipe.id, from: "cooked") },
-                            onTap: { presenter.didSelectRecipe(recipe.id) },
+                            onTap: { presenter.didSelectRecipe(recipe) },
                             onRatingChanged: { newRating in
                                 presenter.updateRating(recipeId: recipe.id, rating: newRating)
                             }
@@ -100,33 +100,45 @@ struct MyRecipesView: View {
     
     @ViewBuilder
     private var myRecipesTab: some View {
-        if presenter.isLoading {
-            ProgressView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if presenter.myRecipes.isEmpty {
-            VStack {
+        ZStack {
+            if presenter.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if presenter.myRecipes.isEmpty {
                 emptyStateView(text: L10n.noRecipesCustom)
-                Button(L10n.createRecipe) {
-                    // TODO: переход на CreateRecipeView
-                }
-                .buttonStyle(.borderedProminent)
-                .padding()
-            }
-        } else {
-            ScrollView {
-                LazyVStack(spacing: 4) {
-                    ForEach(presenter.myRecipes, id: \.id) { recipe in
-                        MyRecipeCard(
-                            recipe: recipe,
-                            onEdit: { /* TODO: редактировать */ },
-                            onDelete: { presenter.deleteRecipe(recipeId: recipe.id, from: "myRecipes") },
-                            onTap: { presenter.didSelectRecipe(recipe.id) }
-                        )
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 2)
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 4) {
+                        ForEach(presenter.myRecipes, id: \.id) { recipe in
+                            MyRecipeCard(
+                                recipe: recipe,
+                                onEdit: { presenter.editRecipe(recipe) },
+                                onDelete: { presenter.deleteCustomRecipe(recipeId: recipe.id) },
+                                onTap: { presenter.didSelectRecipe(recipe) }
+                            )
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 2)
+                        }
                     }
+                    .padding(.vertical, 8)
                 }
-                .padding(.vertical, 8)
+            }
+            
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button(action: { presenter.createRecipe() }) {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 50))
+                            .foregroundColor(.accentGreen)
+                            .background(Color.white)
+                            .clipShape(Circle())
+                            .shadow(radius: 4)
+                    }
+                    .padding(.trailing, 20)
+                    .padding(.bottom, 20)
+                }
             }
         }
     }

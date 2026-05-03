@@ -24,6 +24,19 @@ final class ProfilePresenter: ObservableObject {
         self.interactor = interactor
         self.coordinator = coordinator
         self.currentUser = interactor.currentUser
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(reloadStats),
+            name: NSNotification.Name("userRecipeDeleted"),
+            object: nil
+        )
+    }
+
+    @objc private func reloadStats() {
+        Task {
+            await loadStats()
+        }
     }
     
     func updateAvatar(_ image: UIImage) async {

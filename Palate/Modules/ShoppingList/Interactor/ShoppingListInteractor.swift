@@ -81,43 +81,95 @@ final class ShoppingListInteractor: ShoppingListInteractorProtocol {
     
     func recipeHasConflicts(_ recipe: Recipe) -> Bool {
         let existingItems = fetchItems()
+        
         for ingredient in recipe.ingredients {
             let (quantity, unit, isNumeric) = parseIngredient(ingredient)
+            
+            let name = normalize(ingredient.name)
+            let normalizedUnit = normalize(unit)
+            
             if isNumeric {
                 let exists = existingItems.contains { item in
-                    item.name?.lowercased() == ingredient.name.lowercased() &&
-                    item.unit?.lowercased() == unit.lowercased() &&
+                    normalize(item.name) == name &&
+                    normalize(item.unit) == normalizedUnit &&
                     item.isBought == false
                 }
+                
+                if exists { return true }
+            } else {
+                let exists = existingItems.contains { item in
+                    normalize(item.name) == name &&
+                    item.isBought == false
+                }
+                
                 if exists { return true }
             }
         }
+        
         return false
     }
     
+    private func normalize(_ text: String?) -> String {
+        text?
+            .lowercased()
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            ?? ""
+    }
+    
     func addWholeRecipe(_ recipe: Recipe) async {
+        var existingItems = fetchItems()
+
         for ingredient in recipe.ingredients {
             let (quantity, unit, isNumeric) = parseIngredient(ingredient)
-            if isNumeric {
-                if let existing = fetchItems().first(where: {
-                    $0.name?.lowercased() == ingredient.name.lowercased() &&
-                    $0.unit?.lowercased() == unit.lowercased() &&
-                    $0.isBought == false
-                }) {
-                    existing.quantity += quantity
-                    updateItem(existing)
-                } else {
-                    addItem(name: ingredient.name, quantity: quantity, unit: unit)
-                }
+            let normalizedName = ingredient.name.lowercased().trimmingCharacters(in: .whitespaces)
+            let normalizedUnit = unit.lowercased().trimmingCharacters(in: .whitespaces)
+
+            if isNumeric && quantity > 0 {
+                mergeIngredient(
+                    name: normalizedName,
+                    quantity: quantity,
+                    unit: normalizedUnit,
+                    existingItems: &existingItems
+                )
             } else {
-                addItem(name: ingredient.name, quantity: 0, unit: "")
+                let amountTrimmed = ingredient.amount.trimmingCharacters(in: .whitespaces)
+                if let doubleQuantity = Double(amountTrimmed), doubleQuantity > 0 {
+                    let unitTrimmed = ingredient.unit.lowercased().trimmingCharacters(in: .whitespaces)
+                    mergeIngredient(
+                        name: normalizedName,
+                        quantity: doubleQuantity,
+                        unit: unitTrimmed,
+                        existingItems: &existingItems
+                    )
+                } else {
+                    addItem(name: ingredient.name, quantity: 0, unit: "")
+                }
             }
+        }
+    }
+
+    private func mergeIngredient(
+        name: String,
+        quantity: Double,
+        unit: String,
+        existingItems: inout [ShoppingItem]
+    ) {
+        if let existing = existingItems.first(where: {
+            ($0.name ?? "").lowercased().trimmingCharacters(in: .whitespaces) == name &&
+            ($0.unit ?? "").lowercased().trimmingCharacters(in: .whitespaces) == unit &&
+            !$0.isBought
+        }) {
+            existing.quantity += quantity
+            updateItem(existing)
+        } else {
+            addItem(name: name, quantity: quantity, unit: unit)
+            existingItems.append(fetchItems().last!)
         }
     }
     
     private func parseIngredient(_ ingredient: Ingredient) -> (quantity: Double, unit: String, isNumeric: Bool) {
         let amount = ingredient.amount.trimmingCharacters(in: .whitespaces)
-        let pattern = "^(\\d+(?:\\.\\d+)?(?:\\/\\d+)?)\\s*([a-zA-Z/\\.]+)"
+        let pattern = "^(\\d+(?:\\.\\d+)?(?:\\/\\d+)?)\\s*([a-zA-Zа-яА-Я/\\.]+)"
         guard let regex = try? NSRegularExpression(pattern: pattern),
               let match = regex.firstMatch(in: amount, range: NSRange(amount.startIndex..., in: amount)) else {
             return (0, "", false)
