@@ -21,6 +21,15 @@
         <attribute name="userId" optional="YES" attributeType="String"/>
         <relationship name="ingredients" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CustomIngredient" inverseName="recipe" inverseEntity="CustomIngredient"/>
     </entity>
+    <entity name="MealPlan" representedClassName="MealPlan" syncable="YES">
+        <attribute name="breakfastRecipeId" optional="YES" attributeType="String"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="dinnerRecipeId" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lunchRecipeId" optional="YES" attributeType="String"/>
+        <attribute name="snackRecipeId" optional="YES" attributeType="String"/>
+        <attribute name="synced" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+    </entity>
     <entity name="ShoppingItem" representedClassName="ShoppingItem" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>

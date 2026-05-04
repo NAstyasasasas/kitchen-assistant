@@ -9,6 +9,7 @@ import Combine
 final class ShoppingListPresenter: ObservableObject {
     private let interactor: ShoppingListInteractorProtocol
     private let coordinator: MainCoordinator?
+    private let shoppingInteractor = ShoppingListInteractor()
     
     @Published var items: [ShoppingItem] = []
     @Published var newItemName = ""

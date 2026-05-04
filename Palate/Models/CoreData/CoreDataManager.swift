@@ -118,4 +118,39 @@ final class CoreDataManager {
             return []
         }
     }
+    func saveMealPlan(_ plan: MealPlan) {
+        saveContext()
+    }
+
+    func fetchMealPlan(for date: Date) -> MealPlan? {
+        let startOfDay = Calendar.current.startOfDay(for: date)
+        let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
+        
+        let request: NSFetchRequest<MealPlan> = MealPlan.fetchRequest()
+        request.predicate = NSPredicate(format: "date >= %@ AND date < %@", startOfDay as NSDate, endOfDay as NSDate)
+        
+        do {
+            return try viewContext.fetch(request).first
+        } catch {
+            print("❌ Failed to fetch meal plan: \(error)")
+            return nil
+        }
+    }
+
+    func fetchWeekMealPlans(startOfWeek: Date) -> [MealPlan] {
+        guard let endOfWeek = Calendar.current.date(byAdding: .day, value: 7, to: startOfWeek) else {
+            return []
+        }
+        
+        let request: NSFetchRequest<MealPlan> = MealPlan.fetchRequest()
+        request.predicate = NSPredicate(format: "date >= %@ AND date < %@", startOfWeek as NSDate, endOfWeek as NSDate)
+        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        
+        do {
+            return try viewContext.fetch(request)
+        } catch {
+            print("Failed to fetch week meal plans: \(error)")
+            return []
+        }
+    }
 }
