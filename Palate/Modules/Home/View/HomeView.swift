@@ -94,7 +94,7 @@ struct HomeView: View {
                             
                             ForEach(CuisineType.allCases.prefix(6)) { cuisine in
                                 FilterChip(
-                                    title: L10n.cuisine,
+                                    title: cuisine.localizedName,
                                     isSelected: presenter.selectedCuisine == cuisine
                                 ) {
                                     if presenter.selectedCuisine == cuisine {
@@ -131,11 +131,11 @@ struct HomeView: View {
                         VStack(alignment: .leading, spacing: 16) {
                             HStack {
                                 if let cuisine = presenter.selectedCuisine {
-                                    Text(L10n.cuisine)
+                                    Text(cuisine.localizedName)
                                         .font(.title3)
                                         .fontWeight(.bold)
                                 } else if let mealType = presenter.selectedMealType {
-                                    Text(mealType.rawValue)
+                                    Text(mealType.localizedName)
                                         .font(.title3)
                                         .fontWeight(.bold)
                                 } else {
@@ -210,7 +210,7 @@ struct FilterSheetView: View {
                             tempCuisine = cuisine
                         } label: {
                             HStack {
-                                Text(L10n.cuisine)
+                                Text(cuisine.localizedName)
                                 Spacer()
                                 if tempCuisine == cuisine {
                                     Image(systemName: "checkmark")
@@ -248,7 +248,7 @@ struct FilterSheetView: View {
                             tempMealType = mealType
                         } label: {
                             HStack {
-                                Text(L10n.mealType)
+                                Text(mealType.localizedName)
                                 Spacer()
                                 if tempMealType == mealType {
                                     Image(systemName: "checkmark")
@@ -270,12 +270,12 @@ struct FilterSheetView: View {
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
                                 if let cuisine = tempCuisine {
-                                    Text("\(L10n.cuisine)")
+                                    Text(cuisine.localizedName)
                                         .font(.caption)
                                         .foregroundColor(.accentPurple)
                                 }
                                 if let mealType = tempMealType {
-                                    Text("\(L10n.mealType)")
+                                    Text(mealType.localizedName)
                                         .font(.caption)
                                         .foregroundColor(.accentPurple)
                                 }

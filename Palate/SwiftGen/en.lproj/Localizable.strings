@@ -153,3 +153,70 @@
 "no_recipes_custom" = "You don't have any custom recipes yet";
 "my_notes" = "My Notes";
 "cooked_on" = "Cooked on";
+
+"lunch" = "Lunch";
+"dinner" = "Dinner";
+"snack" = "Snack";
+
+"monday" = "Monday";
+"tuesday" = "Tuesday";
+"wednesday" = "Wednesday";
+"thursday" = "Thursday";
+"friday" = "Friday";
+"saturday" = "Saturday";
+"sunday" = "Sunday";
+
+"select" = "Select";
+"collect_shopping_list" = "Collect shopping list";
+"select_recipe" = "Select recipe";
+"search" = "Search";
+"ingredients_already_in_list" = "Ingredients already in list";
+"ingredients_already_in_list_message" = "These ingredients have already been added to the shopping list. Add again?";
+"add_again" = "Add again";
+
+"shopping_list_title" = "Shopping List";
+"add_item_name" = "Name";
+"add_item_quantity" = "Qty";
+"add_item_unit" = "Unit";
+"shopping_list_empty" = "Shopping list is empty";
+"edit_quantity" = "Quantity";
+"edit_unit" = "Unit (g, ml, pcs, tbsp)";
+"delete_all_confirm" = "Delete all?";
+"delete_all_message" = "Are you sure you want to delete all items?";
+"delete_item_confirm" = "Delete item?";
+"delete_item_message" = "This action cannot be undone.";
+
+
+// MARK: - Recipe Detail Presenter
+"failed_to_save_notes" = "Failed to save notes";
+"failed_to_save_rating" = "Failed to save rating";
+
+// MARK: - Profile
+"user" = "User";
+
+// MARK: - Create Recipe View
+"add_photo" = "Add photo";
+"basic_info" = "Basic Information";
+"recipe_name" = "Recipe Name";
+"category" = "Category";
+"ingredient_name" = "Name";
+"amount" = "Amount";
+"unit" = "Unit";
+"add_ingredient" = "Add Ingredient";
+"create_recipe" = "Create Recipe";
+"edit_recipe" = "Edit Recipe";
+"select_category" = "Select Category";
+"ok" = "OK";
+
+// MARK: - Create Recipe Presenter Errors
+"recipe_name_required" = "Please enter recipe name";
+"cuisine_required" = "Please enter cuisine";
+"category_required" = "Please select category";
+"instructions_required" = "Please enter cooking instructions";
+"ingredients_required" = "Please add at least one ingredient";
+"user_not_authorized" = "User not authorized";
+"recipe_not_found" = "Recipe not found";
+"save_recipe_error" = "Error saving recipe";
+
+// MARK: - Common
+"error" = "Error";

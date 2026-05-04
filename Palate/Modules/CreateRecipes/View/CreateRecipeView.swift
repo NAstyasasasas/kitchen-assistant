@@ -29,7 +29,7 @@ struct CreateRecipeView: View {
                                 .clipped()
                                 .cornerRadius(12)
                         } else {
-                            Label("Добавить фото", systemImage: "camera")
+                            Label(L10n.addPhoto, systemImage: "camera")
                         }
                     }
                     .onChange(of: selectedItem) { newItem in
@@ -43,30 +43,30 @@ struct CreateRecipeView: View {
                     }
                 }
                 
-                Section("Основная информация") {
-                    TextField("Название рецепта", text: $presenter.name)
-                    TextField("Кухня", text: $presenter.cuisine)
+                Section(L10n.basicInfo) {
+                    TextField(L10n.recipeName, text: $presenter.name)
+                    TextField(L10n.cuisine, text: $presenter.cuisine)
                     
                     Button {
                         showingCategoryPicker = true
                     } label: {
                         HStack {
-                            Text("Категория")
+                            Text(L10n.category)
                             Spacer()
-                            Text(presenter.category.isEmpty ? "Выбрать" : presenter.category)
+                            Text(presenter.category.isEmpty ? L10n.select : presenter.category)
                                 .foregroundColor(presenter.category.isEmpty ? .gray : .primary)
                         }
                     }
                 }
                 
-                Section("Ингредиенты") {
+                Section(L10n.ingredients) {
                     ForEach(presenter.ingredientInputs.indices, id: \.self) { index in
                         HStack {
-                            TextField("Название", text: $presenter.ingredientInputs[index].name)
+                            TextField(L10n.ingredientName, text: $presenter.ingredientInputs[index].name)
                                 .autocapitalization(.words)
-                            TextField("Кол-во", text: $presenter.ingredientInputs[index].amount)
+                            TextField(L10n.amount, text: $presenter.ingredientInputs[index].amount)
                                 .keyboardType(.default)
-                            TextField("Ед.", text: $presenter.ingredientInputs[index].unit)
+                            TextField(L10n.unit, text: $presenter.ingredientInputs[index].unit)
                                 .autocapitalization(.none)
                             
                             Button {
@@ -79,23 +79,23 @@ struct CreateRecipeView: View {
                         }
                     }
                     Button(action: { presenter.addIngredient() }) {
-                        Label("Добавить ингредиент", systemImage: "plus")
+                        Label(L10n.addIngredient, systemImage: "plus")
                     }
                 }
                 
-                Section("Приготовление") {
+                Section(L10n.instructions) {
                     TextEditor(text: $presenter.instructions)
                         .frame(minHeight: 150)
                 }
             }
-            .navigationTitle(presenter.mode == .create ? "Создать рецепт" : "Редактировать рецепт")
+            .navigationTitle(presenter.mode == .create ? L10n.createRecipe : L10n.editRecipe)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Отмена") { dismiss() }
+                    Button(L10n.cancel) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Сохранить") {
+                    Button(L10n.save) {
                         Task {
                             await presenter.saveRecipe()
                             if presenter.errorMessage == nil {
@@ -108,11 +108,11 @@ struct CreateRecipeView: View {
             .sheet(isPresented: $showingCategoryPicker) {
                 CategoryPickerView(selectedCategory: $presenter.category, categories: categories)
             }
-            .alert("Ошибка", isPresented: Binding(
+            .alert(L10n.error, isPresented: Binding(
                 get: { presenter.errorMessage != nil },
                 set: { if !$0 { presenter.errorMessage = nil } }
             )) {
-                Button("OK", role: .cancel) {}
+                Button(L10n.ok, role: .cancel) {}
             } message: {
                 Text(presenter.errorMessage ?? "")
             }
@@ -150,11 +150,11 @@ struct CategoryPickerView: View {
                 }
                 .foregroundColor(.primary)
             }
-            .navigationTitle("Выберите категорию")
+            .navigationTitle(L10n.selectCategory)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Отмена") { dismiss() }
+                    Button(L10n.cancel) { dismiss() }
                 }
             }
         }

@@ -87,7 +87,7 @@ final class RecipeDetailPresenter: ObservableObject {
             try await interactor.saveNotes(recipeId: recipeId, notes: notes)
             await loadUserRecipeStatus()
         } catch {
-            errorMessage = "Не удалось сохранить заметки"
+            errorMessage = L10n.failedToSaveNotes
         }
     }
 
@@ -97,7 +97,7 @@ final class RecipeDetailPresenter: ObservableObject {
             await loadUserRecipeStatus()
             NotificationCenter.default.post(name: .ratingDidChange, object: recipeId)
         } catch {
-            errorMessage = "Не удалось сохранить оценку"
+            errorMessage = L10n.failedToSaveRating
         }
     }
 }

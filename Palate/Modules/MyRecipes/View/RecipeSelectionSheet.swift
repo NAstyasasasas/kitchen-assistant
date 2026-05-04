@@ -18,8 +18,8 @@ struct RecipeSelectionSheet: View {
         NavigationView {
             VStack {
                 Picker("", selection: $selectedTab) {
-                    Text("Мои рецепты").tag(0)
-                    Text("Поиск").tag(1)
+                    Text(L10n.myRecipes).tag(0)
+                    Text(L10n.search).tag(1)
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding(.horizontal)
@@ -50,11 +50,11 @@ struct RecipeSelectionSheet: View {
                     }
                 }
             }
-            .navigationTitle("Выбрать рецепт")
+            .navigationTitle(L10n.selectRecipe)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Отмена") { dismiss() }
+                    Button(L10n.cancel) { dismiss() }
                 }
             }
             .task {
