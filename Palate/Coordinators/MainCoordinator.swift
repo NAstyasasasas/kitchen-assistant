@@ -22,10 +22,11 @@ final class MainCoordinator: Coordinator {
         let shoppingListPresenter = ShoppingListPresenter(coordinator: self)
         let shoppingListView = ShoppingListView(presenter: shoppingListPresenter)
         
-        let planView = PlanView()
+        let mealPlanPresenter = MealPlanPresenter(coordinator: self)
+        let mealPlanView = MealPlanView(presenter: mealPlanPresenter)
         
         let tabView = TabView {
-            planView
+            mealPlanView
                 .tabItem {
                     Label(L10n.plan, systemImage: "calendar")
                 }
