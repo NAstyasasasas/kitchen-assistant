@@ -10,12 +10,12 @@ struct MealPlanView: View {
     @StateObject var presenter: MealPlanPresenter
     @State private var currentWeekStart = Calendar.current.date(from: Calendar.current.dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date())) ?? Date()
     
-    private let dayNames = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
+    private let dayNames = [L10n.monday, L10n.tuesday, L10n.wednesday, L10n.thursday, L10n.friday, L10n.saturday, L10n.sunday]
     private let mealTypes: [(MealPlanMealType, String, String)] = [
-        (.breakfast, "Завтрак", "sunrise.fill"),
-        (.lunch, "Обед", "sun.max.fill"),
-        (.dinner, "Ужин", "moon.fill"),
-        (.snack, "Перекус", "apple.whole")
+        (.breakfast, L10n.breakfast, "sunrise.fill"),
+        (.lunch, L10n.lunch, "sun.max.fill"),
+        (.dinner, L10n.dinner, "moon.fill"),
+        (.snack, L10n.snack, "apple.whole")
     ]
     
     var body: some View {
@@ -50,20 +50,20 @@ struct MealPlanView: View {
             .sheet(isPresented: $presenter.showRecipePicker) {
                 RecipeSelectionSheet(presenter: presenter)
             }
-            .alert("Продукты уже есть в списке", isPresented: $presenter.showConflictAlert) {
-                Button("Добавить ещё раз") {
+            .alert(L10n.ingredientsAlreadyInList, isPresented: $presenter.showConflictAlert) {
+                Button(L10n.addAgain) {
                     presenter.confirmAddToShoppingList()
                 }
-                Button("Отмена", role: .cancel) { }
+                Button(L10n.cancel, role: .cancel) { }
             } message: {
-                Text("Ингредиенты уже были добавлены в список покупок. Добавить ещё раз?")
+                Text(L10n.ingredientsAlreadyInListMessage)
             }
         }
     }
 
     private var headerView: some View {
         VStack(spacing: 16) {
-            Text("План питания")
+            Text(L10n.planTitle)
                 .font(.title2)
                 .fontWeight(.semibold)
             
@@ -97,7 +97,7 @@ struct MealPlanView: View {
             } label: {
                 HStack {
                     Image(systemName: "cart.badge.plus")
-                    Text("Собрать список")
+                    Text(L10n.collectShoppingList)
                         .fontWeight(.medium)
                 }
                 .frame(maxWidth: .infinity)
@@ -252,7 +252,7 @@ struct MealSlotCard: View {
                                         Image(systemName: "plus")
                                             .font(.title2)
                                             .foregroundColor(.accentPurple)
-                                        Text("Выбрать")
+                                        Text(L10n.select)
                                             .font(.caption)
                                             .foregroundColor(.accentPurple)
                                     }

@@ -154,3 +154,54 @@
 "no_recipes_custom" = "У вас пока нет своих рецептов";
 "my_notes" = "Мои заметки";
 "cooked_on" = "Приготовлено";
+
+"monday" = "Понедельник";
+"tuesday" = "Вторник";
+"wednesday" = "Среда";
+"thursday" = "Четверг";
+"friday" = "Пятница";
+"saturday" = "Суббота";
+"sunday" = "Воскресенье";
+
+"select" = "Выбрать";
+"collect_shopping_list" = "Собрать список";
+"select_recipe" = "Выбрать рецепт";
+"search" = "Поиск";
+"ingredients_already_in_list" = "Продукты уже есть в списке";
+"ingredients_already_in_list_message" = "Ингредиенты уже были добавлены в список покупок. Добавить ещё раз?";
+"add_again" = "Добавить ещё раз";
+
+
+// MARK: - Recipe Detail Presenter
+"failed_to_save_notes" = "Не удалось сохранить заметки";
+"failed_to_save_rating" = "Не удалось сохранить оценку";
+
+// MARK: - Profile
+"user" = "Пользователь";
+
+// MARK: - Create Recipe View
+"add_photo" = "Добавить фото";
+"basic_info" = "Основная информация";
+"recipe_name" = "Название рецепта";
+"category" = "Категория";
+"ingredient_name" = "Название";
+"amount" = "Кол-во";
+"unit" = "Ед.";
+"add_ingredient" = "Добавить ингредиент";
+"create_recipe" = "Создать рецепт";
+"edit_recipe" = "Редактировать рецепт";
+"select_category" = "Выберите категорию";
+"ok" = "OK";
+
+// MARK: - Create Recipe Presenter Errors
+"recipe_name_required" = "Введите название рецепта";
+"cuisine_required" = "Введите кухню";
+"category_required" = "Выберите категорию";
+"instructions_required" = "Введите инструкцию приготовления";
+"ingredients_required" = "Добавьте хотя бы один ингредиент";
+"user_not_authorized" = "Пользователь не авторизован";
+"recipe_not_found" = "Рецепт не найден";
+"save_recipe_error" = "Ошибка сохранения рецепта";
+
+// MARK: - Common
+"error" = "Ошибка";

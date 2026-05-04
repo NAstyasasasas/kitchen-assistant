@@ -107,19 +107,19 @@ final class CreateRecipePresenter: ObservableObject {
         let trimmedInstructions = instructions.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if trimmedName.isEmpty {
-            errorMessage = "Введите название рецепта"
+            errorMessage = L10n.recipeNameRequired
             return
         }
         if trimmedCuisine.isEmpty {
-            errorMessage = "Введите кухню"
+            errorMessage = L10n.cuisineRequired
             return
         }
         if trimmedCategory.isEmpty {
-            errorMessage = "Выберите категорию"
+            errorMessage = L10n.categoryRequired
             return
         }
         if trimmedInstructions.isEmpty {
-            errorMessage = "Введите инструкцию приготовления"
+            errorMessage = L10n.instructionsRequired
             return
         }
         
@@ -128,7 +128,7 @@ final class CreateRecipePresenter: ObservableObject {
         }
         
         if validIngredients.isEmpty {
-            errorMessage = "Добавьте хотя бы один ингредиент"
+            errorMessage = L10n.ingredientsRequired
             return
         }
         
@@ -136,7 +136,7 @@ final class CreateRecipePresenter: ObservableObject {
         defer { Task { @MainActor in isLoading = false } }
         
         guard let userId = await AuthService.shared.getCurrentUser()?.id else {
-            errorMessage = "Пользователь не авторизован"
+            errorMessage = L10n.userNotAuthorized
             return
         }
         
@@ -146,7 +146,7 @@ final class CreateRecipePresenter: ObservableObject {
             let recipes = coreData.fetchCustomRecipes(byUserId: userId)
             
             guard let existing = recipes.first(where: { $0.id?.uuidString == recipeId }) else {
-                errorMessage = "Рецепт не найден"
+                errorMessage = L10n.recipeNotFound
                 return
             }
             
@@ -209,7 +209,7 @@ final class CreateRecipePresenter: ObservableObject {
             
         } catch {
             await MainActor.run {
-                errorMessage = "Ошибка сохранения рецепта"
+                errorMessage = L10n.saveRecipeError
             }
         }
     }
