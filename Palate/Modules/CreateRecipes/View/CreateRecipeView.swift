@@ -19,7 +19,7 @@ struct CreateRecipeView: View {
     private func fieldTitle(_ title: String) -> some View {
         Text(title)
             .font(.system(size: 16))
-            .foregroundColor(.black)
+            .foregroundColor(Color(.label))
     }
 
     private func customTextField(placeholder: String, text: Binding<String>) -> some View {
@@ -29,7 +29,7 @@ struct CreateRecipeView: View {
             .frame(height: 52)
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color.gray.opacity(0.35), lineWidth: 1)
+                    .stroke(Color(.secondaryLabel).opacity(0.35), lineWidth: 1)
             )
     }
     
@@ -51,17 +51,17 @@ struct CreateRecipeView: View {
                             VStack(spacing: 10) {
                                 Image(systemName: "photo")
                                     .font(.system(size: 42))
-                                    .foregroundColor(.gray.opacity(0.65))
+                                    .foregroundColor(Color(.secondaryLabel).opacity(0.65))
 
                                 Text(L10n.addPhoto)
                                     .font(.system(size: 17))
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(Color(.secondaryLabel))
                             }
                             .frame(maxWidth: .infinity)
                             .frame(height: 180)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.gray.opacity(0.55),
+                                    .stroke(Color(.secondaryLabel).opacity(0.55),
                                             style: StrokeStyle(lineWidth: 1, dash: [3]))
                             )
                         }
@@ -89,16 +89,16 @@ struct CreateRecipeView: View {
                         HStack {
                             Text(presenter.category.isEmpty ? L10n.selectCategory : presenter.category)
                                 .font(.system(size: 16))
-                                .foregroundColor(presenter.category.isEmpty ? .gray : .black)
+                                .foregroundColor(presenter.category.isEmpty ? Color(.secondaryLabel) : Color(.label))
                             Spacer()
                             Image(systemName: "chevron.down")
-                                .foregroundColor(.black)
+                                .foregroundColor(Color(.label))
                         }
                         .padding(.horizontal, 14)
                         .frame(height: 52)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.gray.opacity(0.45), lineWidth: 1)
+                                .stroke(Color(.secondaryLabel).opacity(0.45), lineWidth: 1)
                         )
                     }
                     
@@ -112,7 +112,7 @@ struct CreateRecipeView: View {
                                 .frame(height: 46)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.gray.opacity(0.35), lineWidth: 1)
+                                        .stroke(Color(.secondaryLabel).opacity(0.35), lineWidth: 1)
                                 )
                             
                             TextField(L10n.amount, text: $presenter.ingredientInputs[index].amount)
@@ -121,7 +121,7 @@ struct CreateRecipeView: View {
                                 .frame(width: 92, height: 46)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.gray.opacity(0.35), lineWidth: 1)
+                                        .stroke(Color(.secondaryLabel).opacity(0.35), lineWidth: 1)
                                 )
                             
                             TextField(L10n.unit, text: $presenter.ingredientInputs[index].unit)
@@ -130,7 +130,7 @@ struct CreateRecipeView: View {
                                 .frame(width: 76, height: 46)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.gray.opacity(0.35), lineWidth: 1)
+                                        .stroke(Color(.secondaryLabel).opacity(0.35), lineWidth: 1)
                                 )
                             
                             Button {
@@ -160,7 +160,7 @@ struct CreateRecipeView: View {
                         if presenter.instructions.isEmpty {
                             Text(L10n.inputInstruction)
                                 .font(.system(size: 16))
-                                .foregroundColor(.gray.opacity(0.7))
+                                .foregroundColor(Color(.secondaryLabel).opacity(0.7))
                                 .padding(.horizontal, 14)
                                 .padding(.top, 14)
                         }
@@ -174,7 +174,7 @@ struct CreateRecipeView: View {
                     }
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.gray.opacity(0.35), lineWidth: 1)
+                            .stroke(Color(.secondaryLabel).opacity(0.35), lineWidth: 1)
                     )
                 }
                 .padding(.horizontal, 24)
@@ -189,7 +189,7 @@ struct CreateRecipeView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "chevron.left")
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color(.secondaryLabel))
                     }
                 }
                 
@@ -220,7 +220,7 @@ struct CreateRecipeView: View {
                 if presenter.isLoading {
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(Color.black.opacity(0.2))
+                        .background(Color(.label).opacity(0.2))
                 }
             }
         }

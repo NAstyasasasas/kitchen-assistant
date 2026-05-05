@@ -9,9 +9,9 @@ import Foundation
 import SwiftUI
 
 extension Color {
-    static let cardBackground = Color.white
+    static let cardBackground = Color(.systemBackground)
     static let bg = Color(.systemGray6)
-    static let card = Color.white
+    static let card = Color(.systemBackground)
 
     static let accentPurple = Color(hex: "#B351F4")
     static let accentGreen = Color(hex: "#84CC16")
@@ -41,7 +41,7 @@ struct CardModifier: ViewModifier {
         content
             .background(Color.card)
             .cornerRadius(20)
-            .shadow(color: .black.opacity(0.08), radius: 8, x: 0, y: 4)
+            .shadow(color: Color(.label).opacity(0.08), radius: 8, x: 0, y: 4)
     }
 }
 
@@ -49,4 +49,12 @@ extension View {
     func cardStyle() -> some View {
         self.modifier(CardModifier())
     }
+}
+
+extension Color {
+    static let appBackground = Color(.systemBackground)
+    static let appSurface = Color(.secondarySystemBackground)
+    static let appText = Color(.label)
+    static let appSecondaryText = Color(.secondaryLabel)
+    static let appBorder = Color(.separator)
 }

@@ -9,8 +9,8 @@ import PhotosUI
 struct ProfileView: View {
     @StateObject var presenter: ProfilePresenter
     @StateObject private var languageManager = LanguageManager.shared
-    @State private var darkTheme = false
     @State private var selectedAvatarItem: PhotosPickerItem?
+    @StateObject private var themeManager = ThemeManager.shared
 
     var body: some View {
         NavigationView {
@@ -31,7 +31,7 @@ struct ProfileView: View {
                     .padding(.horizontal, 64)
                     .padding(.bottom, 18)
             }
-            .background(Color.white)
+            .background(Color(.systemBackground))
             .navigationBarHidden(true)
             .task {
                 await presenter.loadStats()
@@ -72,7 +72,7 @@ struct ProfileView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text(presenter.currentUser?.displayName ?? "")
                     .font(.system(size: 26, weight: .bold))
-                    .foregroundColor(.black)
+                    .foregroundColor(Color(.label))
 
                 Text(presenter.currentUser?.email ?? "")
                     .font(.system(size: 16))
@@ -110,12 +110,12 @@ struct ProfileView: View {
         VStack(alignment: .leading, spacing: 15) {
             Text(L10n.statistics)
                 .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.black)
+                .foregroundColor(Color(.label))
 
             HStack(spacing: 14) {
                 StatCard(title: L10n.cooked, value: "\(presenter.cookedCount)", color: .accentGreen)
                 StatCard(title: L10n.inPlan, value: "\(presenter.wantToCookCount)", color: .accentPurple)
-                StatCard(title: L10n.custom, value: "\(presenter.customRecipesCount)", color: .gray)
+                StatCard(title: L10n.custom, value: "\(presenter.customRecipesCount)", color: Color(.secondaryLabel))
             }
         }
     }
@@ -124,25 +124,27 @@ struct ProfileView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text(L10n.settings)
                 .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.black)
+                .foregroundColor(Color(.label))
+                .padding(.horizontal, 4)
 
             HStack {
                 Text(L10n.darkTheme)
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(.black)
+                    .foregroundColor(Color(.label))
 
                 Spacer()
 
-                Toggle("", isOn: $darkTheme)
+                Toggle("", isOn: $themeManager.isDarkTheme)
                     .labelsHidden()
                     .tint(.accentPurple)
             }
             .padding(.horizontal, 22)
             .frame(height: 50)
-            .background(Color.white)
+            .background(Color(.systemBackground))
+            .cornerRadius(10)
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color.gray.opacity(0.45), lineWidth: 1.3)
+                    .stroke(Color(.secondaryLabel).opacity(0.45), lineWidth: 1.3)
             )
 
             Menu {
@@ -155,23 +157,25 @@ struct ProfileView: View {
                 HStack {
                     Text(L10n.language)
                         .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(.black)
+                        .foregroundColor(Color(.label))
 
                     Spacer()
 
                     Text(languageManager.appLanguage.displayName)
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color(.secondaryLabel))
 
                     Image(systemName: "chevron.down")
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color(.secondaryLabel))
+                        .font(.system(size: 14))
                 }
                 .padding(.horizontal, 22)
                 .frame(height: 50)
-                .background(Color.white)
+                .background(Color(.systemBackground))
+                .cornerRadius(10)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray.opacity(0.45), lineWidth: 1.3)
+                        .stroke(Color(.secondaryLabel).opacity(0.45), lineWidth: 1.3)
                 )
             }
         }
@@ -209,18 +213,18 @@ struct StatCard: View {
 
             Text(title)
                 .font(.system(size: 15, weight: .regular))
-                .foregroundColor(.gray)
+                .foregroundColor(Color(.secondaryLabel))
                 .lineLimit(1)
                 .minimumScaleFactor(0.65)
         }
         .frame(maxWidth: .infinity)
         .frame(height: 90)
-        .background(Color.white)
+        .background(Color(.systemBackground))
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(color, lineWidth: 1.5)
         )
-        .shadow(color: .black.opacity(0.16), radius: 4, x: 0, y: 3)
+        .shadow(color: Color(.label).opacity(0.16), radius: 4, x: 0, y: 3)
     }
 }

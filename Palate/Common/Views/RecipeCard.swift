@@ -20,7 +20,7 @@ struct RecipeCard: View {
                             .scaledToFill()
                     } else {
                         Rectangle()
-                            .fill(Color.gray.opacity(0.2))
+                            .fill(Color(.secondaryLabel).opacity(0.2))
                     }
                 }
                 .frame(height: 115)
@@ -32,7 +32,7 @@ struct RecipeCard: View {
                     .font(.system(size: 16))
                     .foregroundColor(.white)
                     .padding(8)
-                    .background(Color.white.opacity(0.55))
+                    .background(Color(.systemBackground).opacity(0.55))
                     .clipShape(Circle())
                     .padding(6)
             }
@@ -45,7 +45,7 @@ struct RecipeCard: View {
             
             Text(translatedCategory ?? (recipe.category ?? ""))
                 .font(.system(size: 14))
-                .foregroundColor(.gray)
+                .foregroundColor(Color(.secondaryLabel))
                 .lineLimit(1)
             
             Spacer(minLength: 0)
@@ -54,7 +54,7 @@ struct RecipeCard: View {
         .frame(height: 230)
         .background(Color.card)
         .cornerRadius(16)
-        .shadow(color: .black.opacity(0.16), radius: 4, x: 0, y: 2)
+        .shadow(color: Color(.label).opacity(0.16), radius: 4, x: 0, y: 2)
     }
 }
 
