@@ -12,33 +12,49 @@ struct RecipeCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            AsyncImage(url: URL(string: recipe.imageUrl ?? "")) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } placeholder: {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.2))
+            ZStack(alignment: .topTrailing) {
+                AsyncImage(url: URL(string: recipe.imageUrl ?? "")) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    } else {
+                        Rectangle()
+                            .fill(Color.gray.opacity(0.2))
+                    }
+                }
+                .frame(height: 115)
+                .frame(maxWidth: .infinity)
+                .clipped()
+                .cornerRadius(12)
+                
+                Image(systemName: "bookmark.fill")
+                    .font(.system(size: 16))
+                    .foregroundColor(.white)
+                    .padding(8)
+                    .background(Color.white.opacity(0.55))
+                    .clipShape(Circle())
+                    .padding(6)
             }
-            .frame(height: 120)
-            .clipped()
-            .cornerRadius(12)
             
             Text(translatedName ?? recipe.name)
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .lineLimit(2)
+                .font(.system(size: 17, weight: .semibold))
                 .foregroundColor(.primary)
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
             
-            if let category = recipe.category {
-                Text(translatedCategory ?? category)
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            }
+            Text(translatedCategory ?? (recipe.category ?? ""))
+                .font(.system(size: 14))
+                .foregroundColor(.gray)
+                .lineLimit(1)
+            
+            Spacer(minLength: 0)
         }
-        .padding(10)
-        .background(Color(.systemBackground))
-        .cornerRadius(20)
-        .shadow(color: .black.opacity(0.08), radius: 8, x: 0, y: 4)
+        .padding(8)
+        .frame(height: 230)
+        .background(Color.card)
+        .cornerRadius(16)
+        .shadow(color: .black.opacity(0.16), radius: 4, x: 0, y: 2)
     }
 }
+

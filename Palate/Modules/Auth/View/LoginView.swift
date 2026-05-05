@@ -3,8 +3,16 @@
 //  Palate
 //
 
-import Foundation
 import SwiftUI
+import Foundation
+
+private var authHeader: some View {
+    Image("food_bg")
+        .resizable()
+        .scaledToFill()
+        .frame(height: 330)
+        .clipped()
+}
 
 struct LoginView: View {
     @StateObject var presenter: AuthPresenter
@@ -15,26 +23,35 @@ struct LoginView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            header
-                .frame(height: 300)
+            authHeader
             
-            VStack(spacing: 16) {
+            VStack(spacing: 14) {
                 Text(L10n.welcomeTitle)
-                    .font(.system(size: 32, weight: .bold))
-                    .foregroundColor(.accentPurple)
-                    .padding(.bottom, 10)
+                    .font(.custom("Condiment-Regular", size: 42))
+                    .foregroundColor(.accentGreen)
+                    .padding(.bottom, 8)
                 
                 TextField(L10n.email, text: $email)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(12)
+                    .font(.system(size: 14))
+                    .padding(.horizontal, 14)
+                    .frame(height: 42)
+                    .background(Color.white)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.35), lineWidth: 1)
+                    )
                     .autocapitalization(.none)
                     .keyboardType(.emailAddress)
                 
                 SecureField(L10n.password, text: $password)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(12)
+                    .font(.system(size: 14))
+                    .padding(.horizontal, 14)
+                    .frame(height: 42)
+                    .background(Color.white)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.35), lineWidth: 1)
+                    )
                 
                 Button {
                     Task {
@@ -45,56 +62,47 @@ struct LoginView: View {
                     }
                 } label: {
                     if presenter.isLoading {
-                        ProgressView()
-                            .tint(.white)
+                        ProgressView().tint(.white)
                     } else {
                         Text(L10n.login.uppercased())
-                            .fontWeight(.semibold)
+                            .font(.system(size: 13, weight: .bold))
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .padding()
+                .frame(height: 44)
                 .background(presenter.isLoading ? Color.gray : Color.accentPurple)
                 .foregroundColor(.white)
-                .cornerRadius(14)
+                .cornerRadius(8)
+                .shadow(color: .black.opacity(0.18), radius: 5, y: 3)
                 .disabled(presenter.isLoading)
                 
-                Button(L10n.noAccount) {
+                Button {
                     presenter.showRegister()
+                } label: {
+                    Text(L10n.noAccount)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.black)
                 }
-                .font(.caption)
             }
-            .padding()
+            .padding(16)
             .background(Color.white)
-            .cornerRadius(30)
-            .shadow(color: .black.opacity(0.1), radius: 10)
-            .padding()
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.gray.opacity(0.35), lineWidth: 1)
+            )
+            .padding(.horizontal, 16)
+            .offset(y: -8)
             
             Spacer()
         }
-        .background(Color(.systemGray6))
+        .background(Color.white)
         .alert(L10n.errorGeneral, isPresented: .constant(presenter.errorMessage != nil)) {
             Button("OK") {
                 presenter.errorMessage = nil
             }
         } message: {
             Text(presenter.errorMessage ?? "")
-        }
-    }
-    
-    var header: some View {
-        ZStack(alignment: .bottom) {
-            Image("food_bg")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(height: 620)
-                .clipped()
-            
-            LinearGradient(
-                colors: [.clear, .white],
-                startPoint: .top,
-                endPoint: .bottom
-            )
         }
     }
 }

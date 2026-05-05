@@ -34,7 +34,7 @@ struct RecipeDetailView: View {
                                     .fill(Color.gray.opacity(0.3))
                             }
                         }
-                        .frame(height: 300)
+                        .frame(height: 310)
                         .clipped()
                         
                         LinearGradient(
@@ -46,20 +46,20 @@ struct RecipeDetailView: View {
                         
                         VStack(alignment: .leading, spacing: 4) {
                             Text(translatedRecipeName ?? recipe.name)
-                                .font(.largeTitle)
-                                .fontWeight(.bold)
+                                .font(.system(size: 34, weight: .bold))
                                 .foregroundColor(.white)
                             
                             if let cuisine = recipe.cuisine {
                                 Text(translatedCuisine ?? cuisine)
-                                    .font(.subheadline)
+                                    .font(.system(size: 14))
                                     .foregroundColor(.white.opacity(0.9))
                             }
                         }
-                        .padding()
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 28)
                     }
                     
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 24) {
                         if presenter.userRecipe?.status == "cooked" {
                             HStack {
                                 ForEach(1..<6) { star in
@@ -71,7 +71,8 @@ struct RecipeDetailView: View {
                                         }
                                 }
                             }
-                            .padding(.top, 8)
+                            .padding(.horizontal, 24)
+                            .padding(.top, 28)
                         }
                         
                         if presenter.userRecipe?.status != "cooked" {
@@ -98,23 +99,32 @@ struct RecipeDetailView: View {
                                     }
                                 }
                             }
-                            .padding(.vertical)
+                            .frame(maxWidth: .infinity)
                         }
                         
                         if let dateCooked = presenter.userRecipe?.dateCooked,
                            presenter.userRecipe?.status == "cooked" {
-                            Text("\(L10n.cookedOn): \(dateCooked.formatted(date: .abbreviated, time: .omitted))")
-                                .font(.caption)
-                                .foregroundColor(.accentPurple)
+
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(L10n.cookedOn)
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.gray)
+
+                                Text(formattedDate)
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(.accentPurple)
+                            }
+                            .padding(.horizontal, 24)
+                            .padding(.top, 4)
                         }
                         
-                        Text(L10n.ingredients)
+                        SectionHeaderBar(title: L10n.ingredients)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.top, 8)
                         IngredientsView(ingredients: translatedIngredients ?? recipe.ingredients)
                         
-                        Text(L10n.instructions)
+                        SectionHeaderBar(title: L10n.instructions)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.top, 8)
@@ -125,7 +135,6 @@ struct RecipeDetailView: View {
                                     HStack {
                                         ProgressView()
                                             .scaleEffect(0.8)
-                                        Text("Перевожу...")
                                             .font(.caption)
                                             .foregroundColor(.gray)
                                     }
@@ -195,6 +204,14 @@ struct RecipeDetailView: View {
         }
     }
     
+    var formattedDate: String {
+        guard let date = presenter.userRecipe?.dateCooked else { return "" }
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.dateFormat = "d MMMM yyyy"
+        return formatter.string(from: date)
+    }
+    
     private func autoTranslateIfNeeded() async {
         guard let recipe = presenter.recipe else { return }
 
@@ -256,17 +273,19 @@ struct ActionButton: View {
     let color: Color
     let isActive: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
-            HStack {
+            HStack(spacing: 10) {
                 Image(systemName: isActive ? "\(icon).fill" : icon)
+                    .font(.system(size: 18))
                 Text(title)
+                    .font(.system(size: 17, weight: .bold))
             }
             .frame(maxWidth: .infinity)
-            .padding()
-            .background(isActive ? color.opacity(0.2) : color.opacity(0.15))
-            .foregroundColor(isActive ? color : color)
+            .frame(height: 64)
+            .background(color)
+            .foregroundColor(.white)
             .cornerRadius(10)
         }
         .disabled(isActive)
@@ -275,63 +294,63 @@ struct ActionButton: View {
 
 struct IngredientsView: View {
     let ingredients: [Ingredient]
-    
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 28) {
             ForEach(ingredients) { ingredient in
-                HStack {
-                    Text("•")
-                        .foregroundColor(.accentPurple)
-                    Text(ingredient.name)
-                        .fontWeight(.medium)
-                    Spacer()
-                    Text("\(ingredient.amount) \(ingredient.unit)")
-                        .foregroundColor(.gray)
-                }
-                .padding(.vertical, 4)
-                
-                if ingredient.id != ingredients.last?.id {
-                    Divider()
-                }
+                Text("•   \(ingredient.name) — \(ingredient.amount) \(ingredient.unit)")
+                    .font(.system(size: 18))
+                    .foregroundColor(.black)
             }
         }
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(10)
+        .padding(.horizontal, 20)
+        .padding(.top, 22)
     }
 }
 
 struct InstructionsView: View {
     let instructions: String
-    
+
     var body: some View {
-        let steps = instructions.components(separatedBy: "\r\n")
+        let steps = instructions
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
-        
-        VStack(alignment: .leading, spacing: 16) {
-            if steps.isEmpty {
-                Text(instructions)
-                    .font(.body)
-            } else {
-                ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
-                    HStack(alignment: .top) {
-                        Text("\(index + 1)")
-                            .font(.headline)
-                            .foregroundColor(.orange)
-                            .frame(width: 30, height: 30)
-                            .background(Color.orange.opacity(0.1))
-                            .clipShape(Circle())
-                        
-                        Text(step)
-                            .font(.body)
-                            .padding(.leading, 8)
-                    }
-                    .padding(.vertical, 4)
+            .map { step in
+                step
+                    .replacingOccurrences(of: #"(?i)^step\s*\d+\s*"#, with: "", options: .regularExpression)
+            }
+
+        VStack(alignment: .leading, spacing: 32) {
+            ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
+                VStack(alignment: .leading, spacing: 18) {
+                    Text("step \(index + 1)")
+                        .font(.system(size: 18))
+                        .foregroundColor(.black)
+
+                    Text(step)
+                        .font(.system(size: 18))
+                        .lineSpacing(8)
+                        .foregroundColor(.black)
                 }
             }
         }
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(10)
+        .padding(.horizontal, 16)
+        .padding(.top, 22)
+    }
+}
+
+struct SectionHeaderBar: View {
+    let title: String
+
+    var body: some View {
+        Text(title.uppercased())
+            .font(.system(size: 17, weight: .bold))
+            .foregroundColor(.black)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(height: 56)
+            .padding(.horizontal, 24)
+            .background(Color(.systemGray6))
+            .cornerRadius(10)
     }
 }

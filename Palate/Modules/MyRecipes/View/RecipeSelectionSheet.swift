@@ -27,15 +27,27 @@ struct RecipeSelectionSheet: View {
                 .padding(.horizontal)
                 
                 if selectedTab == 0 {
-                    List(customRecipes, id: \.id) { recipe in
-                        recipeButton(recipe)
+                    ScrollView {
+                        LazyVStack(spacing: 12) {
+                            ForEach(customRecipes, id: \.id) { recipe in
+                                recipeButton(recipe)
+                                    .padding(.horizontal, 16)
+                            }
+                        }
+                        .padding(.top, 12)
                     }
                     .refreshable {
                         await loadCustomRecipes()
                     }
                 } else {
-                    List(apiResults, id: \.id) { recipe in
-                        recipeButton(recipe)
+                    ScrollView {
+                        LazyVStack(spacing: 12) {
+                            ForEach(apiResults, id: \.id) { recipe in
+                                recipeButton(recipe)
+                                    .padding(.horizontal, 16)
+                            }
+                        }
+                        .padding(.top, 12)
                     }
                     .searchable(text: $searchText)
                     .onSubmit(of: .search) {
@@ -71,28 +83,46 @@ struct RecipeSelectionSheet: View {
             presenter.assignRecipe(recipe)
             dismiss()
         } label: {
-            HStack {
+            HStack(spacing: 12) {
                 AsyncImage(url: URL(string: recipe.imageUrl ?? "")) { phase in
                     if let image = phase.image {
-                        image.resizable()
-                            .frame(width: 50, height: 50)
-                            .cornerRadius(8)
+                        image
+                            .resizable()
+                            .scaledToFill()
                     } else {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 50, height: 50)
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color(hex: "#EEE8F2"))
                     }
                 }
-                VStack(alignment: .leading) {
+                .frame(width: 72, height: 72)
+                .clipped()
+                .cornerRadius(10)
+
+                VStack(alignment: .leading, spacing: 4) {
                     Text(translatedNames[recipe.id] ?? recipe.name)
-                        .font(.headline)
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(.black)
+                        .lineLimit(2)
+
                     Text(translatedCategories[recipe.category ?? ""] ?? (recipe.category ?? ""))
-                        .font(.caption)
+                        .font(.system(size: 14))
                         .foregroundColor(.gray)
+                        .lineLimit(1)
                 }
+
+                Spacer()
+
+                Image(systemName: "plus")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(.accentPurple)
             }
+            .padding(12)
+            .frame(height: 96)
+            .background(Color.white)
+            .cornerRadius(14)
+            .shadow(color: .black.opacity(0.06), radius: 5, x: 0, y: 3)
         }
-        .foregroundColor(.primary)
+        .buttonStyle(.plain)
         .onAppear {
             Task {
                 await translateRecipeIfNeeded(recipe)

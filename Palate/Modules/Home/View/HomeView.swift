@@ -14,13 +14,12 @@ struct FilterChip: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
-                .background(isSelected ? Color.accentPurple : Color(.systemGray6))
+                .font(.system(size: 16, weight: .semibold))
+                .padding(.horizontal, 22)
+                .padding(.vertical, 12)
+                .background(isSelected ? Color.accentPurple : Color.lightCategoryBg)
                 .foregroundColor(isSelected ? .white : .primary)
-                .cornerRadius(20)
+                .cornerRadius(26)
         }
     }
 }
@@ -32,12 +31,13 @@ struct RecipeCardGrid: View {
     @State private var translatedCategories: [String: String] = [:]
     
     private let columns = [
-        GridItem(.flexible()),
-        GridItem(.flexible())
+        GridItem(.flexible(), spacing: 10),
+        GridItem(.flexible(), spacing: 10),
+        GridItem(.flexible(), spacing: 10)
     ]
     
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 16) {
+        LazyVGrid(columns: columns, spacing: 18) {
             ForEach(recipes) { recipe in
                 Button {
                     onTap(recipe.id)
@@ -56,11 +56,10 @@ struct RecipeCardGrid: View {
                 }
             }
         }
-        .padding(.horizontal)
+        .padding(.horizontal, 14)
     }
     
     private func translateRecipeIfNeeded(_ recipe: Recipe) async {
-        
         if translatedNames[recipe.id] == nil {
             let translatedName = await YandexTranslateService.shared.translateIfNeeded(recipe.name)
             await MainActor.run {
@@ -160,16 +159,13 @@ struct HomeView: View {
                             HStack {
                                 if let cuisine = presenter.selectedCuisine {
                                     Text(cuisine.localizedName)
-                                        .font(.title3)
-                                        .fontWeight(.bold)
+                                        .font(.system(size: 22, weight: .bold))
                                 } else if let mealType = presenter.selectedMealType {
                                     Text(mealType.localizedName)
-                                        .font(.title3)
-                                        .fontWeight(.bold)
+                                        .font(.system(size: 22, weight: .bold))
                                 } else {
                                     Text(L10n.recommendations)
-                                        .font(.title3)
-                                        .fontWeight(.bold)
+                                        .font(.system(size: 22, weight: .bold))
                                 }
                                 
                                 Spacer()
@@ -192,8 +188,7 @@ struct HomeView: View {
                 }
                 .padding(.vertical)
             }
-            .background(Color(.systemGray6))
-            .navigationTitle(L10n.home)
+            .background(Color.white)
             .task {
                 await presenter.loadRecipes()
             }

@@ -15,20 +15,30 @@ struct MyRecipesView: View {
         NavigationView {
             VStack(spacing: 0) {
                 Text(L10n.myCollection)
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
+                    .font(.system(size: 28, weight: .bold))
+                    .padding(.horizontal, 16)
                     .padding(.top, 16)
                     .padding(.bottom, 8)
                 
-                Picker("", selection: $selectedTab) {
-                    Text(L10n.wantToCook).tag(0)
-                    Text(L10n.cooked).tag(1)
-                    Text(L10n.myRecipes).tag(2)
+                HStack(spacing: 16) {
+                    UnderlineTab(title: L10n.wantToCook, isSelected: selectedTab == 0) {
+                        selectedTab = 0
+                    }
+
+                    UnderlineTab(title: L10n.cooked, isSelected: selectedTab == 1) {
+                        selectedTab = 1
+                    }
+
+                    UnderlineTab(title: L10n.myRecipes, isSelected: selectedTab == 2) {
+                        selectedTab = 2
+                    }
                 }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding(.horizontal)
+                .padding(.horizontal, 16)
+                .overlay(alignment: .bottom) {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.25))
+                        .frame(height: 1)
+                }
                 .padding(.bottom, 8)
                 
                 TabView(selection: $selectedTab) {
@@ -71,7 +81,7 @@ struct MyRecipesView: View {
             emptyStateView(text: L10n.noRecipesWant)
         } else {
             ScrollView {
-                LazyVStack(spacing: 4) {
+                LazyVStack(spacing: 8) {
                     ForEach(presenter.wantToCookRecipes, id: \.id) { recipe in
                         WantToCookCard(
                             recipe: recipe,
@@ -82,7 +92,7 @@ struct MyRecipesView: View {
                             onTap: { presenter.didSelectRecipe(recipe) }
                         )
                         .padding(.horizontal, 16)
-                        .padding(.vertical, 2)
+                        .padding(.vertical, 4)
                         .onAppear {
                             Task {
                                 await translateIfNeeded(recipe: recipe, nameKey: recipe.id, categoryKey: recipe.category ?? "")
@@ -104,7 +114,7 @@ struct MyRecipesView: View {
             emptyStateView(text: L10n.noRecipesCooked)
         } else {
             ScrollView {
-                LazyVStack(spacing: 4) {
+                LazyVStack(spacing: 8) {
                     ForEach(Array(zip(presenter.cookedRecipes, presenter.cookedUserRecipes)), id: \.0.id) { recipe, userRecipe in
                         CookedCard(
                             recipe: recipe,
@@ -143,7 +153,7 @@ struct MyRecipesView: View {
                 emptyStateView(text: L10n.noRecipesCustom)
             } else {
                 ScrollView {
-                    LazyVStack(spacing: 4) {
+                    LazyVStack(spacing: 8) {
                         ForEach(presenter.myRecipes, id: \.id) { recipe in
                             MyRecipeCard(
                                 recipe: recipe,
@@ -207,58 +217,72 @@ struct WantToCookCard: View {
     let onCook: () -> Void
     let onDelete: () -> Void
     let onTap: () -> Void
-    
+
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 12) {
-                AsyncImage(url: URL(string: recipe.imageUrl ?? "")) { phase in
-                    if let image = phase.image {
-                        image.resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 70, height: 70)
-                            .cornerRadius(12)
-                    } else {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 70, height: 70)
-                    }
-                }
-                .frame(width: 70, height: 70)
-                
-                VStack(alignment: .leading, spacing: 4) {
+                recipeImage
+
+                VStack(alignment: .leading, spacing: 3) {
                     Text(translatedName ?? recipe.name)
-                        .font(.headline)
-                        .lineLimit(2)
+                        .font(.system(size: 18, weight: .semibold))
+                        .lineLimit(1)
+
                     Text(translatedCategory ?? (recipe.category ?? ""))
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                }
-                
-                Spacer()
-                
-                Button(action: onCook) {
-                    Text(L10n.cooked)
-                        .font(.caption)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(Color.green)
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray.opacity(0.8))
+                        .lineLimit(1)
+
+                    Button(action: onCook) {
+                        HStack(spacing: 5) {
+                            Image(systemName: "checkmark")
+                            Text(L10n.cooked)
+                        }
+                        .font(.system(size: 14))
+                        .fontWeight(.semibold)
                         .foregroundColor(.white)
-                        .cornerRadius(16)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 5)
+                        .background(Color.accentGreen)
+                        .cornerRadius(6)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.top, 6)
                 }
-                .buttonStyle(BorderlessButtonStyle())
-                
+
+                Spacer()
+
                 Button(action: onDelete) {
                     Image(systemName: "trash")
+                        .font(.system(size: 16))
                         .foregroundColor(.red)
                 }
-                .buttonStyle(BorderlessButtonStyle())
+                .buttonStyle(.plain)
             }
-            .padding(8)
-            .background(Color(.systemBackground))
-            .cornerRadius(16)
-            .shadow(color: .black.opacity(0.05), radius: 4)
+            .padding(12)
+            .frame(height: 120)
+            .background(Color.white)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.accentGreen.opacity(0.7), lineWidth: 1)
+            )
+            .cornerRadius(12)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
+    }
+
+    private var recipeImage: some View {
+        AsyncImage(url: URL(string: recipe.imageUrl ?? "")) { phase in
+            if let image = phase.image {
+                image.resizable().scaledToFill()
+            } else {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.gray.opacity(0.2))
+            }
+        }
+        .frame(width: 92, height: 92)
+        .clipped()
+        .cornerRadius(8)
     }
 }
 
@@ -272,6 +296,7 @@ struct CookedCard: View {
     let onDelete: () -> Void
     let onTap: () -> Void
     let onRatingChanged: (Int) -> Void
+
     @State private var localRating: Int
 
     init(recipe: Recipe, translatedName: String?, translatedCategory: String?, rating: Int, dateCooked: Date?, onNotes: @escaping () -> Void, onDelete: @escaping () -> Void, onTap: @escaping () -> Void, onRatingChanged: @escaping (Int) -> Void) {
@@ -289,33 +314,23 @@ struct CookedCard: View {
 
     var body: some View {
         Button(action: onTap) {
-            HStack(alignment: .center, spacing: 12) {
-                AsyncImage(url: URL(string: recipe.imageUrl ?? "")) { phase in
-                    if let image = phase.image {
-                        image.resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 70, height: 70)
-                            .cornerRadius(12)
-                    } else {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 70, height: 70)
-                    }
-                }
-                .frame(width: 70, height: 70)
+            HStack(spacing: 12) {
+                recipeImage
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(translatedName ?? recipe.name)
-                        .font(.headline)
-                        .lineLimit(2)
-                    Text(translatedCategory ?? (recipe.category ?? ""))
-                        .font(.caption)
-                        .foregroundColor(.gray)
+                        .font(.system(size: 18, weight: .semibold))
+                        .lineLimit(1)
 
-                    HStack(spacing: 2) {
+                    Text(translatedCategory ?? (recipe.category ?? ""))
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray.opacity(0.8))
+                        .lineLimit(1)
+
+                    HStack(spacing: 1) {
                         ForEach(1..<6) { star in
                             Image(systemName: star <= localRating ? "star.fill" : "star")
-                                .font(.caption)
+                                .font(.system(size: 14))
                                 .foregroundColor(.yellow)
                                 .onTapGesture {
                                     localRating = star
@@ -326,8 +341,9 @@ struct CookedCard: View {
 
                     if let date = dateCooked {
                         Text("\(L10n.cookedOn): \(date.formatted(date: .abbreviated, time: .omitted))")
-                            .font(.caption2)
+                            .font(.footnote)
                             .foregroundColor(.gray)
+                            .lineLimit(1)
                     }
                 }
 
@@ -335,26 +351,45 @@ struct CookedCard: View {
 
                 Button(action: onNotes) {
                     Image(systemName: "note.text")
-                        .font(.title3)
+                        .font(.system(size: 17))
                         .foregroundColor(.accentPurple)
                 }
-                .buttonStyle(BorderlessButtonStyle())
+                .buttonStyle(.plain)
 
                 Button(action: onDelete) {
                     Image(systemName: "trash")
+                        .font(.system(size: 16))
                         .foregroundColor(.red)
                 }
-                .buttonStyle(BorderlessButtonStyle())
+                .buttonStyle(.plain)
             }
-            .padding(10)
-            .background(Color(.systemBackground))
-            .cornerRadius(16)
-            .shadow(color: .black.opacity(0.05), radius: 4)
+            .padding(12)
+            .frame(height: 120)
+            .background(Color.white)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.accentGreen.opacity(0.7), lineWidth: 1)
+            )
+            .cornerRadius(12)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
         .onAppear {
             localRating = rating
         }
+    }
+
+    private var recipeImage: some View {
+        AsyncImage(url: URL(string: recipe.imageUrl ?? "")) { phase in
+            if let image = phase.image {
+                image.resizable().scaledToFill()
+            } else {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.gray.opacity(0.2))
+            }
+        }
+        .frame(width: 92, height: 92)
+        .clipped()
+        .cornerRadius(8)
     }
 }
 
@@ -365,52 +400,97 @@ struct MyRecipeCard: View {
     let onEdit: () -> Void
     let onDelete: () -> Void
     let onTap: () -> Void
-    
+
     var body: some View {
         Button(action: onTap) {
-            HStack(alignment: .center, spacing: 12) {
-                AsyncImage(url: URL(string: recipe.imageUrl ?? "")) { phase in
-                    if let image = phase.image {
-                        image.resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 70, height: 70)
-                            .cornerRadius(12)
-                    } else {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 70, height: 70)
-                    }
-                }
-                .frame(width: 70, height: 70)
-                
-                VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 12) {
+                recipeImage
+
+                VStack(alignment: .leading, spacing: 3) {
                     Text(translatedName ?? recipe.name)
-                        .font(.headline)
-                        .lineLimit(2)
+                        .font(.system(size: 18, weight: .semibold))
+                        .lineLimit(1)
+
                     Text(translatedCategory ?? (recipe.category ?? ""))
-                        .font(.caption)
-                        .foregroundColor(.gray)
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray.opacity(0.8))
+                        .lineLimit(1)
+
+                    Button(action: onEdit) {
+                        HStack(spacing: 5) {
+                            Image(systemName: "pencil")
+                            Text(L10n.editRecipe)
+                        }
+                        .font(.system(size: 14))
+                        .foregroundColor(.white)
+                        .fontWeight(.semibold)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 5)
+                        .background(Color.accentGreen)
+                        .cornerRadius(6)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.top, 6)
                 }
-                
+
                 Spacer()
-                
-                Button(action: onEdit) {
-                    Image(systemName: "pencil")
-                        .foregroundColor(.blue)
-                }
-                .buttonStyle(BorderlessButtonStyle())
-                
+
                 Button(action: onDelete) {
                     Image(systemName: "trash")
+                        .font(.system(size: 16))
                         .foregroundColor(.red)
                 }
-                .buttonStyle(BorderlessButtonStyle())
+                .buttonStyle(.plain)
             }
-            .padding(8)
-            .background(Color(.systemBackground))
-            .cornerRadius(16)
-            .shadow(color: .black.opacity(0.05), radius: 4)
+            .padding(12)
+            .frame(height: 120)
+            .background(Color.white)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.gray.opacity(0.35), lineWidth: 1)
+            )
+            .cornerRadius(12)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
+    }
+
+    private var recipeImage: some View {
+        AsyncImage(url: URL(string: recipe.imageUrl ?? "")) { phase in
+            if let image = phase.image {
+                image.resizable().scaledToFill()
+            } else {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.gray.opacity(0.2))
+            }
+        }
+        .frame(width: 92, height: 92)
+        .clipped()
+        .cornerRadius(8)
     }
 }
+struct UnderlineTab: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 8) {
+                Text(title)
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(isSelected ? .accentPurple : Color.black.opacity(0.7))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+
+                Rectangle()
+                    .fill(isSelected ? Color.accentPurple : Color.clear)
+                    .frame(height: 4)
+                    .cornerRadius(2)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 52)
+        }
+        .buttonStyle(.plain)
+    }
+}
+

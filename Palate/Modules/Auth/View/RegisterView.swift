@@ -6,6 +6,14 @@
 import Foundation
 import SwiftUI
 
+private var authHeader: some View {
+    Image("food_bg")
+        .resizable()
+        .scaledToFill()
+        .frame(height: 330)
+        .clipped()
+}
+
 struct RegisterView: View {
     @StateObject var presenter: AuthPresenter
     @Environment(\.dismiss) var dismiss
@@ -17,88 +25,91 @@ struct RegisterView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            header
-                .frame(height: 300)
+            authHeader
             
-            VStack(spacing: 16) {
-                TextField(L10n.name, text: $name)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(12)
+            VStack(spacing: 12) {
+                Text(L10n.welcomeTitle)
+                    .font(.custom("Condiment-Regular", size: 42))
+                    .foregroundColor(.accentGreen)
+                    .padding(.bottom, 8)
                 
-                TextField(L10n.email, text: $email)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(12)
+                authField(L10n.name, text: $name)
+                
+                authField(L10n.email, text: $email)
                     .autocapitalization(.none)
                     .keyboardType(.emailAddress)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    SecureField(L10n.password, text: $password)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(12)
+                    authSecureField(L10n.password, text: $password)
                     
                     Text(L10n.minPassword)
-                        .font(.caption)
+                        .font(.system(size: 11))
                         .foregroundColor(password.count >= 6 ? .green : .gray)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    SecureField(L10n.confirmPassword, text: $confirmPassword)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(12)
+                    authSecureField(L10n.confirmPassword, text: $confirmPassword)
                     
                     if !confirmPassword.isEmpty {
-                        HStack {
+                        HStack(spacing: 4) {
                             Image(systemName: password == confirmPassword ? "checkmark.circle.fill" : "xmark.circle.fill")
-                                .font(.caption)
-                                .foregroundColor(password == confirmPassword ? .green : .red)
                             Text(password == confirmPassword ? L10n.passwordsMatch : L10n.passwordsDontMatch)
-                                .font(.caption)
-                                .foregroundColor(password == confirmPassword ? .green : .red)
                         }
+                        .font(.system(size: 11))
+                        .foregroundColor(password == confirmPassword ? .green : .red)
                     }
                 }
                 
                 Button {
                     Task {
-                        await presenter.register(email: email, password: password, confirmPassword: confirmPassword, displayName: name)
+                        await presenter.register(
+                            email: email,
+                            password: password,
+                            confirmPassword: confirmPassword,
+                            displayName: name
+                        )
                         if presenter.isAuthenticated {
                             dismiss()
                         }
                     }
                 } label: {
                     if presenter.isLoading {
-                        ProgressView()
-                            .tint(.white)
+                        ProgressView().tint(.white)
                     } else {
                         Text(L10n.register.uppercased())
-                            .fontWeight(.semibold)
+                            .font(.system(size: 13, weight: .bold))
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .padding()
+                .frame(height: 44)
                 .background(isValid && !presenter.isLoading ? Color.accentPurple : Color.gray)
                 .foregroundColor(.white)
-                .cornerRadius(12)
+                .cornerRadius(8)
+                .shadow(color: .black.opacity(0.18), radius: 5, y: 3)
                 .disabled(!isValid || presenter.isLoading)
+                .padding(.top, 6)
                 
-                Button(L10n.alreadyHaveAccount) {
+                Button {
                     presenter.showLogin()
+                } label: {
+                    Text(L10n.alreadyHaveAccount)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.black)
                 }
-                .font(.caption)
             }
-            .padding()
+            .padding(16)
             .background(Color.white)
-            .cornerRadius(30)
-            .shadow(color: .black.opacity(0.1), radius: 10)
-            .padding()
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.gray.opacity(0.35), lineWidth: 1)
+            )
+            .padding(.horizontal, 16)
+            .offset(y: -8)
             
             Spacer()
         }
-        .background(Color(.systemGray6))
+        .background(Color.white)
         .alert(L10n.errorGeneral, isPresented: .constant(presenter.errorMessage != nil)) {
             Button("OK") {
                 presenter.errorMessage = nil
@@ -108,30 +119,34 @@ struct RegisterView: View {
         }
     }
     
-    var header: some View {
-        ZStack(alignment: .bottom) {
-            Image("food_bg")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(height: 620)
-                .clipped()
-            
-            LinearGradient(
-                colors: [.clear, .white],
-                startPoint: .top,
-                endPoint: .bottom
+    private func authField(_ title: String, text: Binding<String>) -> some View {
+        TextField(title, text: text)
+            .font(.system(size: 14))
+            .padding(.horizontal, 14)
+            .frame(height: 42)
+            .background(Color.white)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.gray.opacity(0.35), lineWidth: 1)
             )
-            
-            Text("Palate")
-                .font(.system(size: 32, weight: .bold))
-                .foregroundColor(.accentPurple)
-                .padding(.bottom, 10)
-        }
+    }
+    
+    private func authSecureField(_ title: String, text: Binding<String>) -> some View {
+        SecureField(title, text: text)
+            .font(.system(size: 14))
+            .padding(.horizontal, 14)
+            .frame(height: 42)
+            .background(Color.white)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.gray.opacity(0.35), lineWidth: 1)
+            )
     }
     
     var isValid: Bool {
         !name.trimmingCharacters(in: .whitespaces).isEmpty &&
-        email.contains("@") && email.contains(".") &&
+        email.contains("@") &&
+        email.contains(".") &&
         password.count >= 6 &&
         password == confirmPassword
     }

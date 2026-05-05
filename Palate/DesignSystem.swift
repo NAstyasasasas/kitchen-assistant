@@ -12,9 +12,28 @@ extension Color {
     static let cardBackground = Color.white
     static let bg = Color(.systemGray6)
     static let card = Color.white
-    
-    static let accentPurple = Color(red: 0.62, green: 0.36, blue: 1.0)
-    static let accentGreen = Color(red: 0.5, green: 0.9, blue: 0.4)
+
+    static let accentPurple = Color(hex: "#B351F4")
+    static let accentGreen = Color(hex: "#84CC16")
+
+    static let lightCategoryBg = Color(hex: "#EAEAEA")
+    static let searchBorder = Color(hex: "#B3B3B3")
+    static let searchPlaceholder = Color(hex: "#D9D9D9")
+}
+
+extension Color {
+    init(hex: String) {
+        let hex = hex.replacingOccurrences(of: "#", with: "")
+        let scanner = Scanner(string: hex)
+        var value: UInt64 = 0
+        scanner.scanHexInt64(&value)
+
+        let r = Double((value >> 16) & 0xFF) / 255
+        let g = Double((value >> 8) & 0xFF) / 255
+        let b = Double(value & 0xFF) / 255
+
+        self.init(red: r, green: g, blue: b)
+    }
 }
 
 struct CardModifier: ViewModifier {

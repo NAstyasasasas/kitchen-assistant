@@ -15,6 +15,7 @@ struct ShoppingListView: View {
     @State private var editItem: ShoppingItem?
     @State private var editQuantity = ""
     @State private var editUnit = ""
+    @State private var editName = ""
     
     @State private var showDeleteAllAlert = false
     @State private var itemToDelete: ShoppingItem?
@@ -22,26 +23,56 @@ struct ShoppingListView: View {
     
     var body: some View {
         NavigationView {
-            VStack(alignment: .leading, spacing: 0) {
-                Text(L10n.shoppingList)
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .padding(.horizontal)
-                    .padding(.top, 16)
-                
+            VStack(spacing: 0) {
+                HStack {
+                    Spacer()
+
+                    Text(L10n.shoppingList)
+                        .font(.system(size: 28, weight: .bold))
+
+                    Spacer()
+
+                    Button {
+                        showDeleteAllAlert = true
+                    } label: {
+                        Image(systemName: "trash")
+                            .font(.system(size: 24))
+                            .foregroundColor(.red)
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 20)
+                .padding(.bottom, 24)
+
                 HStack(spacing: 8) {
                     TextField(L10n.addItemName, text: $newItemName)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                    
+                        .font(.system(size: 14))
+                        .padding(.horizontal, 12)
+                        .frame(height: 40)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.gray.opacity(0.45), lineWidth: 1.3)
+                        )
+
                     TextField(L10n.addItemQuantity, text: $newItemQuantity)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .font(.system(size: 14))
                         .keyboardType(.decimalPad)
-                        .frame(width: 70)
-                    
+                        .padding(.horizontal, 12)
+                        .frame(width: 90, height: 40)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.gray.opacity(0.45), lineWidth: 1.3)
+                        )
+
                     TextField(L10n.addItemUnit, text: $newItemUnit)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .frame(width: 60)
-                    
+                        .font(.system(size: 14))
+                        .padding(.horizontal, 12)
+                        .frame(width: 80, height: 40)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.gray.opacity(0.45), lineWidth: 1.3)
+                        )
+
                     Button {
                         let quantity = Double(newItemQuantity) ?? 0
                         presenter.addItem(name: newItemName, quantity: quantity, unit: newItemUnit)
@@ -49,89 +80,56 @@ struct ShoppingListView: View {
                         newItemQuantity = ""
                         newItemUnit = ""
                     } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(newItemName.isEmpty ? .gray : .accentPurple)
+                        Image(systemName: "plus")
+                            .font(.system(size: 25, weight: .bold))
+                            .foregroundColor(.white)
+                            .frame(width: 40, height: 40)
+                            .background(newItemName.isEmpty ? Color.gray : Color.accentGreen)
+                            .cornerRadius(10)
                     }
                     .disabled(newItemName.isEmpty)
                 }
-                .padding(.horizontal)
-                .padding(.top, 8)
-                .padding(.bottom, 8)
-                
+                .padding(.horizontal, 22)
+                .padding(.bottom, 22)
+
                 if presenter.items.isEmpty {
                     Spacer()
-                    VStack(spacing: 20) {
+
+                    VStack(spacing: 16) {
                         Image(systemName: "cart")
-                            .font(.system(size: 60))
+                            .font(.system(size: 40))
                             .foregroundColor(.gray)
+
                         Text(L10n.shoppingListEmpty)
                             .foregroundColor(.gray)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 100)
+
                     Spacer()
                 } else {
-                    List {
-                        ForEach(presenter.items, id: \.self) { item in
-                            HStack(spacing: 12) {
-                                Button {
-                                    presenter.toggleBought(item)
-                                } label: {
-                                    Image(systemName: item.isBought ? "checkmark.circle.fill" : "circle")
-                                        .foregroundColor(item.isBought ? .green : .gray)
-                                }
-                                .buttonStyle(BorderlessButtonStyle())
-                                
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(item.name ?? "")
-                                        .strikethrough(item.isBought)
-                                        .foregroundColor(item.isBought ? .gray : .primary)
-                                        .font(.body)
-                                    
-                                    if item.quantity > 0 || !(item.unit?.isEmpty ?? true) {
-                                        Text("\(item.quantity, specifier: "%.2f") \(item.unit ?? "")")
-                                            .font(.caption)
-                                            .foregroundColor(.gray)
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            ForEach(presenter.items, id: \.self) { item in
+                                ShoppingItemCard(
+                                    item: item,
+                                    onToggle: {
+                                        presenter.toggleBought(item)
+                                    },
+                                    onEdit: {
+                                        editName = item.name ?? ""
+                                        editItem = item
+                                        editQuantity = String(item.quantity)
+                                        editUnit = item.unit ?? ""
                                     }
-                                }
-                                
-                                Spacer()
-                                
-                                Button {
-                                    editItem = item
-                                    editQuantity = String(item.quantity)
-                                    editUnit = item.unit ?? ""
-                                } label: {
-                                    Image(systemName: "pencil")
-                                        .foregroundColor(.accentPurple)
-                                }
-                                .buttonStyle(BorderlessButtonStyle())
-                            }
-                            .padding(.vertical, 4)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button(role: .destructive) {
-                                    itemToDelete = item
-                                    showDeleteAlert = true
-                                } label: {
-                                    Label(L10n.delete, systemImage: "trash")
-                                }
+                                )
                             }
                         }
-                    }
-                    .listStyle(PlainListStyle())
-                }
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        showDeleteAllAlert = true
-                    }) {
-                        Image(systemName: "trash")
-                            .foregroundColor(.red)
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 90)
                     }
                 }
             }
+            .background(Color.white)
+            .navigationBarHidden(true)
             .alert(L10n.deleteAllConfirm, isPresented: $showDeleteAllAlert) {
                 Button(L10n.delete, role: .destructive) {
                     presenter.deleteAllItems()
@@ -139,19 +137,6 @@ struct ShoppingListView: View {
                 Button(L10n.cancel, role: .cancel) { }
             } message: {
                 Text(L10n.deleteAllMessage)
-            }
-            .alert(L10n.deleteItemConfirm, isPresented: $showDeleteAlert) {
-                Button(L10n.delete, role: .destructive) {
-                    if let item = itemToDelete {
-                        presenter.deleteItem(item)
-                        itemToDelete = nil
-                    }
-                }
-                Button(L10n.cancel, role: .cancel) {
-                    itemToDelete = nil
-                }
-            } message: {
-                Text(L10n.deleteItemMessage)
             }
             .sheet(item: $editItem) { item in
                 editProductSheet(item: item)
@@ -166,6 +151,7 @@ struct ShoppingListView: View {
     private func editProductSheet(item: ShoppingItem) -> some View {
         NavigationView {
             Form {
+                TextField(L10n.addItemName, text: $editName)
                 TextField(L10n.editQuantity, text: $editQuantity)
                     .keyboardType(.decimalPad)
                 TextField(L10n.editUnit, text: $editUnit)
@@ -181,11 +167,74 @@ struct ShoppingListView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(L10n.save) {
                         let quantity = Double(editQuantity) ?? item.quantity
+                        item.name = editName
                         presenter.updateItem(item, quantity: quantity, unit: editUnit)
                         editItem = nil
                     }
                 }
             }
         }
+    }
+}
+
+struct ShoppingItemCard: View {
+    let item: ShoppingItem
+    let onToggle: () -> Void
+    let onEdit: () -> Void
+
+    private var quantityText: String {
+        if item.quantity > 0 || !(item.unit?.isEmpty ?? true) {
+            return "\(item.quantity.cleanString) \(item.unit ?? "")"
+        }
+        return ""
+    }
+
+    var body: some View {
+        HStack(spacing: 16) {
+            Button(action: onToggle) {
+                Image(systemName: item.isBought ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 26))
+                    .foregroundColor(item.isBought ? .accentGreen : Color.gray.opacity(0.45))
+            }
+            .buttonStyle(.plain)
+
+            Text(displayText)
+                .font(.system(size: 17, weight: .regular))
+                .foregroundColor(item.isBought ? .gray : .black)
+                .strikethrough(item.isBought)
+                .lineLimit(1)
+
+            Spacer()
+
+            Button(action: onEdit) {
+                Image(systemName: "pencil")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.gray)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 20)
+        .frame(height: 45)
+        .background(Color.white)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.gray.opacity(0.35), lineWidth: 1.3)
+        )
+    }
+
+    private var displayText: String {
+        let name = item.name ?? ""
+        if quantityText.isEmpty {
+            return name
+        }
+        return "\(name) - \(quantityText)"
+    }
+}
+
+private extension Double {
+    var cleanString: String {
+        truncatingRemainder(dividingBy: 1) == 0
+        ? String(format: "%.0f", self)
+        : String(format: "%.2f", self)
     }
 }

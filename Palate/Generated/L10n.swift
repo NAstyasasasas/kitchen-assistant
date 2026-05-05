@@ -120,6 +120,10 @@ public enum L10n {
   public static var errorNetwork: String { return L10n.tr("Localizable", "error_network", fallback: "Network error") }
   /// Password must be at least 6 characters
   public static var errorWeakPassword: String { return L10n.tr("Localizable", "error_weak_password", fallback: "Password must be at least 6 characters") }
+  /// Example: Italia
+  public static var exampleItalia: String { return L10n.tr("Localizable", "example-italia", fallback: "Example: Italia") }
+  /// Example: Pasta
+  public static var examplePasta: String { return L10n.tr("Localizable", "example-pasta", fallback: "Example: Pasta") }
   /// Failed to save notes
   public static var failedToSaveNotes: String { return L10n.tr("Localizable", "failed_to_save_notes", fallback: "Failed to save notes") }
   /// Failed to save rating
@@ -152,6 +156,8 @@ public enum L10n {
   public static var ingredientsAlreadyInListMessage: String { return L10n.tr("Localizable", "ingredients_already_in_list_message", fallback: "These ingredients have already been added to the shopping list. Add again?") }
   /// Please add at least one ingredient
   public static var ingredientsRequired: String { return L10n.tr("Localizable", "ingredients_required", fallback: "Please add at least one ingredient") }
+  /// Enter cooking instructions. Each step on a new line.
+  public static var inputInstruction: String { return L10n.tr("Localizable", "input-instruction", fallback: "Enter cooking instructions. Each step on a new line.") }
   /// Instructions
   public static var instructions: String { return L10n.tr("Localizable", "instructions", fallback: "Instructions") }
   /// Please enter cooking instructions
@@ -162,6 +168,10 @@ public enum L10n {
   public static var japanese: String { return L10n.tr("Localizable", "japanese", fallback: "Japanese") }
   /// Lamb
   public static var lamb: String { return L10n.tr("Localizable", "lamb", fallback: "Lamb") }
+  /// Language
+  public static var language: String { return L10n.tr("Localizable", "language", fallback: "Language") }
+  /// Load photo
+  public static var loadPhoto: String { return L10n.tr("Localizable", "load-photo", fallback: "Load photo") }
   /// Error loading recipe
   public static var loadRecipeError: String { return L10n.tr("Localizable", "load_recipe_error", fallback: "Error loading recipe") }
   /// Login
@@ -228,6 +238,8 @@ public enum L10n {
   public static var potato: String { return L10n.tr("Localizable", "potato", fallback: "Potato") }
   /// Profile
   public static var profile: String { return L10n.tr("Localizable", "profile", fallback: "Profile") }
+  /// Shopping
+  public static var purchases: String { return L10n.tr("Localizable", "purchases", fallback: "Shopping") }
   /// Add again
   public static var recipeConfirmationAddAgain: String { return L10n.tr("Localizable", "recipe_confirmation_add_again", fallback: "Add again") }
   /// Ingredients from this recipe are already in the list. Add again?

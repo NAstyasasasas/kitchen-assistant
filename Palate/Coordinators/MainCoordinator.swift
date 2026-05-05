@@ -43,7 +43,7 @@ final class MainCoordinator: Coordinator {
                     
             shoppingListView
                 .tabItem {
-                    Label(L10n.shoppingList, systemImage: "cart.fill")
+                    Label(L10n.purchases, systemImage: "cart.fill")
                 }
                     
             profileView
