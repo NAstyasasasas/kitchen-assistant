@@ -43,20 +43,20 @@ final class ShoppingListPresenter: ObservableObject {
     
     func checkAndAddRecipe(_ recipe: Recipe) {
         Task {
-            let hasConflicts = await Task { () -> Bool in
-                return self.interactor.recipeHasConflicts(recipe)
-            }.value
+            let hasConflicts = await interactor.recipeHasConflicts(recipe)
+
             await MainActor.run {
                 if hasConflicts {
                     self.pendingRecipe = recipe
                     self.showRecipeConfirmation = true
-                } else {
-                    Task {
-                        await self.interactor.addWholeRecipe(recipe)
-                        await MainActor.run {
-                            self.loadData()
-                        }
-                    }
+                }
+            }
+
+            if !hasConflicts {
+                await interactor.addWholeRecipe(recipe)
+
+                await MainActor.run {
+                    self.loadData()
                 }
             }
         }

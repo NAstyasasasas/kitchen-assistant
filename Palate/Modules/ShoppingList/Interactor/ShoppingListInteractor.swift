@@ -17,8 +17,12 @@ protocol ShoppingListInteractorProtocol {
     func toggleBought(_ item: ShoppingItem)
     func syncWithFirebase() async
     
-    func recipeHasConflicts(_ recipe: Recipe) -> Bool
+    func recipeHasConflicts(_ recipe: Recipe) async -> Bool
     func addWholeRecipe(_ recipe: Recipe) async
+}
+
+protocol ShoppingListInteractorDelegate: AnyObject {
+    func didDetectDuplicate()
 }
 
 final class ShoppingListInteractor: ShoppingListInteractorProtocol {
@@ -26,6 +30,7 @@ final class ShoppingListInteractor: ShoppingListInteractorProtocol {
     private let db = Firestore.firestore()
     
     private var userId: String? { Auth.auth().currentUser?.uid }
+    weak var delegate: ShoppingListInteractorDelegate?
     
     func fetchItems() -> [ShoppingItem] {
         let request: NSFetchRequest<ShoppingItem> = ShoppingItem.fetchRequest()
@@ -42,15 +47,28 @@ final class ShoppingListInteractor: ShoppingListInteractorProtocol {
     }
     
     func addItem(name: String, quantity: Double, unit: String) {
-        let newItem = ShoppingItem(context: context)
-        newItem.id = UUID()
-        newItem.name = name
-        newItem.quantity = quantity
-        newItem.unit = unit
-        newItem.isBought = false
-        newItem.createdAt = Date()
+        let existingItems = fetchItems()
+
+        if existingItems.contains(where: {
+            normalize($0.name) == normalize(name) && !$0.isBought
+        }) {
+            delegate?.didDetectDuplicate()
+            return
+        }
+
+        let item = ShoppingItem(context: context)
+        item.id = UUID()
+        item.name = name
+        item.quantity = quantity
+        item.unit = unit
+        item.isBought = false
+        item.createdAt = Date()
+
         saveContext()
-        Task { await syncToFirestore(item: newItem) }
+
+        Task {
+            await syncToFirestore(item: item)
+        }
     }
     
     func updateItem(_ item: ShoppingItem) {
@@ -79,33 +97,40 @@ final class ShoppingListInteractor: ShoppingListInteractorProtocol {
         Task { await syncToFirestore(item: item) }
     }
     
-    func recipeHasConflicts(_ recipe: Recipe) -> Bool {
+    private func displayNameForShoppingList(_ name: String) async -> String {
+        if LanguageManager.shared.isRussian {
+            return await YandexTranslateService.shared.translateIfNeeded(name)
+        } else {
+            return name
+        }
+    }
+    
+    func recipeHasConflicts(_ recipe: Recipe) async -> Bool {
         let existingItems = fetchItems()
-        
+
         for ingredient in recipe.ingredients {
-            let (quantity, unit, isNumeric) = parseIngredient(ingredient)
-            
-            let name = normalize(ingredient.name)
-            let normalizedUnit = normalize(unit)
-            
+            let finalName = await displayNameForShoppingList(ingredient.name)
+            let (_, unit, isNumeric) = parseIngredient(ingredient)
+
+            let name = normalize(finalName)
+            let normalizedUnit = normalize(LanguageManager.shared.isRussian ? translateUnit(unit) : unit)
+
             if isNumeric {
                 let exists = existingItems.contains { item in
                     normalize(item.name) == name &&
                     normalize(item.unit) == normalizedUnit &&
-                    item.isBought == false
+                    !item.isBought
                 }
-                
                 if exists { return true }
             } else {
                 let exists = existingItems.contains { item in
                     normalize(item.name) == name &&
-                    item.isBought == false
+                    !item.isBought
                 }
-                
                 if exists { return true }
             }
         }
-        
+
         return false
     }
     
@@ -118,52 +143,66 @@ final class ShoppingListInteractor: ShoppingListInteractorProtocol {
     
     func addWholeRecipe(_ recipe: Recipe) async {
         var existingItems = fetchItems()
+        let shouldTranslate = LanguageManager.shared.isRussian
+        
 
         for ingredient in recipe.ingredients {
+            var finalName = ingredient.name
+            var finalUnit = ""
+            
+            if shouldTranslate {
+                do {
+                    finalName = try await YandexTranslateService.shared.translate(text: ingredient.name, to: "ru")
+                } catch {
+                    print("Ошибка перевода: \(error)")
+                }
+            }
+            
             let (quantity, unit, isNumeric) = parseIngredient(ingredient)
-            let normalizedName = ingredient.name.lowercased().trimmingCharacters(in: .whitespaces)
-            let normalizedUnit = unit.lowercased().trimmingCharacters(in: .whitespaces)
+            let normalizedName = finalName.lowercased().trimmingCharacters(in: .whitespaces)
+            
+            if isNumeric && !unit.isEmpty && shouldTranslate {
+                finalUnit = translateUnit(unit)
+                print("📏 \(unit) → \(finalUnit)")
+            } else {
+                finalUnit = unit
+            }
+            let normalizedUnit = finalUnit.lowercased().trimmingCharacters(in: .whitespaces)
 
             if isNumeric && quantity > 0 {
-                mergeIngredient(
-                    name: normalizedName,
-                    quantity: quantity,
-                    unit: normalizedUnit,
-                    existingItems: &existingItems
-                )
+                if let existing = existingItems.first(where: {
+                    normalize($0.name) == normalizedName &&
+                    normalize($0.unit) == normalizedUnit &&
+                    !$0.isBought
+                }) {
+                    existing.quantity += quantity
+                    updateItem(existing)
+                } else {
+                    addItem(name: finalName, quantity: quantity, unit: finalUnit)
+                    existingItems.append(fetchItems().last!)
+                }
             } else {
                 let amountTrimmed = ingredient.amount.trimmingCharacters(in: .whitespaces)
                 if let doubleQuantity = Double(amountTrimmed), doubleQuantity > 0 {
-                    let unitTrimmed = ingredient.unit.lowercased().trimmingCharacters(in: .whitespaces)
-                    mergeIngredient(
-                        name: normalizedName,
-                        quantity: doubleQuantity,
-                        unit: unitTrimmed,
-                        existingItems: &existingItems
-                    )
+                    if let existing = existingItems.first(where: {
+                        normalize($0.name) == normalizedName &&
+                        normalize($0.unit) == normalizedUnit &&
+                        !$0.isBought
+                    }) {
+                        existing.quantity += doubleQuantity
+                        updateItem(existing)
+                    } else {
+                        addItem(name: finalName, quantity: doubleQuantity, unit: finalUnit)
+                        existingItems.append(fetchItems().last!)
+                    }
                 } else {
-                    addItem(name: ingredient.name, quantity: 0, unit: "")
+                    if existingItems.contains(where: { normalize($0.name) == normalizedName && !$0.isBought }) {
+                    } else {
+                        addItem(name: finalName, quantity: 0, unit: finalUnit)
+                        existingItems.append(fetchItems().last!)
+                    }
                 }
             }
-        }
-    }
-
-    private func mergeIngredient(
-        name: String,
-        quantity: Double,
-        unit: String,
-        existingItems: inout [ShoppingItem]
-    ) {
-        if let existing = existingItems.first(where: {
-            ($0.name ?? "").lowercased().trimmingCharacters(in: .whitespaces) == name &&
-            ($0.unit ?? "").lowercased().trimmingCharacters(in: .whitespaces) == unit &&
-            !$0.isBought
-        }) {
-            existing.quantity += quantity
-            updateItem(existing)
-        } else {
-            addItem(name: name, quantity: quantity, unit: unit)
-            existingItems.append(fetchItems().last!)
         }
     }
     
@@ -272,5 +311,26 @@ final class ShoppingListInteractor: ShoppingListInteractorProtocol {
         } catch {
             print("❌ Firestore sync error: \(error)")
         }
+    }
+    
+    private let unitTranslations: [String: String] = [
+        "cup": "чашка", "cups": "чашки",
+        "tbsp": "ст.л.", "tablespoon": "столовая ложка", "tablespoons": "столовые ложки",
+        "tsp": "ч.л.", "teaspoon": "чайная ложка", "teaspoons": "чайные ложки",
+        "ml": "мл", "milliliter": "миллилитр", "milliliters": "миллилитры",
+        "l": "л", "liter": "литр", "liters": "литры",
+        "g": "г", "gram": "грамм", "grams": "граммов",
+        "kg": "кг", "kilogram": "килограмм", "kilograms": "килограммов",
+        "oz": "унция", "ounce": "унция", "ounces": "унций",
+        "lb": "фунт", "pound": "фунт", "pounds": "фунтов",
+        "piece": "шт", "pieces": "шт", "pc": "шт", "pcs": "шт",
+        "pinch": "щепотка", "pinches": "щепотки",
+        "slice": "ломтик", "slices": "ломтика",
+        "to taste": "по вкусу", "dash": "капля"
+    ]
+
+    private func translateUnit(_ unit: String) -> String {
+        let unitLower = unit.lowercased()
+        return unitTranslations[unitLower] ?? unit
     }
 }

@@ -8,10 +8,17 @@ import FirebaseAuth
 
 struct MealPlanView: View {
     @StateObject var presenter: MealPlanPresenter
-    @State private var currentWeekStart = Calendar.current.date(from: Calendar.current.dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date())) ?? Date()
     
-    private let dayNames = [L10n.monday, L10n.tuesday, L10n.wednesday, L10n.thursday, L10n.friday, L10n.saturday, L10n.sunday]
-    private let mealTypes: [(MealPlanMealType, String, String)] = [
+    init(presenter: MealPlanPresenter) {
+            _presenter = StateObject(wrappedValue: presenter)
+        }
+    
+    @State private var currentWeekStart = Calendar.current.date(from: Calendar.current.dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date())) ?? Date()
+    @State private var translatedNames: [String: String] = [:]
+    @State private var translatedCategories: [String: String] = [:]
+    
+    private var dayNames = [L10n.monday, L10n.tuesday, L10n.wednesday, L10n.thursday, L10n.friday, L10n.saturday, L10n.sunday]
+    private var mealTypes: [(MealPlanMealType, String, String)] = [
         (.breakfast, L10n.breakfast, "sunrise.fill"),
         (.lunch, L10n.lunch, "sun.max.fill"),
         (.dinner, L10n.dinner, "moon.fill"),
@@ -31,7 +38,9 @@ struct MealPlanView: View {
                                 date: date,
                                 isSelected: presenter.selectedDate == date,
                                 presenter: presenter,
-                                mealTypes: mealTypes
+                                mealTypes: mealTypes,
+                                translatedNames: $translatedNames,
+                                translatedCategories: $translatedCategories
                             )
                         }
                     }
@@ -128,6 +137,8 @@ struct DayPlanRow: View {
     let isSelected: Bool
     @ObservedObject var presenter: MealPlanPresenter
     let mealTypes: [(MealPlanMealType, String, String)]
+    @Binding var translatedNames: [String: String]
+    @Binding var translatedCategories: [String: String]
     
     private let dateFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -162,7 +173,9 @@ struct DayPlanRow: View {
                                 recipeId: presenter.recipeId(for: date, mealType: mealType),
                                 onTap: { presenter.selectSlot(date: date, mealType: mealType) },
                                 onRecipeTap: { presenter.openRecipe(recipeId: $0) },
-                                onRemove: { presenter.removeRecipe(date: date, mealType: mealType) }
+                                onRemove: { presenter.removeRecipe(date: date, mealType: mealType) },
+                                translatedNames: $translatedNames,
+                                translatedCategories: $translatedCategories
                             )
                             .frame(width: 130)
                         }
@@ -190,9 +203,13 @@ struct MealSlotCard: View {
     let onTap: () -> Void
     let onRecipeTap: ((String) -> Void)?
     let onRemove: (() -> Void)?
+    @Binding var translatedNames: [String: String]
+    @Binding var translatedCategories: [String: String]
     
     @State private var recipe: Recipe?
     @State private var isLoading = false
+    @State private var translatedRecipeName: String?
+    @State private var translatedCategory: String?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -267,14 +284,14 @@ struct MealSlotCard: View {
                                 .frame(height: 55)
                         } else if let recipe = recipe {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(recipe.name)
+                                Text(translatedRecipeName ?? recipe.name)
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
                                     .lineLimit(2)
                                     .multilineTextAlignment(.leading)
                                 
                                 if let category = recipe.category {
-                                    Text(category)
+                                    Text(translatedCategory ?? category)
                                         .font(.caption)
                                         .foregroundColor(.gray)
                                         .lineLimit(1)
@@ -298,6 +315,16 @@ struct MealSlotCard: View {
         }
         .task(id: recipeId) {
             await loadRecipe()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .languageDidChange)) { _ in
+            translatedRecipeName = nil
+            translatedCategory = nil
+
+            if let recipe = recipe {
+                Task {
+                    await translateRecipe(recipe)
+                }
+            }
         }
     }
     
@@ -329,18 +356,22 @@ struct MealSlotCard: View {
                     }
                 }
                 
+                let fetchedRecipe = Recipe(
+                    id: recipeId,
+                    source: .custom,
+                    name: custom.name ?? "",
+                    category: custom.category,
+                    cuisine: custom.cuisine,
+                    imageUrl: custom.imageUrl,
+                    ingredients: ingredients,
+                    instructions: custom.instructions
+                )
+                
                 await MainActor.run {
-                    recipe = Recipe(
-                        id: recipeId,
-                        source: .custom,
-                        name: custom.name ?? "",
-                        category: custom.category,
-                        cuisine: custom.cuisine,
-                        imageUrl: custom.imageUrl,
-                        ingredients: ingredients,
-                        instructions: custom.instructions
-                    )
+                    recipe = fetchedRecipe
                 }
+                
+                await translateRecipe(fetchedRecipe)
             }
         } else {
             do {
@@ -348,9 +379,31 @@ struct MealSlotCard: View {
                 await MainActor.run {
                     recipe = fetched
                 }
+                await translateRecipe(fetched)
             } catch {
                 print("❌ Failed to load API recipe \(recipeId): \(error)")
             }
+        }
+    }
+    
+    private func translateRecipe(_ recipe: Recipe) async {
+        let lang = LanguageManager.shared.appLanguage.rawValue
+        
+        async let name = try? YandexTranslateService.shared.translate(
+            text: recipe.name,
+            to: lang
+        )
+        
+        async let category = try? YandexTranslateService.shared.translate(
+            text: recipe.category ?? "",
+            to: lang
+        )
+        
+        let (translatedName, translatedCat) = await (name, category)
+        
+        await MainActor.run {
+            translatedRecipeName = translatedName ?? recipe.name
+            translatedCategory = translatedCat ?? recipe.category
         }
     }
 }

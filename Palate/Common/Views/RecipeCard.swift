@@ -7,6 +7,8 @@ import SwiftUI
 
 struct RecipeCard: View {
     let recipe: Recipe
+    let translatedName: String?
+    let translatedCategory: String?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -22,14 +24,14 @@ struct RecipeCard: View {
             .clipped()
             .cornerRadius(12)
             
-            Text(recipe.name)
+            Text(translatedName ?? recipe.name)
                 .font(.subheadline)
                 .fontWeight(.semibold)
                 .lineLimit(2)
                 .foregroundColor(.primary)
             
             if let category = recipe.category {
-                Text(category)
+                Text(translatedCategory ?? category)
                     .font(.caption)
                     .foregroundColor(.gray)
             }

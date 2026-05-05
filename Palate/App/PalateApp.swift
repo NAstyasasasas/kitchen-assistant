@@ -10,20 +10,28 @@ import Firebase
 struct PalateApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
+    @StateObject private var languageManager = LanguageManager.shared
     @State private var isAuthenticated = false
+    @State private var refreshID = UUID()
     
     var body: some Scene {
         WindowGroup {
-            if isAuthenticated {
-                MainTabViewContainer()
-                    .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("userDidSignOut"))) { _ in
-                        isAuthenticated = false
-                    }
-            } else {
-                AuthContainerView(onAuthSuccess: {
-                    isAuthenticated = true
-                })
+            Group {
+                if isAuthenticated {
+                    MainTabViewContainer()
+                        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("userDidSignOut"))) { _ in
+                            isAuthenticated = false
+                        }
+                } else {
+                    AuthContainerView(onAuthSuccess: {
+                        isAuthenticated = true
+                    })
+                }
+            }
+            .environmentObject(languageManager)
+            .id(refreshID)
+            .onReceive(NotificationCenter.default.publisher(for: .languageDidChange)) { _ in
+                refreshID = UUID()
             }
         }
     }
@@ -31,14 +39,17 @@ struct PalateApp: App {
 
 struct AuthContainerView: View {
     let onAuthSuccess: () -> Void
+    @EnvironmentObject var languageManager: LanguageManager
     
     var body: some View {
         AuthCoordinatorView(onAuthSuccess: onAuthSuccess)
+            .id(languageManager.currentLanguage)
     }
 }
 
 struct AuthCoordinatorView: UIViewControllerRepresentable {
     let onAuthSuccess: () -> Void
+    @EnvironmentObject var languageManager: LanguageManager
     
     func makeUIViewController(context: Context) -> UINavigationController {
         let navigationController = UINavigationController()
@@ -53,7 +64,7 @@ struct AuthCoordinatorView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {}
     
     func makeCoordinator() -> Coordinator {
-            Coordinator()
+        Coordinator()
     }
         
     class Coordinator: NSObject {
@@ -62,12 +73,17 @@ struct AuthCoordinatorView: UIViewControllerRepresentable {
 }
 
 struct MainTabViewContainer: View {
+    @EnvironmentObject var languageManager: LanguageManager
+    
     var body: some View {
         MainCoordinatorView()
+            .id(languageManager.currentLanguage)
     }
 }
 
 struct MainCoordinatorView: UIViewControllerRepresentable {
+    @EnvironmentObject var languageManager: LanguageManager
+    
     func makeUIViewController(context: Context) -> UIViewController {
         let coordinator = MainCoordinator()
         coordinator.start()

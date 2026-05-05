@@ -28,6 +28,8 @@ struct FilterChip: View {
 struct RecipeCardGrid: View {
     let recipes: [Recipe]
     let onTap: (String) -> Void
+    @State private var translatedNames: [String: String] = [:]
+    @State private var translatedCategories: [String: String] = [:]
     
     private let columns = [
         GridItem(.flexible()),
@@ -40,12 +42,38 @@ struct RecipeCardGrid: View {
                 Button {
                     onTap(recipe.id)
                 } label: {
-                    RecipeCard(recipe: recipe)
+                    RecipeCard(
+                        recipe: recipe,
+                        translatedName: translatedNames[recipe.id],
+                        translatedCategory: translatedCategories[recipe.category ?? ""]
+                    )
                 }
                 .buttonStyle(.plain)
+                .onAppear {
+                    Task {
+                        await translateRecipeIfNeeded(recipe)
+                    }
+                }
             }
         }
         .padding(.horizontal)
+    }
+    
+    private func translateRecipeIfNeeded(_ recipe: Recipe) async {
+        
+        if translatedNames[recipe.id] == nil {
+            let translatedName = await YandexTranslateService.shared.translateIfNeeded(recipe.name)
+            await MainActor.run {
+                translatedNames[recipe.id] = translatedName
+            }
+        }
+        
+        if let category = recipe.category, translatedCategories[category] == nil {
+            let translatedCategory = await YandexTranslateService.shared.translateIfNeeded(category)
+            await MainActor.run {
+                translatedCategories[category] = translatedCategory
+            }
+        }
     }
 }
 

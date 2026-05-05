@@ -205,3 +205,8 @@
 
 // MARK: - Common
 "error" = "Ошибка";
+
+
+"lunch" = "Обед";
+"dinner" = "Ужин";
+"snack" = "Перекус";

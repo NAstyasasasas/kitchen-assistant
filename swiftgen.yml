@@ -6,3 +6,4 @@ strings:
       params:
         enumName: L10n
         publicAccess: true
+        lookupFunction: LanguageManager.shared.lookupTranslation(forKey:inTable:fallbackValue:)

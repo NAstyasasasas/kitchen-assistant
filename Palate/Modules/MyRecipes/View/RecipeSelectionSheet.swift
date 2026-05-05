@@ -12,6 +12,8 @@ struct RecipeSelectionSheet: View {
     @State private var customRecipes: [Recipe] = []
     @State private var isLoading = false
     @State private var selectedTab = 0
+    @State private var translatedNames: [String: String] = [:]
+    @State private var translatedCategories: [String: String] = [:]
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -82,15 +84,37 @@ struct RecipeSelectionSheet: View {
                     }
                 }
                 VStack(alignment: .leading) {
-                    Text(recipe.name)
+                    Text(translatedNames[recipe.id] ?? recipe.name)
                         .font(.headline)
-                    Text(recipe.category ?? "")
+                    Text(translatedCategories[recipe.category ?? ""] ?? (recipe.category ?? ""))
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
             }
         }
         .foregroundColor(.primary)
+        .onAppear {
+            Task {
+                await translateRecipeIfNeeded(recipe)
+            }
+        }
+    }
+    
+    private func translateRecipeIfNeeded(_ recipe: Recipe) async {
+        
+        if translatedNames[recipe.id] == nil {
+            let translatedName = await YandexTranslateService.shared.translateIfNeeded(recipe.name)
+            await MainActor.run {
+                translatedNames[recipe.id] = translatedName
+            }
+        }
+        
+        if let category = recipe.category, translatedCategories[category] == nil {
+            let translatedCategory = await YandexTranslateService.shared.translateIfNeeded(category)
+            await MainActor.run {
+                translatedCategories[category] = translatedCategory
+            }
+        }
     }
     
     private func loadCustomRecipes() async {

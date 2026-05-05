@@ -28,10 +28,9 @@ final class MealPlanPresenter: ObservableObject {
          coordinator: MainCoordinator?) {
         self.interactor = interactor
         self.coordinator = coordinator
-        let startOfWeek = Calendar.current.date(from: Calendar.current.dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date())) ?? Date()
-        loadWeekPlans(startOfWeek: startOfWeek)
+        self.shoppingInteractor.delegate = self
     }
-    
+
     func normalizeDate(_ date: Date) -> Date {
         Calendar.current.startOfDay(for: date)
     }
@@ -92,7 +91,7 @@ final class MealPlanPresenter: ObservableObject {
         }
         
         for recipe in allRecipes {
-            if shoppingInteractor.recipeHasConflicts(recipe) {
+            if await shoppingInteractor.recipeHasConflicts(recipe) {
                 await MainActor.run {
                     pendingConfirmationRecipe = recipe
                     showConflictAlert = true
@@ -199,6 +198,14 @@ final class MealPlanPresenter: ObservableObject {
                     return (Calendar.current.startOfDay(for: date), plan)
                 })
             }
+        }
+    }
+}
+
+extension MealPlanPresenter: ShoppingListInteractorDelegate {
+    func didDetectDuplicate() {
+        DispatchQueue.main.async {
+            self.showConflictAlert = true
         }
     }
 }
