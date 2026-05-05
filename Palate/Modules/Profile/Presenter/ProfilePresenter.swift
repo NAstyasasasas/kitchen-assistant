@@ -66,11 +66,22 @@ final class ProfilePresenter: ObservableObject {
         
         do {
             let stats = try await interactor.getUserStats()
-            cookedCount = stats.cooked
-            wantToCookCount = stats.wantToCook
-            customRecipesCount = stats.custom
+            
+            await MainActor.run {
+                cookedCount = stats.cooked
+                wantToCookCount = stats.wantToCook
+                customRecipesCount = stats.custom
+            }
+            
+            if let userId = currentUser?.id {
+                let avatarUrl = try await userService.getUserAvatarUrl(userId: userId)
+                
+                await MainActor.run {
+                    currentUser?.avatarUrl = avatarUrl
+                }
+            }
         } catch {
-            print("Ошибка загрузки статистики: \(error)")
+            print("Ошибка загрузки профиля: \(error)")
         }
     }
     
