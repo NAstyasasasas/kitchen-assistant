@@ -83,13 +83,13 @@ struct HomeEmptyState: View {
         VStack(spacing: 20) {
             Image(systemName: "fork.knife")
                 .font(.system(size: 60))
-                .foregroundColor(.gray)
+                .foregroundColor(Color(.secondaryLabel))
             Text(message)
-                .foregroundColor(.gray)
+                .foregroundColor(Color(.secondaryLabel))
                 .multilineTextAlignment(.center)
             Text(L10n.tryChangeFilters)
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundColor(Color(.secondaryLabel))
         }
         .padding(.top, 100)
     }
@@ -188,7 +188,7 @@ struct HomeView: View {
                 }
                 .padding(.vertical)
             }
-            .background(Color.white)
+            .background(Color(.systemBackground))
             .task {
                 await presenter.loadRecipes()
             }

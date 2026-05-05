@@ -31,14 +31,14 @@ struct RecipeDetailView: View {
                                     .aspectRatio(contentMode: .fill)
                             } else {
                                 Rectangle()
-                                    .fill(Color.gray.opacity(0.3))
+                                    .fill(Color(.secondaryLabel).opacity(0.3))
                             }
                         }
                         .frame(height: 310)
                         .clipped()
                         
                         LinearGradient(
-                            colors: [.clear, .black.opacity(0.6)],
+                            colors: [.clear, Color(.label).opacity(0.6)],
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -108,7 +108,7 @@ struct RecipeDetailView: View {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text(L10n.cookedOn)
                                     .font(.system(size: 12))
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(Color(.secondaryLabel))
 
                                 Text(formattedDate)
                                     .font(.system(size: 14, weight: .semibold))
@@ -136,7 +136,7 @@ struct RecipeDetailView: View {
                                         ProgressView()
                                             .scaleEffect(0.8)
                                             .font(.caption)
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(Color(.secondaryLabel))
                                     }
                                     .padding(.leading, 4)
                                 }
@@ -145,7 +145,7 @@ struct RecipeDetailView: View {
                             }
                         } else {
                             Text(L10n.noInstructions)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color(.secondaryLabel))
                                 .padding()
                         }
                         
@@ -300,7 +300,7 @@ struct IngredientsView: View {
             ForEach(ingredients) { ingredient in
                 Text("•   \(ingredient.name) — \(ingredient.amount) \(ingredient.unit)")
                     .font(.system(size: 18))
-                    .foregroundColor(.black)
+                    .foregroundColor(Color(.label))
             }
         }
         .padding(.horizontal, 20)
@@ -326,12 +326,12 @@ struct InstructionsView: View {
                 VStack(alignment: .leading, spacing: 18) {
                     Text("step \(index + 1)")
                         .font(.system(size: 18))
-                        .foregroundColor(.black)
+                        .foregroundColor(Color(.label))
 
                     Text(step)
                         .font(.system(size: 18))
                         .lineSpacing(8)
-                        .foregroundColor(.black)
+                        .foregroundColor(Color(.label))
                 }
             }
         }
@@ -346,7 +346,7 @@ struct SectionHeaderBar: View {
     var body: some View {
         Text(title.uppercased())
             .font(.system(size: 17, weight: .bold))
-            .foregroundColor(.black)
+            .foregroundColor(Color(.label))
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(height: 56)
             .padding(.horizontal, 24)

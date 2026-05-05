@@ -51,7 +51,7 @@ struct ShoppingListView: View {
                         .frame(height: 40)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.gray.opacity(0.45), lineWidth: 1.3)
+                                .stroke(Color(.secondaryLabel).opacity(0.45), lineWidth: 1.3)
                         )
 
                     TextField(L10n.addItemQuantity, text: $newItemQuantity)
@@ -61,7 +61,7 @@ struct ShoppingListView: View {
                         .frame(width: 90, height: 40)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.gray.opacity(0.45), lineWidth: 1.3)
+                                .stroke(Color(.secondaryLabel).opacity(0.45), lineWidth: 1.3)
                         )
 
                     TextField(L10n.addItemUnit, text: $newItemUnit)
@@ -70,7 +70,7 @@ struct ShoppingListView: View {
                         .frame(width: 80, height: 40)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.gray.opacity(0.45), lineWidth: 1.3)
+                                .stroke(Color(.secondaryLabel).opacity(0.45), lineWidth: 1.3)
                         )
 
                     Button {
@@ -84,7 +84,7 @@ struct ShoppingListView: View {
                             .font(.system(size: 25, weight: .bold))
                             .foregroundColor(.white)
                             .frame(width: 40, height: 40)
-                            .background(newItemName.isEmpty ? Color.gray : Color.accentGreen)
+                            .background(newItemName.isEmpty ? Color(.secondaryLabel) : Color.accentGreen)
                             .cornerRadius(10)
                     }
                     .disabled(newItemName.isEmpty)
@@ -98,10 +98,10 @@ struct ShoppingListView: View {
                     VStack(spacing: 16) {
                         Image(systemName: "cart")
                             .font(.system(size: 40))
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color(.secondaryLabel))
 
                         Text(L10n.shoppingListEmpty)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color(.secondaryLabel))
                     }
 
                     Spacer()
@@ -128,7 +128,7 @@ struct ShoppingListView: View {
                     }
                 }
             }
-            .background(Color.white)
+            .background(Color(.systemBackground))
             .navigationBarHidden(true)
             .alert(L10n.deleteAllConfirm, isPresented: $showDeleteAllAlert) {
                 Button(L10n.delete, role: .destructive) {
@@ -194,13 +194,13 @@ struct ShoppingItemCard: View {
             Button(action: onToggle) {
                 Image(systemName: item.isBought ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 26))
-                    .foregroundColor(item.isBought ? .accentGreen : Color.gray.opacity(0.45))
+                    .foregroundColor(item.isBought ? .accentGreen : Color(.secondaryLabel).opacity(0.45))
             }
             .buttonStyle(.plain)
 
             Text(displayText)
                 .font(.system(size: 17, weight: .regular))
-                .foregroundColor(item.isBought ? .gray : .black)
+                .foregroundColor(item.isBought ? Color(.secondaryLabel) : Color(.label))
                 .strikethrough(item.isBought)
                 .lineLimit(1)
 
@@ -208,17 +208,17 @@ struct ShoppingItemCard: View {
 
             Button(action: onEdit) {
                 Image(systemName: "pencil")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.gray)
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundColor(Color(.secondaryLabel))
             }
             .buttonStyle(.plain)
         }
         .padding(.horizontal, 20)
         .frame(height: 45)
-        .background(Color.white)
+        .background(Color(.systemBackground))
         .overlay(
             RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.gray.opacity(0.35), lineWidth: 1.3)
+                .stroke(Color(.secondaryLabel).opacity(0.35), lineWidth: 1.3)
         )
     }
 

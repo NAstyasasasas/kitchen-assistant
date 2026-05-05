@@ -13,6 +13,7 @@ struct PalateApp: App {
     @StateObject private var languageManager = LanguageManager.shared
     @State private var isAuthenticated = false
     @State private var refreshID = UUID()
+    @StateObject private var themeManager = ThemeManager.shared
     
     var body: some Scene {
         WindowGroup {
@@ -29,6 +30,8 @@ struct PalateApp: App {
                 }
             }
             .environmentObject(languageManager)
+            .environmentObject(themeManager)
+            .preferredColorScheme(themeManager.isDarkTheme ? .dark : .light)
             .id(refreshID)
             .onReceive(NotificationCenter.default.publisher(for: .languageDidChange)) { _ in
                 refreshID = UUID()

@@ -45,7 +45,7 @@ struct StartView: View {
                             .frame(width: 180, height: 44)
                             .background(Color.accentPurple)
                             .cornerRadius(8)
-                            .shadow(color: .black.opacity(0.18), radius: 5, y: 3)
+                            .shadow(color: Color(.label).opacity(0.18), radius: 5, y: 3)
                     }
                     
                     Button {
@@ -55,9 +55,9 @@ struct StartView: View {
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(Color.accentPurple)
                             .frame(width: 180, height: 44)
-                            .background(Color.white)
+                            .background(Color(.systemBackground))
                             .cornerRadius(8)
-                            .shadow(color: .black.opacity(0.14), radius: 5, y: 3)
+                            .shadow(color: Color(.label).opacity(0.14), radius: 5, y: 3)
                     }
                 }
                 .padding(.top, 34)

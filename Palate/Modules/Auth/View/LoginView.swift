@@ -35,10 +35,10 @@ struct LoginView: View {
                     .font(.system(size: 14))
                     .padding(.horizontal, 14)
                     .frame(height: 42)
-                    .background(Color.white)
+                    .background(Color(.systemBackground))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray.opacity(0.35), lineWidth: 1)
+                            .stroke(Color(.secondaryLabel).opacity(0.35), lineWidth: 1)
                     )
                     .autocapitalization(.none)
                     .keyboardType(.emailAddress)
@@ -47,10 +47,10 @@ struct LoginView: View {
                     .font(.system(size: 14))
                     .padding(.horizontal, 14)
                     .frame(height: 42)
-                    .background(Color.white)
+                    .background(Color(.systemBackground))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray.opacity(0.35), lineWidth: 1)
+                            .stroke(Color(.secondaryLabel).opacity(0.35), lineWidth: 1)
                     )
                 
                 Button {
@@ -70,10 +70,10 @@ struct LoginView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .frame(height: 44)
-                .background(presenter.isLoading ? Color.gray : Color.accentPurple)
+                .background(presenter.isLoading ? Color(.secondaryLabel) : Color.accentPurple)
                 .foregroundColor(.white)
                 .cornerRadius(8)
-                .shadow(color: .black.opacity(0.18), radius: 5, y: 3)
+                .shadow(color: Color(.label).opacity(0.18), radius: 5, y: 3)
                 .disabled(presenter.isLoading)
                 
                 Button {
@@ -81,22 +81,22 @@ struct LoginView: View {
                 } label: {
                     Text(L10n.noAccount)
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.black)
+                        .foregroundColor(Color(.label))
                 }
             }
             .padding(16)
-            .background(Color.white)
+            .background(Color(.systemBackground))
             .cornerRadius(10)
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color.gray.opacity(0.35), lineWidth: 1)
+                    .stroke(Color(.secondaryLabel).opacity(0.35), lineWidth: 1)
             )
             .padding(.horizontal, 16)
             .offset(y: -8)
             
             Spacer()
         }
-        .background(Color.white)
+        .background(Color(.systemBackground))
         .alert(L10n.errorGeneral, isPresented: .constant(presenter.errorMessage != nil)) {
             Button("OK") {
                 presenter.errorMessage = nil

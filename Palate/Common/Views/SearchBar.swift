@@ -12,7 +12,7 @@ struct SearchBar: View {
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(.gray)
+                .foregroundColor(Color(.secondaryLabel))
             
             TextField(L10n.searchPlaceholder, text: $text)
                 .font(.system(size: 16))
@@ -24,7 +24,7 @@ struct SearchBar: View {
                     onSearch()
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color(.secondaryLabel))
                 }
             }
         }

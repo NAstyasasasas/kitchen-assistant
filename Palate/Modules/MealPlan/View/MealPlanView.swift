@@ -216,7 +216,7 @@ struct MealSlotCard: View {
                                     .fill(Color(hex: "#EEE8F2"))
                                     .overlay(
                                         Image(systemName: "photo")
-                                            .foregroundColor(.gray.opacity(0.35))
+                                            .foregroundColor(Color(.secondaryLabel).opacity(0.35))
                                     )
                             }
                         }
@@ -232,7 +232,7 @@ struct MealSlotCard: View {
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundColor(.red)
                                 .padding(5)
-                                .background(Color.white.opacity(0.85))
+                                .background(Color(.systemBackground).opacity(0.85))
                                 .clipShape(Circle())
                         }
                         .buttonStyle(.plain)
@@ -261,7 +261,7 @@ struct MealSlotCard: View {
 
                     Text(translatedCategory ?? (recipe.category ?? ""))
                         .font(.system(size: 11))
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color(.secondaryLabel))
                         .lineLimit(1)
                 } else {
                     Spacer(minLength: 0)
@@ -270,10 +270,10 @@ struct MealSlotCard: View {
             .padding(6)
             .frame(maxWidth: .infinity)
             .frame(height: 142)
-            .background(Color.white)
+            .background(Color(.systemBackground))
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.gray.opacity(0.45), lineWidth: 1)
+                    .stroke(Color(.secondaryLabel).opacity(0.45), lineWidth: 1)
             )
             .cornerRadius(8)
         }

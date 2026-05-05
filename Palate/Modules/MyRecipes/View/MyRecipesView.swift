@@ -36,7 +36,7 @@ struct MyRecipesView: View {
                 .padding(.horizontal, 16)
                 .overlay(alignment: .bottom) {
                     Rectangle()
-                        .fill(Color.gray.opacity(0.25))
+                        .fill(Color(.secondaryLabel).opacity(0.25))
                         .frame(height: 1)
                 }
                 .padding(.bottom, 8)
@@ -184,7 +184,7 @@ struct MyRecipesView: View {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 50))
                             .foregroundColor(.accentGreen)
-                            .background(Color.white)
+                            .background(Color(.systemBackground))
                             .clipShape(Circle())
                             .shadow(radius: 4)
                     }
@@ -200,9 +200,9 @@ struct MyRecipesView: View {
         VStack(spacing: 20) {
             Image(systemName: "fork.knife")
                 .font(.system(size: 60))
-                .foregroundColor(.gray)
+                .foregroundColor(Color(.secondaryLabel))
             Text(text)
-                .foregroundColor(.gray)
+                .foregroundColor(Color(.secondaryLabel))
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -230,7 +230,7 @@ struct WantToCookCard: View {
 
                     Text(translatedCategory ?? (recipe.category ?? ""))
                         .font(.system(size: 14))
-                        .foregroundColor(.gray.opacity(0.8))
+                        .foregroundColor(Color(.secondaryLabel).opacity(0.8))
                         .lineLimit(1)
 
                     Button(action: onCook) {
@@ -261,7 +261,7 @@ struct WantToCookCard: View {
             }
             .padding(12)
             .frame(height: 120)
-            .background(Color.white)
+            .background(Color(.systemBackground))
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(Color.accentGreen.opacity(0.7), lineWidth: 1)
@@ -277,7 +277,7 @@ struct WantToCookCard: View {
                 image.resizable().scaledToFill()
             } else {
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.gray.opacity(0.2))
+                    .fill(Color(.secondaryLabel).opacity(0.2))
             }
         }
         .frame(width: 92, height: 92)
@@ -324,7 +324,7 @@ struct CookedCard: View {
 
                     Text(translatedCategory ?? (recipe.category ?? ""))
                         .font(.system(size: 14))
-                        .foregroundColor(.gray.opacity(0.8))
+                        .foregroundColor(Color(.secondaryLabel).opacity(0.8))
                         .lineLimit(1)
 
                     HStack(spacing: 1) {
@@ -342,7 +342,7 @@ struct CookedCard: View {
                     if let date = dateCooked {
                         Text("\(L10n.cookedOn): \(date.formatted(date: .abbreviated, time: .omitted))")
                             .font(.footnote)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color(.secondaryLabel))
                             .lineLimit(1)
                     }
                 }
@@ -365,7 +365,7 @@ struct CookedCard: View {
             }
             .padding(12)
             .frame(height: 120)
-            .background(Color.white)
+            .background(Color(.systemBackground))
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(Color.accentGreen.opacity(0.7), lineWidth: 1)
@@ -384,7 +384,7 @@ struct CookedCard: View {
                 image.resizable().scaledToFill()
             } else {
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.gray.opacity(0.2))
+                    .fill(Color(.secondaryLabel).opacity(0.2))
             }
         }
         .frame(width: 92, height: 92)
@@ -413,7 +413,7 @@ struct MyRecipeCard: View {
 
                     Text(translatedCategory ?? (recipe.category ?? ""))
                         .font(.system(size: 14))
-                        .foregroundColor(.gray.opacity(0.8))
+                        .foregroundColor(Color(.secondaryLabel).opacity(0.8))
                         .lineLimit(1)
 
                     Button(action: onEdit) {
@@ -444,10 +444,10 @@ struct MyRecipeCard: View {
             }
             .padding(12)
             .frame(height: 120)
-            .background(Color.white)
+            .background(Color(.systemBackground))
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color.gray.opacity(0.35), lineWidth: 1)
+                    .stroke(Color(.secondaryLabel).opacity(0.35), lineWidth: 1)
             )
             .cornerRadius(12)
         }
@@ -460,7 +460,7 @@ struct MyRecipeCard: View {
                 image.resizable().scaledToFill()
             } else {
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.gray.opacity(0.2))
+                    .fill(Color(.secondaryLabel).opacity(0.2))
             }
         }
         .frame(width: 92, height: 92)
@@ -478,7 +478,7 @@ struct UnderlineTab: View {
             VStack(spacing: 8) {
                 Text(title)
                     .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(isSelected ? .accentPurple : Color.black.opacity(0.7))
+                    .foregroundColor(isSelected ? .accentPurple : Color(.label).opacity(0.7))
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
 

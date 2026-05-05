@@ -101,12 +101,12 @@ struct RecipeSelectionSheet: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(translatedNames[recipe.id] ?? recipe.name)
                         .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(.black)
+                        .foregroundColor(Color(.label))
                         .lineLimit(2)
 
                     Text(translatedCategories[recipe.category ?? ""] ?? (recipe.category ?? ""))
                         .font(.system(size: 14))
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color(.secondaryLabel))
                         .lineLimit(1)
                 }
 
@@ -118,9 +118,9 @@ struct RecipeSelectionSheet: View {
             }
             .padding(12)
             .frame(height: 96)
-            .background(Color.white)
+            .background(Color(.systemBackground))
             .cornerRadius(14)
-            .shadow(color: .black.opacity(0.06), radius: 5, x: 0, y: 3)
+            .shadow(color: Color(.label).opacity(0.06), radius: 5, x: 0, y: 3)
         }
         .buttonStyle(.plain)
         .onAppear {
