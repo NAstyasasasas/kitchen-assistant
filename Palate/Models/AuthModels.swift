@@ -17,7 +17,6 @@ struct AppUser: Codable {
         self.id = firebaseUser.uid
         self.email = firebaseUser.email ?? ""
         self.displayName = firebaseUser.displayName
-        self.avatarUrl = nil
         self.createdAt = Date()
     }
 }

@@ -4,11 +4,13 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct ProfileView: View {
     @StateObject var presenter: ProfilePresenter
     @StateObject private var languageManager = LanguageManager.shared
     @State private var darkTheme = false
+    @State private var selectedAvatarItem: PhotosPickerItem?
 
     var body: some View {
         NavigationView {
@@ -43,9 +45,27 @@ struct ProfileView: View {
                 RoundedRectangle(cornerRadius: 42)
                     .fill(Color(hex: "#EEE8F2"))
 
-                Image(systemName: "person.crop.circle.fill")
-                    .font(.system(size: 72))
-                    .foregroundColor(Color(hex: "#C8C1CC"))
+                if let avatarUrl = presenter.currentUser?.avatarUrl,
+                   let url = URL(string: avatarUrl) {
+                    AsyncImage(url: url) { phase in
+                        if let image = phase.image {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        } else {
+                            Image(systemName: "person.crop.circle.fill")
+                                .font(.system(size: 72))
+                                .foregroundColor(Color(hex: "#C8C1CC"))
+                        }
+                    }
+                    .frame(width: 132, height: 132)
+                    .clipped()
+                    .cornerRadius(42)
+                } else {
+                    Image(systemName: "person.crop.circle.fill")
+                        .font(.system(size: 72))
+                        .foregroundColor(Color(hex: "#C8C1CC"))
+                }
             }
             .frame(width: 132, height: 132)
 
@@ -58,9 +78,7 @@ struct ProfileView: View {
                     .font(.system(size: 16))
                     .foregroundColor(Color(hex: "#4F4A55"))
 
-                Button {
-                    // upload photo later
-                } label: {
+                PhotosPicker(selection: $selectedAvatarItem, matching: .images) {
                     HStack(spacing: 10) {
                         Image(systemName: "square.and.arrow.up")
                             .font(.system(size: 17, weight: .bold))
@@ -72,6 +90,16 @@ struct ProfileView: View {
                     .frame(height: 48)
                     .background(Color.accentGreen)
                     .cornerRadius(24)
+                }
+                .padding(.top, 4)
+                .onChange(of: selectedAvatarItem) { newItem in
+                    Task {
+                        if let data = try? await newItem?.loadTransferable(type: Data.self),
+                           let image = UIImage(data: data) {
+                            await presenter.updateAvatar(image)
+                        }
+                        selectedAvatarItem = nil
+                    }
                 }
                 .padding(.top, 4)
             }
