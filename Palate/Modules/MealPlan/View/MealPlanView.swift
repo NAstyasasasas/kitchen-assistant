@@ -87,7 +87,7 @@ struct MealPlanView: View {
                 Spacer()
                 
                 Text(weekRangeString)
-                    .font(.subheadline)
+                    .font(.system(size: 14))
                     .foregroundColor(.secondary)
                 
                 Spacer()
@@ -114,7 +114,7 @@ struct MealPlanView: View {
                 .background(Color.accentGreen)
                 .foregroundColor(.white)
                 .cornerRadius(30)
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 12)
             }
         }
         .padding(.top, 16)
@@ -149,52 +149,38 @@ struct DayPlanRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text(dayName)
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                Text(dateFormatter.string(from: date))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                Text(dayName.uppercased())
+                    .font(.system(size: 14, weight: .bold))
+
                 Spacer()
+
+                Text(dateFormatter.string(from: date))
+                    .font(.system(size: 13, weight: .bold))
             }
-            .padding(.horizontal, 4)
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach(mealTypes, id: \.0) { mealType, title, iconName in
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(title)
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(.secondary)
-                                .padding(.leading, 4)
-                            
-                            MealSlotCard(
-                                recipeId: presenter.recipeId(for: date, mealType: mealType),
-                                onTap: { presenter.selectSlot(date: date, mealType: mealType) },
-                                onRecipeTap: { presenter.openRecipe(recipeId: $0) },
-                                onRemove: { presenter.removeRecipe(date: date, mealType: mealType) },
-                                translatedNames: $translatedNames,
-                                translatedCategories: $translatedCategories
-                            )
-                            .frame(width: 130)
-                        }
-                        .frame(width: 140)
+            .padding(.horizontal, 16)
+            .frame(height: 36)
+            .background(Color(.systemGray6))
+            .cornerRadius(6)
+
+            HStack(spacing: 8) {
+                ForEach(mealTypes, id: \.0) { mealType, title, _ in
+                    VStack(spacing: 6) {
+                        Text(title.uppercased())
+                            .font(.system(size: 12, weight: .bold))
+
+                        MealSlotCard(
+                            recipeId: presenter.recipeId(for: date, mealType: mealType),
+                            onTap: { presenter.selectSlot(date: date, mealType: mealType) },
+                            onRecipeTap: { presenter.openRecipe(recipeId: $0) },
+                            onRemove: { presenter.removeRecipe(date: date, mealType: mealType) },
+                            translatedNames: $translatedNames,
+                            translatedCategories: $translatedCategories
+                        )
                     }
+                    .frame(maxWidth: .infinity)
                 }
-                .padding(.horizontal, 4)
             }
         }
-        .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 5)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(isSelected ? Color.accentPurple : Color.clear, lineWidth: 2)
-        )
     }
 }
 
@@ -212,107 +198,86 @@ struct MealSlotCard: View {
     @State private var translatedCategory: String?
     
     var body: some View {
-        VStack(spacing: 0) {
-            if let recipe = recipe {
-                HStack {
-                    Spacer()
-                    Button {
-                        onRemove?()
-                    } label: {
-                        Image(systemName: "trash")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                            .background(Color(.systemBackground))
-                            .clipShape(Circle())
-                    }
-                    .padding(4)
-                }
-                .frame(height: 20)
-                .padding(.top, 4)
-                .padding(.trailing, 4)
+        Button {
+            if let recipeId = recipeId {
+                onRecipeTap?(recipeId)
+            } else {
+                onTap()
             }
-            
-            Button {
-                if let recipeId = recipeId {
-                    onRecipeTap?(recipeId)
+        } label: {
+            VStack(alignment: .leading, spacing: 6) {
+                ZStack(alignment: .topTrailing) {
+                    if let recipe = recipe {
+                        AsyncImage(url: URL(string: recipe.imageUrl ?? "")) { phase in
+                            if let image = phase.image {
+                                image.resizable().scaledToFill()
+                            } else {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color(hex: "#EEE8F2"))
+                                    .overlay(
+                                        Image(systemName: "photo")
+                                            .foregroundColor(.gray.opacity(0.35))
+                                    )
+                            }
+                        }
+                        .frame(height: 82)
+                        .frame(maxWidth: .infinity)
+                        .clipped()
+                        .cornerRadius(8)
+
+                        Button {
+                            onRemove?()
+                        } label: {
+                            Image(systemName: "trash")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(.red)
+                                .padding(5)
+                                .background(Color.white.opacity(0.85))
+                                .clipShape(Circle())
+                        }
+                        .buttonStyle(.plain)
+                        .padding(4)
+
+                    } else {
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.accentPurple, style: StrokeStyle(lineWidth: 1.2, dash: [4]))
+                            .frame(height: 82)
+                            .overlay(
+                                VStack(spacing: 6) {
+                                    Image(systemName: "plus")
+                                        .font(.system(size: 24, weight: .medium))
+                                    Text(L10n.select)
+                                        .font(.system(size: 12))
+                                }
+                                .foregroundColor(.accentPurple)
+                            )
+                    }
+                }
+
+                if let recipe = recipe {
+                    Text(translatedRecipeName ?? recipe.name)
+                        .font(.system(size: 12, weight: .semibold))
+                        .lineLimit(1)
+
+                    Text(translatedCategory ?? (recipe.category ?? ""))
+                        .font(.system(size: 11))
+                        .foregroundColor(.gray)
+                        .lineLimit(1)
                 } else {
-                    onTap()
+                    Spacer(minLength: 0)
                 }
-            } label: {
-                VStack(alignment: .leading, spacing: 8) {
-                    ZStack {
-                        if let recipe = recipe {
-                            AsyncImage(url: URL(string: recipe.imageUrl ?? "")) { phase in
-                                if let image = phase.image {
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                } else {
-                                    Rectangle()
-                                        .fill(Color.gray.opacity(0.2))
-                                }
-                            }
-                            .frame(height: 90)
-                            .frame(maxWidth: .infinity)
-                            .clipped()
-                            .cornerRadius(12)
-                        } else if isLoading {
-                            ProgressView()
-                                .frame(height: 90)
-                                .frame(maxWidth: .infinity)
-                        } else {
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.accentPurple, style: StrokeStyle(lineWidth: 1.5, dash: [6]))
-                                .frame(height: 90)
-                                .overlay(
-                                    VStack(spacing: 6) {
-                                        Image(systemName: "plus")
-                                            .font(.title2)
-                                            .foregroundColor(.accentPurple)
-                                        Text(L10n.select)
-                                            .font(.caption)
-                                            .foregroundColor(.accentPurple)
-                                    }
-                                )
-                        }
-                    }
-                    .frame(height: 90)
-                    
-                    Group {
-                        if isLoading {
-                            ProgressView()
-                                .frame(height: 55)
-                        } else if let recipe = recipe {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(translatedRecipeName ?? recipe.name)
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-                                    .lineLimit(2)
-                                    .multilineTextAlignment(.leading)
-                                
-                                if let category = recipe.category {
-                                    Text(translatedCategory ?? category)
-                                        .font(.caption)
-                                        .foregroundColor(.gray)
-                                        .lineLimit(1)
-                                }
-                            }
-                            .frame(height: 55, alignment: .top)
-                        } else {
-                            Spacer()
-                                .frame(height: 55)
-                        }
-                    }
-                    .frame(height: 55)
-                }
-                .frame(width: 110, height: 170)
-                .padding(8)
-                .background(Color(.systemBackground))
-                .cornerRadius(16)
-                .shadow(color: .black.opacity(0.05), radius: 4)
             }
-            .buttonStyle(PlainButtonStyle())
+            .padding(6)
+            .frame(maxWidth: .infinity)
+            .frame(height: 142)
+            .background(Color.white)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.gray.opacity(0.45), lineWidth: 1)
+            )
+            .cornerRadius(8)
         }
+        .buttonStyle(.plain)
         .task(id: recipeId) {
             await loadRecipe()
         }

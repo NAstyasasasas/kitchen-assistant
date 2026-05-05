@@ -8,74 +8,162 @@ import SwiftUI
 struct ProfileView: View {
     @StateObject var presenter: ProfilePresenter
     @StateObject private var languageManager = LanguageManager.shared
-    
+    @State private var darkTheme = false
+
     var body: some View {
         NavigationView {
-            List {
-                Section {
-                    HStack {
-                        Image(systemName: "person.circle.fill")
-                            .font(.system(size: 60))
-                            .foregroundColor(.orange)
-                        
-                        VStack(alignment: .leading) {
-                            Text(presenter.currentUser?.displayName ?? L10n.user)
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                            Text(presenter.currentUser?.email ?? "")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                        }
+            VStack(spacing: 0) {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 30) {
+                        profileHeader
+                        statisticsBlock
+                        settingsBlock
+
+                        Spacer(minLength: 250)
                     }
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 32)
                 }
-                
-                Section(L10n.statistics) {
-                    HStack(spacing: 16) {
-                        StatCard(title: L10n.cooked, value: "\(presenter.cookedCount)", color: .accentGreen)
-                        StatCard(title: L10n.inPlan, value: "\(presenter.wantToCookCount)", color: .accentPurple)
-                        StatCard(title: L10n.custom, value: "\(presenter.customRecipesCount)", color: .gray)
-                    }
-                    .padding(.vertical, 8)
-                }
-                
-                Section("Язык / Language") {
-                    ForEach(AppLanguage.allCases, id: \.self) { language in
-                        Button {
-                            languageManager.appLanguage = language
-                        } label: {
-                            HStack {
-                                Text(language.displayName)
-                                Spacer()
-                                if languageManager.appLanguage == language {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(.accentPurple)
-                                }
-                            }
-                        }
-                        .foregroundColor(.primary)
-                    }
-                }
-                
-                Section(L10n.settings) {
-                    Toggle(L10n.darkTheme, isOn: .constant(false))
-                }
-                
-                Section {
-                    Button(action: { presenter.signOut() }) {
-                        HStack {
-                            Spacer()
-                            Text(L10n.signOut)
-                                .foregroundColor(.red)
-                            Spacer()
-                        }
-                    }
-                }
+
+                logoutButton
+                    .padding(.horizontal, 64)
+                    .padding(.bottom, 18)
             }
-            .navigationTitle(L10n.profile)
+            .background(Color.white)
+            .navigationBarHidden(true)
             .task {
                 await presenter.loadStats()
             }
+        }
+    }
+
+    private var profileHeader: some View {
+        HStack(alignment: .center, spacing: 28) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 42)
+                    .fill(Color(hex: "#EEE8F2"))
+
+                Image(systemName: "person.crop.circle.fill")
+                    .font(.system(size: 72))
+                    .foregroundColor(Color(hex: "#C8C1CC"))
+            }
+            .frame(width: 132, height: 132)
+
+            VStack(alignment: .leading, spacing: 10) {
+                Text(presenter.currentUser?.displayName ?? "")
+                    .font(.system(size: 26, weight: .bold))
+                    .foregroundColor(.black)
+
+                Text(presenter.currentUser?.email ?? "")
+                    .font(.system(size: 16))
+                    .foregroundColor(Color(hex: "#4F4A55"))
+
+                Button {
+                    // upload photo later
+                } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.system(size: 17, weight: .bold))
+                        Text(L10n.loadPhoto)
+                            .font(.system(size: 17, weight: .bold))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 22)
+                    .frame(height: 48)
+                    .background(Color.accentGreen)
+                    .cornerRadius(24)
+                }
+                .padding(.top, 4)
+            }
+        }
+    }
+
+    private var statisticsBlock: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            Text(L10n.statistics)
+                .font(.system(size: 24, weight: .bold))
+                .foregroundColor(.black)
+
+            HStack(spacing: 14) {
+                StatCard(title: L10n.cooked, value: "\(presenter.cookedCount)", color: .accentGreen)
+                StatCard(title: L10n.inPlan, value: "\(presenter.wantToCookCount)", color: .accentPurple)
+                StatCard(title: L10n.custom, value: "\(presenter.customRecipesCount)", color: .gray)
+            }
+        }
+    }
+
+    private var settingsBlock: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text(L10n.settings)
+                .font(.system(size: 24, weight: .bold))
+                .foregroundColor(.black)
+
+            HStack {
+                Text(L10n.darkTheme)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.black)
+
+                Spacer()
+
+                Toggle("", isOn: $darkTheme)
+                    .labelsHidden()
+                    .tint(.accentPurple)
+            }
+            .padding(.horizontal, 22)
+            .frame(height: 50)
+            .background(Color.white)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.gray.opacity(0.45), lineWidth: 1.3)
+            )
+
+            Menu {
+                ForEach(AppLanguage.allCases, id: \.self) { language in
+                    Button(language.displayName) {
+                        languageManager.appLanguage = language
+                    }
+                }
+            } label: {
+                HStack {
+                    Text(L10n.language)
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(.black)
+
+                    Spacer()
+
+                    Text(languageManager.appLanguage.displayName)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(.gray)
+
+                    Image(systemName: "chevron.down")
+                        .foregroundColor(.gray)
+                }
+                .padding(.horizontal, 22)
+                .frame(height: 50)
+                .background(Color.white)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.gray.opacity(0.45), lineWidth: 1.3)
+                )
+            }
+        }
+    }
+
+    private var logoutButton: some View {
+        Button {
+            presenter.signOut()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "rectangle.portrait.and.arrow.right")
+                    .font(.system(size: 20, weight: .bold))
+                Text(L10n.signOut)
+                    .font(.system(size: 20, weight: .bold))
+            }
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+            .frame(height: 52)
+            .background(Color(hex: "#FF3B3B"))
+            .cornerRadius(32)
         }
     }
 }
@@ -84,20 +172,27 @@ struct StatCard: View {
     let title: String
     let value: String
     let color: Color
-    
+
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 6) {
             Text(value)
-                .font(.title2)
-                .fontWeight(.bold)
+                .font(.system(size: 38, weight: .bold))
                 .foregroundColor(color)
+
             Text(title)
-                .font(.caption)
+                .font(.system(size: 15, weight: .regular))
                 .foregroundColor(.gray)
+                .lineLimit(1)
+                .minimumScaleFactor(0.65)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
-        .background(Color(.systemGray6))
+        .frame(height: 90)
+        .background(Color.white)
         .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(color, lineWidth: 1.5)
+        )
+        .shadow(color: .black.opacity(0.16), radius: 4, x: 0, y: 3)
     }
 }

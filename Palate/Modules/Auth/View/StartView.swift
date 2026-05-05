@@ -3,8 +3,8 @@
 //  Palate
 //
 
-import Foundation
 import SwiftUI
+import Foundation
 
 struct StartView: View {
     @StateObject var presenter: AuthPresenter
@@ -13,29 +13,26 @@ struct StartView: View {
         ZStack {
             Image("food_bg")
                 .resizable()
-                .aspectRatio(contentMode: .fill)
+                .scaledToFill()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .offset(y: -70)
                 .ignoresSafeArea()
             
-            LinearGradient(
-                colors: [.black.opacity(0.4), .white],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-            
             VStack {
-                Spacer(minLength: 380)
+                Spacer()
                 
-                VStack(spacing: 16) {
+                VStack(spacing: 18) {
                     Text(L10n.welcomeTitle)
-                        .font(.custom("Condiment-Regular", size: 40))
+                        .font(.custom("Condiment-Regular", size: 42))
                         .foregroundColor(.white)
                     
                     Text(L10n.welcomeSubtitle)
-                        .font(.body)
+                        .font(.system(size: 18))
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
                         .lineSpacing(4)
+                        .padding(.horizontal, 10)
+                        .fixedSize(horizontal: false, vertical: true)
                     
                     Spacer()
                     
@@ -43,32 +40,37 @@ struct StartView: View {
                         presenter.showRegister()
                     } label: {
                         Text(L10n.register)
-                            .fontWeight(.semibold)
-                            .frame(maxWidth: 150)
-                            .padding()
-                            .background(Color.accentPurple)
+                            .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(.white)
-                            .cornerRadius(12)
+                            .frame(width: 180, height: 44)
+                            .background(Color.accentPurple)
+                            .cornerRadius(8)
+                            .shadow(color: .black.opacity(0.18), radius: 5, y: 3)
                     }
                     
                     Button {
                         presenter.showLogin()
                     } label: {
                         Text(L10n.login)
-                            .fontWeight(.semibold)
-                            .frame(maxWidth: 150)
-                            .padding()
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(Color.accentPurple)
+                            .frame(width: 180, height: 44)
                             .background(Color.white)
-                            .foregroundColor(.accentPurple)
-                            .cornerRadius(12)
+                            .cornerRadius(8)
+                            .shadow(color: .black.opacity(0.14), radius: 5, y: 3)
                     }
                 }
-                .padding()
-                .background(Color.accentGreen.opacity(0.95))
-                .cornerRadius(40)
-                .shadow(color: .black.opacity(0.2), radius: 10)
-                .padding(.horizontal)
+                .padding(.top, 34)
+                .padding(.horizontal, 18)
+                .padding(.bottom, 50)
+                .frame(maxWidth: .infinity)
+                .frame(height: 390)
+                .background(Color.accentGreen.opacity(0.96))
+                .cornerRadius(34)
             }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 0)
+            .ignoresSafeArea(edges: .bottom)
         }
     }
 }

@@ -220,3 +220,11 @@
 
 // MARK: - Common
 "error" = "Error";
+"purchases" = "Shopping";
+
+"load-photo" = "Load photo";
+"language" = "Language";
+
+"input-instruction" = "Enter cooking instructions. Each step on a new line.";
+"example-pasta" = "Example: Pasta";
+"example-italia" = "Example: Italia";

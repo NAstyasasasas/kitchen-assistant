@@ -15,6 +15,7 @@ struct SearchBar: View {
                 .foregroundColor(.gray)
             
             TextField(L10n.searchPlaceholder, text: $text)
+                .font(.system(size: 16))
                 .onSubmit(onSearch)
             
             if !text.isEmpty {
