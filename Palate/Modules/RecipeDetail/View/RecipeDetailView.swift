@@ -8,6 +8,12 @@ import SwiftUI
 struct RecipeDetailView: View {
     @StateObject var presenter: RecipeDetailPresenter
     @ObservedObject var shoppingListPresenter: ShoppingListPresenter
+    @State private var translatedInstructions: String?
+    @State private var isTranslating = false
+    @State private var hasAttemptedAutoTranslate = false
+    @State private var translatedIngredients: [Ingredient]?
+    @State private var translatedRecipeName: String?
+    @State private var translatedCuisine: String?
     
     var body: some View {
         ScrollView {
@@ -39,13 +45,13 @@ struct RecipeDetailView: View {
                         .frame(height: 120)
                         
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(recipe.name)
+                            Text(translatedRecipeName ?? recipe.name)
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
                                 .foregroundColor(.white)
                             
                             if let cuisine = recipe.cuisine {
-                                Text(cuisine)
+                                Text(translatedCuisine ?? cuisine)
                                     .font(.subheadline)
                                     .foregroundColor(.white.opacity(0.9))
                             }
@@ -106,14 +112,28 @@ struct RecipeDetailView: View {
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.top, 8)
-                        IngredientsView(ingredients: recipe.ingredients)
+                        IngredientsView(ingredients: translatedIngredients ?? recipe.ingredients)
                         
                         Text(L10n.instructions)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.top, 8)
+                        
                         if let instructions = recipe.instructions, !instructions.isEmpty {
-                            InstructionsView(instructions: instructions)
+                            VStack(alignment: .leading, spacing: 8) {
+                                if isTranslating {
+                                    HStack {
+                                        ProgressView()
+                                            .scaleEffect(0.8)
+                                        Text("Перевожу...")
+                                            .font(.caption)
+                                            .foregroundColor(.gray)
+                                    }
+                                    .padding(.leading, 4)
+                                }
+                                
+                                InstructionsView(instructions: translatedInstructions ?? instructions)
+                            }
                         } else {
                             Text(L10n.noInstructions)
                                 .foregroundColor(.gray)
@@ -144,6 +164,18 @@ struct RecipeDetailView: View {
         .task {
             await presenter.loadRecipe()
             await presenter.loadUserRecipeStatus()
+            await autoTranslateIfNeeded()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .languageDidChange)) { _ in
+            hasAttemptedAutoTranslate = false
+            translatedRecipeName = nil
+            translatedCuisine = nil
+            translatedInstructions = nil
+            translatedIngredients = nil
+
+            Task {
+                await autoTranslateIfNeeded()
+            }
         }
         .alert(L10n.errorGeneral, isPresented: .constant(presenter.errorMessage != nil)) {
             Button("OK") {
@@ -161,6 +193,60 @@ struct RecipeDetailView: View {
         } message: {
             Text(L10n.recipeConfirmationMessageSimple)
         }
+    }
+    
+    private func autoTranslateIfNeeded() async {
+        guard let recipe = presenter.recipe else { return }
+
+        let targetLang = LanguageManager.shared.appLanguage.rawValue
+
+        if targetLang == "en" {
+            await MainActor.run {
+                translatedRecipeName = nil
+                translatedCuisine = nil
+                translatedInstructions = nil
+                translatedIngredients = nil
+                isTranslating = false
+            }
+            return
+        }
+
+        await MainActor.run {
+            isTranslating = true
+        }
+
+        async let name = YandexTranslateService.shared.translateIfNeeded(recipe.name)
+        async let cuisine = YandexTranslateService.shared.translateIfNeeded(recipe.cuisine ?? "")
+        async let instructions = YandexTranslateService.shared.translateIfNeeded(recipe.instructions ?? "")
+        async let ingredients = translateIngredientsArray(recipe.ingredients)
+
+        let result = await (name, cuisine, instructions, ingredients)
+
+        await MainActor.run {
+            translatedRecipeName = result.0
+            translatedCuisine = result.1
+            translatedInstructions = result.2
+            translatedIngredients = result.3
+            isTranslating = false
+        }
+    }
+    
+    private func translateIngredientsArray(_ ingredients: [Ingredient]) async -> [Ingredient] {
+        var result: [Ingredient] = []
+
+        for ingredient in ingredients {
+            let translatedName = await YandexTranslateService.shared.translateIfNeeded(ingredient.name)
+
+            result.append(
+                Ingredient(
+                    name: translatedName,
+                    amount: ingredient.amount,
+                    unit: ingredient.unit
+                )
+            )
+        }
+
+        return result
     }
 }
 

@@ -7,6 +7,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @StateObject var presenter: ProfilePresenter
+    @StateObject private var languageManager = LanguageManager.shared
     
     var body: some View {
         NavigationView {
@@ -18,7 +19,7 @@ struct ProfileView: View {
                             .foregroundColor(.orange)
                         
                         VStack(alignment: .leading) {
-                            Text(presenter.currentUser?.displayName ?? "Пользователь")
+                            Text(presenter.currentUser?.displayName ?? L10n.user)
                                 .font(.title2)
                                 .fontWeight(.semibold)
                             Text(presenter.currentUser?.email ?? "")
@@ -31,25 +32,29 @@ struct ProfileView: View {
                 
                 Section(L10n.statistics) {
                     HStack(spacing: 16) {
-                        StatCard(
-                            title: L10n.cooked,
-                            value: "\(presenter.cookedCount)",
-                            color: .accentGreen
-                        )
-                        
-                        StatCard(
-                            title: L10n.inPlan,
-                            value: "\(presenter.wantToCookCount)",
-                            color: .accentPurple
-                        )
-                        
-                        StatCard(
-                            title: L10n.custom,
-                            value: "\(presenter.customRecipesCount)",
-                            color: .gray
-                        )
+                        StatCard(title: L10n.cooked, value: "\(presenter.cookedCount)", color: .accentGreen)
+                        StatCard(title: L10n.inPlan, value: "\(presenter.wantToCookCount)", color: .accentPurple)
+                        StatCard(title: L10n.custom, value: "\(presenter.customRecipesCount)", color: .gray)
                     }
                     .padding(.vertical, 8)
+                }
+                
+                Section("Язык / Language") {
+                    ForEach(AppLanguage.allCases, id: \.self) { language in
+                        Button {
+                            languageManager.appLanguage = language
+                        } label: {
+                            HStack {
+                                Text(language.displayName)
+                                Spacer()
+                                if languageManager.appLanguage == language {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(.accentPurple)
+                                }
+                            }
+                        }
+                        .foregroundColor(.primary)
+                    }
                 }
                 
                 Section(L10n.settings) {
@@ -57,9 +62,7 @@ struct ProfileView: View {
                 }
                 
                 Section {
-                    Button(action: {
-                        presenter.signOut()
-                    }) {
+                    Button(action: { presenter.signOut() }) {
                         HStack {
                             Spacer()
                             Text(L10n.signOut)
@@ -96,20 +99,5 @@ struct StatCard: View {
         .padding(.vertical, 12)
         .background(Color(.systemGray6))
         .cornerRadius(12)
-    }
-}
-
-struct StatRow: View {
-    let title: String
-    let value: String
-    
-    var body: some View {
-        HStack {
-            Text(title)
-            Spacer()
-            Text(value)
-                .fontWeight(.bold)
-                .foregroundColor(.accentPurple)
-        }
     }
 }

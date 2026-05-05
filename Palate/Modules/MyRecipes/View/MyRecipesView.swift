@@ -8,6 +8,8 @@ import SwiftUI
 struct MyRecipesView: View {
     @StateObject var presenter: MyRecipesPresenter
     @State private var selectedTab = 0
+    @State private var translatedNames: [String: String] = [:]
+    @State private var translatedCategories: [String: String] = [:]
     
     var body: some View {
         NavigationView {
@@ -43,6 +45,23 @@ struct MyRecipesView: View {
         }
     }
     
+    private func translateIfNeeded(recipe: Recipe, nameKey: String, categoryKey: String) async {
+        
+        if translatedNames[nameKey] == nil {
+            let translatedName = await YandexTranslateService.shared.translateIfNeeded(recipe.name)
+            await MainActor.run {
+                translatedNames[nameKey] = translatedName
+            }
+        }
+        
+        if let category = recipe.category, translatedCategories[categoryKey] == nil {
+            let translatedCategory = await YandexTranslateService.shared.translateIfNeeded(category)
+            await MainActor.run {
+                translatedCategories[categoryKey] = translatedCategory
+            }
+        }
+    }
+    
     @ViewBuilder
     private var wantToCookTab: some View {
         if presenter.isLoading {
@@ -56,12 +75,19 @@ struct MyRecipesView: View {
                     ForEach(presenter.wantToCookRecipes, id: \.id) { recipe in
                         WantToCookCard(
                             recipe: recipe,
+                            translatedName: translatedNames[recipe.id],
+                            translatedCategory: translatedCategories[recipe.category ?? ""],
                             onCook: { presenter.markAsCooked(recipeId: recipe.id) },
                             onDelete: { presenter.deleteRecipe(recipeId: recipe.id, from: "wantToCook") },
                             onTap: { presenter.didSelectRecipe(recipe) }
                         )
                         .padding(.horizontal, 16)
                         .padding(.vertical, 2)
+                        .onAppear {
+                            Task {
+                                await translateIfNeeded(recipe: recipe, nameKey: recipe.id, categoryKey: recipe.category ?? "")
+                            }
+                        }
                     }
                 }
                 .padding(.vertical, 8)
@@ -82,6 +108,8 @@ struct MyRecipesView: View {
                     ForEach(Array(zip(presenter.cookedRecipes, presenter.cookedUserRecipes)), id: \.0.id) { recipe, userRecipe in
                         CookedCard(
                             recipe: recipe,
+                            translatedName: translatedNames[recipe.id],
+                            translatedCategory: translatedCategories[recipe.category ?? ""],
                             rating: Int(userRecipe.rating),
                             dateCooked: userRecipe.dateCooked,
                             onNotes: { /* показать заметки */ },
@@ -91,6 +119,13 @@ struct MyRecipesView: View {
                                 presenter.updateRating(recipeId: recipe.id, rating: newRating)
                             }
                         )
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 2)
+                        .onAppear {
+                            Task {
+                                await translateIfNeeded(recipe: recipe, nameKey: recipe.id, categoryKey: recipe.category ?? "")
+                            }
+                        }
                     }
                 }
                 .padding(.vertical, 8)
@@ -112,12 +147,19 @@ struct MyRecipesView: View {
                         ForEach(presenter.myRecipes, id: \.id) { recipe in
                             MyRecipeCard(
                                 recipe: recipe,
+                                translatedName: translatedNames[recipe.id],
+                                translatedCategory: translatedCategories[recipe.category ?? ""],
                                 onEdit: { presenter.editRecipe(recipe) },
                                 onDelete: { presenter.deleteCustomRecipe(recipeId: recipe.id) },
                                 onTap: { presenter.didSelectRecipe(recipe) }
                             )
                             .padding(.horizontal, 16)
                             .padding(.vertical, 2)
+                            .onAppear {
+                                Task {
+                                    await translateIfNeeded(recipe: recipe, nameKey: recipe.id, categoryKey: recipe.category ?? "")
+                                }
+                            }
                         }
                     }
                     .padding(.vertical, 8)
@@ -160,6 +202,8 @@ struct MyRecipesView: View {
 
 struct WantToCookCard: View {
     let recipe: Recipe
+    let translatedName: String?
+    let translatedCategory: String?
     let onCook: () -> Void
     let onDelete: () -> Void
     let onTap: () -> Void
@@ -182,10 +226,10 @@ struct WantToCookCard: View {
                 .frame(width: 70, height: 70)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(recipe.name)
+                    Text(translatedName ?? recipe.name)
                         .font(.headline)
                         .lineLimit(2)
-                    Text(recipe.category ?? "")
+                    Text(translatedCategory ?? (recipe.category ?? ""))
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
@@ -220,6 +264,8 @@ struct WantToCookCard: View {
 
 struct CookedCard: View {
     let recipe: Recipe
+    let translatedName: String?
+    let translatedCategory: String?
     let rating: Int
     let dateCooked: Date?
     let onNotes: () -> Void
@@ -228,8 +274,10 @@ struct CookedCard: View {
     let onRatingChanged: (Int) -> Void
     @State private var localRating: Int
 
-    init(recipe: Recipe, rating: Int, dateCooked: Date?, onNotes: @escaping () -> Void, onDelete: @escaping () -> Void, onTap: @escaping () -> Void, onRatingChanged: @escaping (Int) -> Void) {
+    init(recipe: Recipe, translatedName: String?, translatedCategory: String?, rating: Int, dateCooked: Date?, onNotes: @escaping () -> Void, onDelete: @escaping () -> Void, onTap: @escaping () -> Void, onRatingChanged: @escaping (Int) -> Void) {
         self.recipe = recipe
+        self.translatedName = translatedName
+        self.translatedCategory = translatedCategory
         self.rating = rating
         self.dateCooked = dateCooked
         self.onNotes = onNotes
@@ -257,10 +305,10 @@ struct CookedCard: View {
                 .frame(width: 70, height: 70)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(recipe.name)
+                    Text(translatedName ?? recipe.name)
                         .font(.headline)
                         .lineLimit(2)
-                    Text(recipe.category ?? "")
+                    Text(translatedCategory ?? (recipe.category ?? ""))
                         .font(.caption)
                         .foregroundColor(.gray)
 
@@ -312,6 +360,8 @@ struct CookedCard: View {
 
 struct MyRecipeCard: View {
     let recipe: Recipe
+    let translatedName: String?
+    let translatedCategory: String?
     let onEdit: () -> Void
     let onDelete: () -> Void
     let onTap: () -> Void
@@ -334,10 +384,10 @@ struct MyRecipeCard: View {
                 .frame(width: 70, height: 70)
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(recipe.name)
+                    Text(translatedName ?? recipe.name)
                         .font(.headline)
                         .lineLimit(2)
-                    Text(recipe.category ?? "")
+                    Text(translatedCategory ?? (recipe.category ?? ""))
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
