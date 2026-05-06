@@ -15,7 +15,7 @@ final class MyRecipesPresenter: ObservableObject {
     @Published var errorMessage: String?
     
     private let interactor: MyRecipesInteractorProtocol
-    private let coordinator: MainCoordinator?
+    private weak var coordinator: MainCoordinator?
     
     init(interactor: MyRecipesInteractorProtocol = MyRecipesInteractor(),
          coordinator: MainCoordinator?) {
@@ -30,9 +30,7 @@ final class MyRecipesPresenter: ObservableObject {
     }
     
     @objc private func ratingDidChange() {
-        Task {
-            await loadData()
-        }
+        loadData()
     }
     
     deinit {

@@ -24,9 +24,19 @@ final class CoreDataManager {
         persistentContainer.viewContext
     }
     
+    func newBackgroundContext() -> NSManagedObjectContext {
+        persistentContainer.newBackgroundContext()
+    }
+    
     func save() {
-        if viewContext.hasChanges {
-            try? viewContext.save()
+        viewContext.performAndWait {
+            guard viewContext.hasChanges else { return }
+
+            do {
+                try viewContext.save()
+            } catch {
+                print("CoreData save error: \(error)")
+            }
         }
     }
     
@@ -36,6 +46,18 @@ final class CoreDataManager {
     
     func saveUserRecipe(_ userRecipe: UserRecipe) {
         saveContext()
+    }
+    
+    func deleteAndSave(_ object: NSManagedObject) {
+        viewContext.performAndWait {
+            viewContext.delete(object)
+
+            do {
+                try viewContext.save()
+            } catch {
+                print("❌ CoreData delete error: \(error)")
+            }
+        }
     }
 
     func fetchUserRecipes(byUserId userId: String, status: String? = nil) -> [UserRecipe] {

@@ -130,8 +130,7 @@ final class MyRecipesInteractor: MyRecipesInteractorProtocol {
         
         let localRecipes = coreData.fetchUserRecipes(byUserId: userId)
         if let toDelete = localRecipes.first(where: { $0.recipeId == recipeId }) {
-            coreData.viewContext.delete(toDelete)
-            coreData.saveContext()
+            coreData.deleteAndSave(toDelete)
         }
         
         do {
