@@ -17,13 +17,15 @@ final class RecipeDetailPresenter: ObservableObject {
     private let recipeId: String
     private let interactor: RecipeDetailInteractorProtocol
     private weak var coordinator: MainCoordinator?
+    private let shoppingListPresenter: ShoppingListPresenter?
     
     init(recipeId: String,
          interactor: RecipeDetailInteractorProtocol = RecipeDetailInteractor(),
-         coordinator: MainCoordinator?) {
+         coordinator: MainCoordinator?, shoppingListPresenter: ShoppingListPresenter) {
         self.recipeId = recipeId
         self.interactor = interactor
         self.coordinator = coordinator
+        self.shoppingListPresenter = shoppingListPresenter
     }
     
     func loadRecipe() async {

@@ -7,6 +7,7 @@ import SwiftUI
 
 struct RecipeDetailView: View {
     @StateObject var presenter: RecipeDetailPresenter
+    @ObservedObject var shoppingListPresenter: ShoppingListPresenter
     
     var body: some View {
         ScrollView {
@@ -58,6 +59,9 @@ struct RecipeDetailView: View {
                                 color: .accentGreen,
                                 isActive: false
                             ) {
+                                Task{
+                                    await shoppingListPresenter.checkAndAddRecipe(recipe)
+                                }
                             }
                         }
                         .padding(.vertical)
@@ -96,6 +100,17 @@ struct RecipeDetailView: View {
             }
         } message: {
             Text(presenter.errorMessage ?? "")
+        }
+        .alert(L10n.recipeConfirmationTitle,
+               isPresented: $shoppingListPresenter.showRecipeConfirmation) {
+            Button(L10n.recipeConfirmationAddAgain) {
+                Task {
+                    await shoppingListPresenter.confirmAddWholeRecipe()
+                }
+            }
+            Button(L10n.cancel, role: .cancel) { }
+        } message: {
+            Text(L10n.recipeConfirmationMessageSimple)
         }
     }
 }
@@ -185,4 +200,3 @@ struct InstructionsView: View {
         .cornerRadius(10)
     }
 }
-

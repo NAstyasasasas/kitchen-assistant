@@ -12,6 +12,12 @@ import Foundation
 public enum L10n {
   /// Active
   public static let active = L10n.tr("Localizable", "active", fallback: "Active")
+  /// Name
+  public static let addItemName = L10n.tr("Localizable", "add_item_name", fallback: "Name")
+  /// Qty
+  public static let addItemQuantity = L10n.tr("Localizable", "add_item_quantity", fallback: "Qty")
+  /// Unit
+  public static let addItemUnit = L10n.tr("Localizable", "add_item_unit", fallback: "Unit")
   /// Add to cart
   public static let addToCart = L10n.tr("Localizable", "add_to_cart", fallback: "Add to cart")
   /// Error adding to cart
@@ -52,8 +58,24 @@ public enum L10n {
   public static let custom = L10n.tr("Localizable", "custom", fallback: "Custom")
   /// Dark theme
   public static let darkTheme = L10n.tr("Localizable", "dark_theme", fallback: "Dark theme")
+  /// Delete
+  public static let delete = L10n.tr("Localizable", "delete", fallback: "Delete")
+  /// Delete all?
+  public static let deleteAllConfirm = L10n.tr("Localizable", "delete_all_confirm", fallback: "Delete all?")
+  /// Are you sure you want to delete all items?
+  public static let deleteAllMessage = L10n.tr("Localizable", "delete_all_message", fallback: "Are you sure you want to delete all items?")
+  /// Delete item?
+  public static let deleteItemConfirm = L10n.tr("Localizable", "delete_item_confirm", fallback: "Delete item?")
+  /// This action cannot be undone.
+  public static let deleteItemMessage = L10n.tr("Localizable", "delete_item_message", fallback: "This action cannot be undone.")
   /// Dessert
   public static let dessert = L10n.tr("Localizable", "dessert", fallback: "Dessert")
+  /// Edit item
+  public static let editItem = L10n.tr("Localizable", "edit_item", fallback: "Edit item")
+  /// Quantity
+  public static let editQuantity = L10n.tr("Localizable", "edit_quantity", fallback: "Quantity")
+  /// Unit (g, ml, pcs, tbsp)
+  public static let editUnit = L10n.tr("Localizable", "edit_unit", fallback: "Unit (g, ml, pcs, tbsp)")
   /// Egg
   public static let egg = L10n.tr("Localizable", "egg", fallback: "Egg")
   /// Email
@@ -146,6 +168,12 @@ public enum L10n {
   public static let potato = L10n.tr("Localizable", "potato", fallback: "Potato")
   /// Profile
   public static let profile = L10n.tr("Localizable", "profile", fallback: "Profile")
+  /// Add again
+  public static let recipeConfirmationAddAgain = L10n.tr("Localizable", "recipe_confirmation_add_again", fallback: "Add again")
+  /// Ingredients from this recipe are already in the list. Add again?
+  public static let recipeConfirmationMessageSimple = L10n.tr("Localizable", "recipe_confirmation_message_simple", fallback: "Ingredients from this recipe are already in the list. Add again?")
+  /// Confirmation
+  public static let recipeConfirmationTitle = L10n.tr("Localizable", "recipe_confirmation_title", fallback: "Confirmation")
   /// Recommendations
   public static let recommendations = L10n.tr("Localizable", "recommendations", fallback: "Recommendations")
   /// Register
@@ -158,6 +186,8 @@ public enum L10n {
   public static let rice = L10n.tr("Localizable", "rice", fallback: "Rice")
   /// Salmon
   public static let salmon = L10n.tr("Localizable", "salmon", fallback: "Salmon")
+  /// Save
+  public static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Seafood
   public static let seafood = L10n.tr("Localizable", "seafood", fallback: "Seafood")
   /// Search error. Check connection
@@ -170,6 +200,8 @@ public enum L10n {
   public static let settings = L10n.tr("Localizable", "settings", fallback: "Settings")
   /// Shopping list
   public static let shoppingList = L10n.tr("Localizable", "shopping_list", fallback: "Shopping list")
+  /// Shopping list is empty
+  public static let shoppingListEmpty = L10n.tr("Localizable", "shopping_list_empty", fallback: "Shopping list is empty")
   /// Shrimp
   public static let shrimp = L10n.tr("Localizable", "shrimp", fallback: "Shrimp")
   /// Side

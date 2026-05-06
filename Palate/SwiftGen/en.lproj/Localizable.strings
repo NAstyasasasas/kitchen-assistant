@@ -124,3 +124,21 @@
 
 "my_recipes" = "My recipes";
 "plan_title" = "Meal Plan";
+
+"add_item_name" = "Name";
+"add_item_quantity" = "Qty";
+"add_item_unit" = "Unit";
+"shopping_list_empty" = "Shopping list is empty";
+"edit_quantity" = "Quantity";
+"edit_unit" = "Unit (g, ml, pcs, tbsp)";
+"delete_all_confirm" = "Delete all?";
+"delete_all_message" = "Are you sure you want to delete all items?";
+"delete_item_confirm" = "Delete item?";
+"delete_item_message" = "This action cannot be undone.";
+"delete" = "Delete";
+"save" = "Save";
+"edit_item" = "Edit item";
+
+"recipe_confirmation_title" = "Confirmation";
+"recipe_confirmation_add_again" = "Add again";
+"recipe_confirmation_message_simple" = "Ingredients from this recipe are already in the list. Add again?";
