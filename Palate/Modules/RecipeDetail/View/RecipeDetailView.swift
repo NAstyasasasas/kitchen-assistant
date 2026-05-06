@@ -59,7 +59,9 @@ struct RecipeDetailView: View {
                                 color: .accentGreen,
                                 isActive: false
                             ) {
-                                shoppingListPresenter.checkAndAddRecipe(recipe)
+                                Task{
+                                    await shoppingListPresenter.checkAndAddRecipe(recipe)
+                                }
                             }
                         }
                         .padding(.vertical)
@@ -102,7 +104,9 @@ struct RecipeDetailView: View {
         .alert(L10n.recipeConfirmationTitle,
                isPresented: $shoppingListPresenter.showRecipeConfirmation) {
             Button(L10n.recipeConfirmationAddAgain) {
-                shoppingListPresenter.confirmAddWholeRecipe()
+                Task {
+                    await shoppingListPresenter.confirmAddWholeRecipe()
+                }
             }
             Button(L10n.cancel, role: .cancel) { }
         } message: {

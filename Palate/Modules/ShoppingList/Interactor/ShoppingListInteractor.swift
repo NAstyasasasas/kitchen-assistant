@@ -8,6 +8,7 @@ import CoreData
 import FirebaseAuth
 import FirebaseFirestore
 
+@MainActor
 protocol ShoppingListInteractorProtocol {
     func fetchItems() -> [ShoppingItem]
     func addItem(name: String, quantity: Double, unit: String)
@@ -21,6 +22,7 @@ protocol ShoppingListInteractorProtocol {
     func addWholeRecipe(_ recipe: Recipe) async
 }
 
+@MainActor
 final class ShoppingListInteractor: ShoppingListInteractorProtocol {
     private let context = CoreDataManager.shared.viewContext
     private let db = Firestore.firestore()
@@ -66,11 +68,23 @@ final class ShoppingListInteractor: ShoppingListInteractorProtocol {
     
     func deleteAllItems() {
         let items = fetchItems()
+        let itemIds = items.compactMap { $0.id?.uuidString }
+
         for item in items {
-            Task { await deleteFromFirestore(item: item) }
             context.delete(item)
         }
+
         saveContext()
+
+        Task {
+            await withTaskGroup(of: Void.self) { group in
+                for id in itemIds {
+                    group.addTask {
+                        await self.deleteFromFirestore(id: id)
+                    }
+                }
+            }
+        }
     }
     
     func toggleBought(_ item: ShoppingItem) {
@@ -173,6 +187,14 @@ final class ShoppingListInteractor: ShoppingListInteractorProtocol {
     
     private func deleteFromFirestore(item: ShoppingItem) async {
         guard let id = item.id?.uuidString else { return }
+        do {
+            try await collectionRef().document(id).delete()
+        } catch {
+            print("❌ Firestore delete error: \(error)")
+        }
+    }
+    
+    private func deleteFromFirestore(id: String) async {
         do {
             try await collectionRef().document(id).delete()
         } catch {
