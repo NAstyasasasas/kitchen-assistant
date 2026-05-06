@@ -52,9 +52,12 @@ struct RecipeSelectionSheet: View {
                     .searchable(text: $searchText)
                     .onSubmit(of: .search) {
                         Task {
-                            isLoading = true
-                            defer { isLoading = false }
-                            apiResults = try await APIService.shared.searchRecipes(query: searchText)
+                            await searchApiRecipes()
+                        }
+                    }
+                    .onChange(of: searchText) { newValue in
+                        if newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                            apiResults = []
                         }
                     }
                     .overlay {
@@ -143,6 +146,46 @@ struct RecipeSelectionSheet: View {
             let translatedCategory = await YandexTranslateService.shared.translateIfNeeded(category)
             await MainActor.run {
                 translatedCategories[category] = translatedCategory
+            }
+        }
+    }
+    
+    private func searchApiRecipes() async {
+        let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+
+        await MainActor.run {
+            isLoading = true
+        }
+
+        defer {
+            Task { @MainActor in
+                isLoading = false
+            }
+        }
+
+        do {
+            let query: String
+
+            if LanguageManager.shared.isRussian {
+                query = try await YandexTranslateService.shared.translate(
+                    text: trimmed,
+                    from: "ru",
+                    to: "en"
+                )
+            } else {
+                query = trimmed
+            }
+
+            let results = try await APIService.shared.searchRecipes(query: query)
+
+            await MainActor.run {
+                apiResults = results
+            }
+        } catch {
+            print("❌ Recipe picker search error:", error)
+            await MainActor.run {
+                apiResults = []
             }
         }
     }

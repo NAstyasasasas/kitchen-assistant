@@ -82,6 +82,10 @@ public enum L10n {
   public static var darkTheme: String { return L10n.tr("Localizable", "dark_theme", fallback: "Dark theme") }
   /// Delete
   public static var delete: String { return L10n.tr("Localizable", "delete", fallback: "Delete") }
+  /// Delete selected products?
+  public static var deleteProduct: String { return L10n.tr("Localizable", "delete-product", fallback: "Delete selected products?") }
+  /// Remove recipe from list?
+  public static var deleteRecipeIn: String { return L10n.tr("Localizable", "delete-recipe-in", fallback: "Remove recipe from list?") }
   /// Delete all?
   public static var deleteAllConfirm: String { return L10n.tr("Localizable", "delete_all_confirm", fallback: "Delete all?") }
   /// Are you sure you want to delete all items?
@@ -258,6 +262,10 @@ public enum L10n {
   public static var register: String { return L10n.tr("Localizable", "register", fallback: "Register") }
   /// Registration error
   public static var registrationError: String { return L10n.tr("Localizable", "registration_error", fallback: "Registration error") }
+  /// Put away
+  public static var removeFromWantToCook: String { return L10n.tr("Localizable", "remove-from-want-to-cook", fallback: "Put away") }
+  /// Reset
+  public static var reset: String { return L10n.tr("Localizable", "reset", fallback: "Reset") }
   /// Reset all filters
   public static var resetFilters: String { return L10n.tr("Localizable", "reset_filters", fallback: "Reset all filters") }
   /// Rice

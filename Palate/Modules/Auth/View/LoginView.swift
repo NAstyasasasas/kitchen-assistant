@@ -7,11 +7,14 @@ import SwiftUI
 import Foundation
 
 private var authHeader: some View {
-    Image("food_bg")
-        .resizable()
-        .scaledToFill()
-        .frame(height: 330)
-        .clipped()
+    ZStack {
+        Image("food_bg")
+            .resizable()
+            .scaledToFill()
+            .frame(width: UIScreen.main.bounds.width, height: 390)
+            .offset(y: -45)
+    }
+    .frame(width: UIScreen.main.bounds.width, height: 280)
 }
 
 struct LoginView: View {
@@ -25,7 +28,7 @@ struct LoginView: View {
         VStack(spacing: 0) {
             authHeader
             
-            VStack(spacing: 14) {
+            VStack(spacing: 12) {
                 Text(L10n.welcomeTitle)
                     .font(.custom("Condiment-Regular", size: 42))
                     .foregroundColor(.accentGreen)
@@ -92,7 +95,7 @@ struct LoginView: View {
                     .stroke(Color(.secondaryLabel).opacity(0.35), lineWidth: 1)
             )
             .padding(.horizontal, 16)
-            .offset(y: -8)
+            .offset(y: -58)
             
             Spacer()
         }

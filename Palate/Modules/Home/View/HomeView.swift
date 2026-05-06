@@ -27,6 +27,7 @@ struct FilterChip: View {
 struct RecipeCardGrid: View {
     let recipes: [Recipe]
     let onTap: (String) -> Void
+    let onBookmarkTap: (Recipe) -> Void
     @State private var translatedNames: [String: String] = [:]
     @State private var translatedCategories: [String: String] = [:]
     
@@ -45,7 +46,10 @@ struct RecipeCardGrid: View {
                     RecipeCard(
                         recipe: recipe,
                         translatedName: translatedNames[recipe.id],
-                        translatedCategory: translatedCategories[recipe.category ?? ""]
+                        translatedCategory: translatedCategories[recipe.category ?? ""],
+                        onBookmarkTap: {
+                            onBookmarkTap(recipe)
+                        }
                     )
                 }
                 .buttonStyle(.plain)
@@ -99,6 +103,28 @@ struct HomeView: View {
     @StateObject var presenter: HomePresenter
     @State private var searchText = ""
     @State private var showFilterSheet = false
+    @State private var translatedApiTexts: [String: String] = [:]
+    
+    private func displayApiText(_ text: String) -> String {
+        guard LanguageManager.shared.isRussian else { return text }
+        return translatedApiTexts[text] ?? text
+    }
+
+    private func translateApiTextIfNeeded(_ text: String) {
+        guard LanguageManager.shared.isRussian else { return }
+        guard translatedApiTexts[text] == nil else { return }
+        guard text != "All" else {
+            translatedApiTexts[text] = L10n.all
+            return
+        }
+
+        Task {
+            let translated = await YandexTranslateService.shared.translateIfNeeded(text)
+            await MainActor.run {
+                translatedApiTexts[text] = translated
+            }
+        }
+    }
     
     var body: some View {
         NavigationView {
@@ -112,27 +138,20 @@ struct HomeView: View {
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
-                            FilterChip(
-                                title: L10n.all,
-                                isSelected: presenter.selectedCuisine == nil && presenter.selectedMealType == nil
-                            ) {
-                                presenter.resetFilters()
-                            }
-                            
-                            ForEach(CuisineType.allCases.prefix(6)) { cuisine in
+                            ForEach(presenter.apiCategories.prefix(10), id: \.self) { category in
                                 FilterChip(
-                                    title: cuisine.localizedName,
-                                    isSelected: presenter.selectedCuisine == cuisine
+                                    title: displayApiText(category),
+                                    isSelected: presenter.selectedApiCategory == category
                                 ) {
-                                    if presenter.selectedCuisine == cuisine {
-                                        presenter.selectedCuisine = nil
-                                    } else {
-                                        presenter.selectedCuisine = cuisine
-                                        presenter.selectedMealType = nil
-                                    }
+                                    presenter.selectedApiCategory = category
+                                    presenter.selectedApiCuisine = "All"
+
                                     Task {
-                                        await presenter.loadRecipes()
+                                        await presenter.applyApiFilters()
                                     }
+                                }
+                                .onAppear {
+                                    translateApiTextIfNeeded(category)
                                 }
                             }
                         }
@@ -148,20 +167,28 @@ struct HomeView: View {
                                 .font(.headline)
                                 .padding(.horizontal)
                             
-                            RecipeCardGrid(recipes: presenter.searchResults) { recipeId in
-                                presenter.didSelectRecipe(recipeId)
-                            }
+                            RecipeCardGrid(
+                                recipes: presenter.searchResults,
+                                onTap: { recipeId in
+                                    presenter.didSelectRecipe(recipeId)
+                                },
+                                onBookmarkTap: { recipe in
+                                    Task {
+                                        await presenter.toggleWantToCook(recipe: recipe)
+                                    }
+                                }
+                            )
                         }
                     } else if presenter.filteredRecipes.isEmpty {
                         HomeEmptyState(message: presenter.errorMessage ?? L10n.noRecipes)
                     } else {
                         VStack(alignment: .leading, spacing: 16) {
                             HStack {
-                                if let cuisine = presenter.selectedCuisine {
-                                    Text(cuisine.localizedName)
+                                if presenter.selectedApiCategory != "All" {
+                                    Text(displayApiText(presenter.selectedApiCategory))
                                         .font(.system(size: 22, weight: .bold))
-                                } else if let mealType = presenter.selectedMealType {
-                                    Text(mealType.localizedName)
+                                } else if presenter.selectedApiCuisine != "All" {
+                                    Text(displayApiText(presenter.selectedApiCuisine))
                                         .font(.system(size: 22, weight: .bold))
                                 } else {
                                     Text(L10n.recommendations)
@@ -180,9 +207,17 @@ struct HomeView: View {
                             }
                             .padding(.horizontal)
                             
-                            RecipeCardGrid(recipes: presenter.filteredRecipes) { recipeId in
-                                presenter.didSelectRecipe(recipeId)
-                            }
+                            RecipeCardGrid(
+                                recipes: presenter.filteredRecipes,
+                                onTap: { recipeId in
+                                    presenter.didSelectRecipe(recipeId)
+                                },
+                                onBookmarkTap: { recipe in
+                                    Task {
+                                        await presenter.toggleWantToCook(recipe: recipe)
+                                    }
+                                }
+                            )
                         }
                     }
                 }
@@ -198,6 +233,9 @@ struct HomeView: View {
             .sheet(isPresented: $showFilterSheet) {
                 FilterSheetView(presenter: presenter)
             }
+            .onReceive(NotificationCenter.default.publisher(for: .languageDidChange)) { _ in
+                translatedApiTexts.removeAll()
+            }
         }
     }
 }
@@ -205,150 +243,197 @@ struct HomeView: View {
 struct FilterSheetView: View {
     @ObservedObject var presenter: HomePresenter
     @Environment(\.dismiss) var dismiss
+
+    @State private var tempCategory = "All"
+    @State private var tempCuisine = "All"
     
-    @State private var tempCuisine: CuisineType? = nil
-    @State private var tempMealType: MealType? = nil
+    @State private var translatedApiTexts: [String: String] = [:]
+    
+    private func displayApiText(_ text: String) -> String {
+        translatedApiTexts[text] ?? text
+    }
+
+    private func translateApiTextIfNeeded(_ text: String) {
+        guard LanguageManager.shared.isRussian else { return }
+        guard translatedApiTexts[text] == nil else { return }
+        guard text != "All" else {
+            translatedApiTexts[text] = L10n.all
+            return
+        }
+
+        Task {
+            let translated = await YandexTranslateService.shared.translateIfNeeded(text)
+            await MainActor.run {
+                translatedApiTexts[text] = translated
+            }
+        }
+    }
     
     var body: some View {
         NavigationView {
-            List {
-                Section {
-                    Button {
-                        tempCuisine = nil
-                    } label: {
-                        HStack {
-                            Text(L10n.anyCuisine)
-                                .fontWeight(.medium)
-                            Spacer()
-                            if tempCuisine == nil {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.accentPurple)
-                            }
-                        }
-                    }
-                    .foregroundColor(.primary)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 22) {
+                    Text(L10n.filters)
+                        .font(.system(size: 28, weight: .regular))
                     
-                    ForEach(CuisineType.allCases) { cuisine in
-                        Button {
-                            tempCuisine = cuisine
-                        } label: {
-                            HStack {
-                                Text(cuisine.localizedName)
-                                Spacer()
-                                if tempCuisine == cuisine {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(.accentPurple)
-                                }
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text(L10n.category)
+                            .font(.system(size: 16, weight: .bold))
+                        
+                        FlowLayout(data: presenter.apiCategories, spacing: 10) { category in
+                            filterChip(
+                                title: category,
+                                selected: tempCategory == category
+                            ) {
+                                tempCategory = category
+                            }
+                            .onAppear {
+                                translateApiTextIfNeeded(category)
                             }
                         }
-                        .foregroundColor(.primary)
                     }
-                } header: {
-                    HStack {
-                        Image(systemName: "fork.knife")
+                    
+                    VStack(alignment: .leading, spacing: 10) {
                         Text(L10n.cuisine)
-                    }
-                }
-                
-                Section {
-                    Button {
-                        tempMealType = nil
-                    } label: {
-                        HStack {
-                            Text(L10n.anyType)
-                                .fontWeight(.medium)
-                            Spacer()
-                            if tempMealType == nil {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.accentPurple)
+                            .font(.system(size: 16, weight: .bold))
+                        
+                        FlowLayout(data: presenter.apiCuisines, spacing: 10) { cuisine in
+                            filterChip(
+                                title: cuisine,
+                                selected: tempCuisine == cuisine
+                            ) {
+                                tempCuisine = cuisine
+                            }
+                            .onAppear {
+                                translateApiTextIfNeeded(cuisine)
                             }
                         }
                     }
-                    .foregroundColor(.primary)
                     
-                    ForEach(MealType.allCases) { mealType in
+                    Spacer()
+                    
+                    HStack(spacing: 16) {
                         Button {
-                            tempMealType = mealType
+                            tempCategory = "All"
+                            tempCuisine = "All"
                         } label: {
-                            HStack {
-                                Text(mealType.localizedName)
-                                Spacer()
-                                if tempMealType == mealType {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(.accentPurple)
-                                }
-                            }
+                            Text(L10n.reset)
+                                .font(.system(size: 15, weight: .semibold))
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 44)
+                                .foregroundColor(.primary)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(Color.gray.opacity(0.45), lineWidth: 1)
+                                )
                         }
-                        .foregroundColor(.primary)
-                    }
-                } header: {
-                    HStack {
-                        Image(systemName: "carrot")
-                        Text(L10n.mealType)
-                    }
-                }
-                
-                if tempCuisine != nil || tempMealType != nil {
-                    Section {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                if let cuisine = tempCuisine {
-                                    Text(cuisine.localizedName)
-                                        .font(.caption)
-                                        .foregroundColor(.accentPurple)
-                                }
-                                if let mealType = tempMealType {
-                                    Text(mealType.localizedName)
-                                        .font(.caption)
-                                        .foregroundColor(.accentPurple)
-                                }
+                        
+                        Button {
+                            presenter.selectedApiCategory = tempCategory
+                            presenter.selectedApiCuisine = tempCuisine
+                            
+                            Task {
+                                await presenter.applyApiFilters()
+                                dismiss()
                             }
-                            Spacer()
-                            Text(L10n.active)
-                                .font(.caption)
-                                .foregroundColor(.green)
-                        }
-                    }
-                }
-                
-                Section {
-                    Button {
-                        tempCuisine = nil
-                        tempMealType = nil
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Text(L10n.resetFilters)
-                                .foregroundColor(.red)
-                            Spacer()
+                        } label: {
+                            Text(L10n.apply)
+                                .font(.system(size: 15, weight: .semibold))
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 44)
+                                .foregroundColor(.white)
+                                .background(Color.accentPurple)
+                                .cornerRadius(10)
                         }
                     }
                 }
             }
-            .navigationTitle(L10n.filters)
-            .navigationBarTitleDisplayMode(.inline)
+            .padding(24)
+            .background(Color(.systemBackground))
+            .navigationBarHidden(true)
             .onAppear {
-                tempCuisine = presenter.selectedCuisine
-                tempMealType = presenter.selectedMealType
+                tempCategory = presenter.selectedApiCategory
+                tempCuisine = presenter.selectedApiCuisine
             }
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(L10n.cancel) {
-                        dismiss()
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(L10n.apply) {
-                        presenter.selectedCuisine = tempCuisine
-                        presenter.selectedMealType = tempMealType
-                        Task {
-                            await presenter.loadRecipes()
-                            dismiss()
-                        }
-                    }
-                    .fontWeight(.bold)
-                }
+            .onReceive(NotificationCenter.default.publisher(for: .languageDidChange)) { _ in
+                translatedApiTexts.removeAll()
             }
         }
+    }
+
+    private func filterChip(title: String, selected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(displayApiText(title))
+                .font(.system(size: 13, weight: .semibold))
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
+                .padding(.horizontal, 14)
+                .frame(height: 34)
+                .background(selected ? Color.accentPurple : Color(.systemGray5))
+                .foregroundColor(selected ? .white : .primary)
+                .cornerRadius(17)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+struct FlowLayout<Data: RandomAccessCollection, Content: View>: View where Data.Element: Hashable {
+    let data: Data
+    let spacing: CGFloat
+    let content: (Data.Element) -> Content
+
+    @State private var totalHeight: CGFloat = .zero
+
+    var body: some View {
+        GeometryReader { geometry in
+            self.generateContent(in: geometry)
+        }
+        .frame(height: totalHeight)
+    }
+
+    private func generateContent(in geometry: GeometryProxy) -> some View {
+        var width: CGFloat = 0
+        var height: CGFloat = 0
+
+        return ZStack(alignment: .topLeading) {
+            ForEach(Array(data), id: \.self) { item in
+                content(item)
+                    .padding(.trailing, spacing)
+                    .padding(.bottom, spacing)
+                    .alignmentGuide(.leading) { dimension in
+                        if abs(width - dimension.width) > geometry.size.width {
+                            width = 0
+                            height -= dimension.height + spacing
+                        }
+
+                        let result = width
+                        if item == data.last {
+                            width = 0
+                        } else {
+                            width -= dimension.width + spacing
+                        }
+
+                        return result
+                    }
+                    .alignmentGuide(.top) { _ in
+                        let result = height
+                        if item == data.last {
+                            height = 0
+                        }
+                        return result
+                    }
+            }
+        }
+        .background(
+            GeometryReader { geo in
+                Color.clear
+                    .onAppear {
+                        totalHeight = geo.size.height
+                    }
+                    .onChange(of: geo.size.height) { newValue in
+                        totalHeight = newValue
+                    }
+            }
+        )
     }
 }

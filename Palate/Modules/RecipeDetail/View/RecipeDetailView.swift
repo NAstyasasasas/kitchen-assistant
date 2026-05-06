@@ -81,7 +81,7 @@ struct RecipeDetailView: View {
                                     title: L10n.wantToCook,
                                     icon: "bookmark",
                                     color: .accentPurple,
-                                    isActive: presenter.isInWantToCook
+                                    isActive: presenter.isWantToCook
                                 ) {
                                     Task {
                                         await presenter.addToWantToCook()
@@ -288,7 +288,6 @@ struct ActionButton: View {
             .foregroundColor(.white)
             .cornerRadius(10)
         }
-        .disabled(isActive)
     }
 }
 

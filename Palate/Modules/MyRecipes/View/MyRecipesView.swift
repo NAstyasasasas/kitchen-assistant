@@ -10,6 +10,10 @@ struct MyRecipesView: View {
     @State private var selectedTab = 0
     @State private var translatedNames: [String: String] = [:]
     @State private var translatedCategories: [String: String] = [:]
+    @State private var recipeToDelete: (id: String, from: String)?
+    @State private var showDeleteAlert = false
+    @State private var notesRecipe: UserRecipe?
+    @State private var showNotesSheet = false
     
     var body: some View {
         NavigationView {
@@ -52,6 +56,81 @@ struct MyRecipesView: View {
             .onAppear {
                 presenter.loadData()
             }
+            .alert(L10n.delete, isPresented: $showDeleteAlert) {
+                Button(L10n.delete, role: .destructive) {
+                    if let item = recipeToDelete {
+                        presenter.deleteRecipe(recipeId: item.id, from: item.from)
+                        recipeToDelete = nil
+                    }
+                }
+
+                Button(L10n.cancel, role: .cancel) {
+                    recipeToDelete = nil
+                }
+            } message: {
+                Text(L10n.deleteRecipeIn)
+            }
+            .sheet(isPresented: $showNotesSheet) {
+                if let notesRecipe = notesRecipe {
+                    NavigationView {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text(L10n.myNotes)
+                                .font(.system(size: 22, weight: .bold))
+
+                            Text(notesRecipe.notes ?? "")
+                                .font(.system(size: 16))
+                                .foregroundColor(.primary)
+
+                            Spacer()
+                        }
+                        .padding()
+                        .navigationTitle(L10n.myNotes)
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button(L10n.ok) {
+                                    showNotesSheet = false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func cookedRecipeRow(recipe: Recipe, userRecipe: UserRecipe) -> some View {
+        CookedCard(
+            recipe: recipe,
+            translatedName: translatedNames[recipe.id],
+            translatedCategory: translatedCategories[recipe.category ?? ""],
+            rating: Int(userRecipe.rating),
+            dateCooked: userRecipe.dateCooked,
+            onNotes: {
+                presenter.didSelectRecipe(recipe)
+            },
+            onDelete: {
+                recipeToDelete = (recipe.id, "cooked")
+                showDeleteAlert = true
+            },
+            onTap: {
+                presenter.didSelectRecipe(recipe)
+            },
+            onRatingChanged: { newRating in
+                presenter.updateRating(recipeId: recipe.id, rating: newRating)
+            }
+        )
+        .padding(.horizontal, 16)
+        .padding(.vertical, 2)
+        .onAppear {
+            Task {
+                await translateIfNeeded(
+                    recipe: recipe,
+                    nameKey: recipe.id,
+                    categoryKey: recipe.category ?? ""
+                )
+            }
         }
     }
     
@@ -88,7 +167,9 @@ struct MyRecipesView: View {
                             translatedName: translatedNames[recipe.id],
                             translatedCategory: translatedCategories[recipe.category ?? ""],
                             onCook: { presenter.markAsCooked(recipeId: recipe.id) },
-                            onDelete: { presenter.deleteRecipe(recipeId: recipe.id, from: "wantToCook") },
+                            onDelete: {
+                                recipeToDelete = (recipe.id, "wantToCook")
+                                showDeleteAlert = true },
                             onTap: { presenter.didSelectRecipe(recipe) }
                         )
                         .padding(.horizontal, 16)
@@ -116,26 +197,7 @@ struct MyRecipesView: View {
             ScrollView {
                 LazyVStack(spacing: 8) {
                     ForEach(Array(zip(presenter.cookedRecipes, presenter.cookedUserRecipes)), id: \.0.id) { recipe, userRecipe in
-                        CookedCard(
-                            recipe: recipe,
-                            translatedName: translatedNames[recipe.id],
-                            translatedCategory: translatedCategories[recipe.category ?? ""],
-                            rating: Int(userRecipe.rating),
-                            dateCooked: userRecipe.dateCooked,
-                            onNotes: { /* показать заметки */ },
-                            onDelete: { presenter.deleteRecipe(recipeId: recipe.id, from: "cooked") },
-                            onTap: { presenter.didSelectRecipe(recipe) },
-                            onRatingChanged: { newRating in
-                                presenter.updateRating(recipeId: recipe.id, rating: newRating)
-                            }
-                        )
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 2)
-                        .onAppear {
-                            Task {
-                                await translateIfNeeded(recipe: recipe, nameKey: recipe.id, categoryKey: recipe.category ?? "")
-                            }
-                        }
+                        cookedRecipeRow(recipe: recipe, userRecipe: userRecipe)
                     }
                 }
                 .padding(.vertical, 8)

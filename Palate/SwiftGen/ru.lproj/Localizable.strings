@@ -220,3 +220,8 @@
 "example-pasta" = "Например: Паста";
 "example-italia" = "Например: Итальянская";
 
+"remove-from-want-to-cook" = "Убрать";
+"delete-recipe-in" = "Удалить рецепт из списка?";
+"reset" = "Сбросить";
+
+"delete-product" = "Удалить выбранные продукты?";

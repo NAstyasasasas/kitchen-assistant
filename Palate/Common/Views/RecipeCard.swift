@@ -9,6 +9,7 @@ struct RecipeCard: View {
     let recipe: Recipe
     let translatedName: String?
     let translatedCategory: String?
+    let onBookmarkTap: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -28,13 +29,15 @@ struct RecipeCard: View {
                 .clipped()
                 .cornerRadius(12)
                 
-                Image(systemName: "bookmark.fill")
-                    .font(.system(size: 16))
-                    .foregroundColor(.white)
-                    .padding(8)
-                    .background(Color(.systemBackground).opacity(0.55))
-                    .clipShape(Circle())
-                    .padding(6)
+                Button(action: onBookmarkTap) {
+                    Image(systemName: "bookmark.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(.white)
+                        .padding(8)
+                        .background(Color.white.opacity(0.55))
+                        .clipShape(Circle())
+                }
+                .padding(6)
             }
             
             Text(translatedName ?? recipe.name)

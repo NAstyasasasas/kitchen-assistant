@@ -7,11 +7,14 @@ import Foundation
 import SwiftUI
 
 private var authHeader: some View {
-    Image("food_bg")
-        .resizable()
-        .scaledToFill()
-        .frame(height: 330)
-        .clipped()
+    ZStack {
+        Image("food_bg")
+            .resizable()
+            .scaledToFill()
+            .frame(width: UIScreen.main.bounds.width, height: 390)
+            .offset(y: -45)
+    }
+    .frame(width: UIScreen.main.bounds.width, height: 280)
 }
 
 struct RegisterView: View {
@@ -105,7 +108,7 @@ struct RegisterView: View {
                     .stroke(Color(.secondaryLabel).opacity(0.35), lineWidth: 1)
             )
             .padding(.horizontal, 16)
-            .offset(y: -8)
+            .offset(y: -58)
             
             Spacer()
         }
