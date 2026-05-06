@@ -33,7 +33,7 @@ struct ShoppingListView: View {
                     Spacer()
 
                     Button {
-                        showDeleteAllAlert = true
+                        showDeleteAlert = true
                     } label: {
                         Image(systemName: "trash")
                             .font(.system(size: 24))
@@ -111,8 +111,9 @@ struct ShoppingListView: View {
                             ForEach(presenter.items, id: \.self) { item in
                                 ShoppingItemCard(
                                     item: item,
+                                    isSelected: presenter.isSelected(item),
                                     onToggle: {
-                                        presenter.toggleBought(item)
+                                        presenter.toggleSelection(item)
                                     },
                                     onEdit: {
                                         editName = item.name ?? ""
@@ -130,13 +131,27 @@ struct ShoppingListView: View {
             }
             .background(Color(.systemBackground))
             .navigationBarHidden(true)
-            .alert(L10n.deleteAllConfirm, isPresented: $showDeleteAllAlert) {
+            .alert(
+                presenter.selectedItems.isEmpty
+                ? L10n.deleteAllConfirm
+                : L10n.deleteProduct,
+                isPresented: $showDeleteAlert
+            ) {
                 Button(L10n.delete, role: .destructive) {
-                    presenter.deleteAllItems()
+                    if presenter.selectedItems.isEmpty {
+                        presenter.deleteAllItems()
+                    } else {
+                        presenter.deleteSelectedItems()
+                    }
                 }
+
                 Button(L10n.cancel, role: .cancel) { }
             } message: {
-                Text(L10n.deleteAllMessage)
+                Text(
+                    presenter.selectedItems.isEmpty
+                    ? L10n.deleteAllMessage
+                    : L10n.deleteProduct
+                )
             }
             .sheet(item: $editItem) { item in
                 editProductSheet(item: item)
@@ -179,6 +194,7 @@ struct ShoppingListView: View {
 
 struct ShoppingItemCard: View {
     let item: ShoppingItem
+    let isSelected: Bool
     let onToggle: () -> Void
     let onEdit: () -> Void
 
@@ -192,24 +208,24 @@ struct ShoppingItemCard: View {
     var body: some View {
         HStack(spacing: 16) {
             Button(action: onToggle) {
-                Image(systemName: item.isBought ? "checkmark.circle.fill" : "circle")
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 26))
-                    .foregroundColor(item.isBought ? .accentGreen : Color(.secondaryLabel).opacity(0.45))
+                    .foregroundColor(isSelected ? .accentGreen : Color.gray.opacity(0.45))
             }
             .buttonStyle(.plain)
 
             Text(displayText)
-                .font(.system(size: 17, weight: .regular))
-                .foregroundColor(item.isBought ? Color(.secondaryLabel) : Color(.label))
-                .strikethrough(item.isBought)
+                .font(.system(size: 17))
+                .foregroundColor(isSelected ? .gray : .primary)
+                .strikethrough(isSelected)
                 .lineLimit(1)
 
             Spacer()
 
             Button(action: onEdit) {
                 Image(systemName: "pencil")
-                    .font(.system(size: 22, weight: .semibold))
-                    .foregroundColor(Color(.secondaryLabel))
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.gray)
             }
             .buttonStyle(.plain)
         }
@@ -218,7 +234,7 @@ struct ShoppingItemCard: View {
         .background(Color(.systemBackground))
         .overlay(
             RoundedRectangle(cornerRadius: 10)
-                .stroke(Color(.secondaryLabel).opacity(0.35), lineWidth: 1.3)
+                .stroke(Color.gray.opacity(0.35), lineWidth: 1.3)
         )
     }
 

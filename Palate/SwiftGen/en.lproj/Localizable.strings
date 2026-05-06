@@ -228,3 +228,9 @@
 "input-instruction" = "Enter cooking instructions. Each step on a new line.";
 "example-pasta" = "Example: Pasta";
 "example-italia" = "Example: Italia";
+
+"remove-from-want-to-cook" = "Put away";
+"delete-recipe-in" = "Remove recipe from list?";
+"reset" = "Reset";
+
+"delete-product" = "Delete selected products?";

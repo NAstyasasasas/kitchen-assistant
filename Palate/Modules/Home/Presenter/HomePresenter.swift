@@ -17,10 +17,32 @@ final class HomePresenter: ObservableObject {
     @Published var selectedMealType: MealType? = nil
     @Published var isLoading = false
     @Published var errorMessage: String?
+    @Published var selectedApiCategory: String = "All"
+    @Published var selectedApiCuisine: String = "All"
     
     private let interactor: HomeInteractorProtocol
     private weak var coordinator: MainCoordinator?
     private var currentTask: Task<Void, Never>?
+    
+    let apiCategories = [
+        "All", "Beef", "Chicken", "Dessert", "Lamb",
+        "Miscellaneous", "Pasta", "Pork", "Seafood",
+        "Side", "Starter", "Vegan", "Vegetarian",
+        "Breakfast", "Goat"
+    ]
+
+    let apiCuisines = [
+        "All", "Algerian", "American", "Argentinian",
+        "Australian", "British", "Canadian", "Chinese",
+        "Croatian", "Dutch", "Egyptian", "Filipino",
+        "French", "Greek", "Indian", "Irish", "Italian",
+        "Jamaican", "Japanese", "Kenyan", "Malaysian",
+        "Mexican", "Moroccan", "Norwegian", "Polish",
+        "Portuguese", "Russian", "Saudi Arabian",
+        "Slovakian", "Spanish", "Syrian", "Thai",
+        "Tunisian", "Turkish", "Ukrainian", "Uruguayan",
+        "Venezuelan", "Vietnamese"
+    ]
     
     init(interactor: HomeInteractorProtocol = HomeInteractor(),
          coordinator: MainCoordinator?) {
@@ -39,39 +61,46 @@ final class HomePresenter: ObservableObject {
     }
     
     func searchRecipes(query: String) async {
-        guard !query.isEmpty else {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !trimmed.isEmpty else {
             await MainActor.run {
                 searchResults = []
             }
             return
         }
-        
+
         await MainActor.run {
             isLoading = true
             errorMessage = nil
         }
-        
-        defer {
-            Task { @MainActor in
+
+        do {
+            let searchQuery: String
+
+            if LanguageManager.shared.isRussian {
+                searchQuery = try await YandexTranslateService.shared.translate(
+                    text: trimmed,
+                    from: "ru",
+                    to: "en"
+                )
+            } else {
+                searchQuery = trimmed
+            }
+
+            let results = try await interactor.searchRecipes(query: searchQuery)
+
+            await MainActor.run {
+                searchResults = results
                 isLoading = false
             }
-        }
-        
-        do {
-            let results = try await interactor.searchRecipes(query: query)
-            if Task.isCancelled { return }
-            await MainActor.run {
-                if results.isEmpty {
-                    errorMessage = L10n.noResults + " '\(query)'"
-                }
-                searchResults = results
-            }
         } catch {
-            if Task.isCancelled { return }
             await MainActor.run {
-                errorMessage = L10n.searchError
                 searchResults = []
+                errorMessage = L10n.noRecipes
+                isLoading = false
             }
+            print("❌ Search error:", error)
         }
     }
     
@@ -86,6 +115,93 @@ final class HomePresenter: ObservableObject {
     
     func didSelectRecipe(_ recipeId: String) {
         coordinator?.showRecipeDetail(recipeId: recipeId)
+    }
+    
+    func toggleWantToCook(recipe: Recipe) async {
+        let interactor = MyRecipesInteractor()
+        let existing = await interactor.fetchRecipes(status: "wantToCook")
+
+        if existing.contains(where: { $0.recipeId == recipe.id }) {
+            try? await interactor.deleteRecipe(recipeId: recipe.id)
+        } else {
+            try? await interactor.saveRecipeStatus(
+                recipeId: recipe.id,
+                status: "wantToCook",
+                recipeSource: recipe.source.rawValue
+            )
+        }
+
+        await MainActor.run {
+            NotificationCenter.default.post(
+                name: NSNotification.Name("userRecipeDeleted"),
+                object: nil
+            )
+        }
+    }
+    
+    func applyApiFilters() async {
+        await MainActor.run {
+            isLoading = true
+            errorMessage = nil
+        }
+
+        do {
+            let category = selectedApiCategory
+            let cuisine = selectedApiCuisine
+
+            var result: [Recipe] = []
+
+            if category == "All" && cuisine == "All" {
+                await loadRecipes()
+                await MainActor.run {
+                    isLoading = false
+                }
+                return
+            }
+
+            if category != "All" && cuisine == "All" {
+                result = try await interactor.fetchRecipesByCategory(category)
+            }
+
+            else if category == "All" && cuisine != "All" {
+                result = try await interactor.fetchRecipesByArea(cuisine)
+            }
+
+            else {
+                let categoryRecipes = try await interactor.fetchRecipesByCategory(category)
+                let cuisineRecipes = try await interactor.fetchRecipesByArea(cuisine)
+
+                let cuisineNames = Set(
+                    cuisineRecipes.map {
+                        $0.name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+                    }
+                )
+
+                result = categoryRecipes.filter { recipe in
+                    cuisineNames.contains(
+                        recipe.name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+                    )
+                }
+            }
+
+            await MainActor.run {
+                filteredRecipes = result
+                isLoading = false
+
+                if result.isEmpty {
+                    errorMessage = L10n.noRecipes
+                }
+            }
+
+        } catch {
+            await MainActor.run {
+                filteredRecipes = []
+                errorMessage = L10n.noRecipes
+                isLoading = false
+            }
+
+            print("❌ Filter error:", error)
+        }
     }
     
     private func performLoadRecipes() async {

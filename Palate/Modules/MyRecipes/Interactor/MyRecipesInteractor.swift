@@ -206,11 +206,23 @@ final class MyRecipesInteractor: MyRecipesInteractorProtocol {
         let customRecipes = coreData.fetchCustomRecipes(byUserId: userId)
         if let toDelete = customRecipes.first(where: { $0.id?.uuidString == recipeId }) {
             coreData.viewContext.delete(toDelete)
-            coreData.saveContext()
         }
+        
+        let userRecipes = coreData.fetchUserRecipes(byUserId: userId)
+        if let userRecipe = userRecipes.first(where: { $0.recipeId == recipeId }) {
+            coreData.viewContext.delete(userRecipe)
+        }
+        
+        coreData.saveContext()
         
         do {
             try await customRecipeService.deleteCustomRecipe(recipeId: recipeId, userId: userId)
+            try await userService.deleteUserRecipe(recipeId: recipeId, userId: userId)
+            
+            NotificationCenter.default.post(
+                        name: NSNotification.Name("userRecipeDeleted"),
+                        object: nil
+                    )
         } catch {
             print("⚠️ Firebase delete failed: \(error)")
         }

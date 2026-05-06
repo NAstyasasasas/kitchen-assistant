@@ -5,6 +5,7 @@
 
 import SwiftUI
 import Combine
+import CoreData
 
 final class ShoppingListPresenter: ObservableObject {
     private let interactor: ShoppingListInteractorProtocol
@@ -14,7 +15,7 @@ final class ShoppingListPresenter: ObservableObject {
     @Published var items: [ShoppingItem] = []
     @Published var newItemName = ""
     @Published var errorMessage: String?
-    @Published var selectedItems: Set<ShoppingItem> = []
+    @Published var selectedItems: Set<NSManagedObjectID> = []
     
     @Published var showRecipeConfirmation = false
     @Published var pendingRecipe: Recipe?
@@ -75,21 +76,24 @@ final class ShoppingListPresenter: ObservableObject {
     }
     
     func toggleSelection(_ item: ShoppingItem) {
-        if selectedItems.contains(item) {
-            selectedItems.remove(item)
+        if selectedItems.contains(item.objectID) {
+            selectedItems.remove(item.objectID)
         } else {
-            selectedItems.insert(item)
+            selectedItems.insert(item.objectID)
         }
     }
 
     func isSelected(_ item: ShoppingItem) -> Bool {
-        selectedItems.contains(item)
+        selectedItems.contains(item.objectID)
     }
 
     func deleteSelectedItems() {
-        for item in selectedItems {
+        let itemsToDelete = items.filter { selectedItems.contains($0.objectID) }
+
+        for item in itemsToDelete {
             interactor.deleteItem(item)
         }
+
         selectedItems.removeAll()
         loadData()
     }

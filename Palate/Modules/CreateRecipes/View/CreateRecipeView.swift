@@ -12,9 +12,6 @@ struct CreateRecipeView: View {
     @Environment(\.dismiss) var dismiss
     
     @State private var selectedItem: PhotosPickerItem?
-    @State private var showingCategoryPicker = false
-    
-    let categories = MealType.allCases.map { $0.localizedName }
     
     private func fieldTitle(_ title: String) -> some View {
         Text(title)
@@ -83,24 +80,10 @@ struct CreateRecipeView: View {
                     customTextField(placeholder: L10n.exampleItalia, text: $presenter.cuisine)
                     
                     fieldTitle(L10n.category)
-                    Button {
-                        showingCategoryPicker = true
-                    } label: {
-                        HStack {
-                            Text(presenter.category.isEmpty ? L10n.selectCategory : presenter.category)
-                                .font(.system(size: 16))
-                                .foregroundColor(presenter.category.isEmpty ? Color(.secondaryLabel) : Color(.label))
-                            Spacer()
-                            Image(systemName: "chevron.down")
-                                .foregroundColor(Color(.label))
-                        }
-                        .padding(.horizontal, 14)
-                        .frame(height: 52)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color(.secondaryLabel).opacity(0.45), lineWidth: 1)
-                        )
-                    }
+                    customTextField(
+                        placeholder: L10n.category,
+                        text: $presenter.category
+                    )
                     
                     SectionHeaderBar(title: L10n.ingredients)
                     
@@ -204,9 +187,6 @@ struct CreateRecipeView: View {
                     }
                     .foregroundColor(.accentGreen)
                 }
-            }
-            .sheet(isPresented: $showingCategoryPicker) {
-                CategoryPickerView(selectedCategory: $presenter.category, categories: categories)
             }
             .alert(L10n.error, isPresented: Binding(
                 get: { presenter.errorMessage != nil },

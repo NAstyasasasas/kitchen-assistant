@@ -8,7 +8,7 @@ import Foundation
 actor YandexTranslateService {
     static let shared = YandexTranslateService()
     
-    private let apiKey = ProcessInfo.processInfo.environment["YANDEX_API_KEY"] ?? ""
+    private let apiKey = ProcessInfo.processInfo.environment["YANDEX_KEY"] ?? ""
     
     private init() {}
     

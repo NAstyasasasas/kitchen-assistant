@@ -11,7 +11,7 @@ final class RecipeDetailPresenter: ObservableObject {
     @Published var recipe: Recipe?
     @Published var isLoading = false
     @Published var errorMessage: String?
-    @Published var isInWantToCook = false
+    @Published var isWantToCook = false
     @Published var isInCooked = false
     @Published var userRecipe: UserRecipe?
     @Published var notes: String = ""
@@ -45,7 +45,7 @@ final class RecipeDetailPresenter: ObservableObject {
         do {
             recipe = try await interactor.fetchRecipeDetail(id: recipeId, source: recipeSource)
             let status = try await interactor.checkRecipeStatus(recipeId: recipeId)
-            isInWantToCook = status.wantToCook
+            isWantToCook = status.wantToCook
             isInCooked = status.cooked
         } catch {
             errorMessage = L10n.loadRecipeError
@@ -64,12 +64,35 @@ final class RecipeDetailPresenter: ObservableObject {
     }
     
     func addToWantToCook() async {
-        let source = recipeSource == .custom ? "custom" : "mealDB"
         do {
-            try await myRecipesInteractor.saveRecipeStatus(recipeId: recipeId, status: "wantToCook", recipeSource: source)
-            isInWantToCook = true
+            if isWantToCook {
+                try await myRecipesInteractor.deleteRecipe(recipeId: recipeId)
+                await MainActor.run {
+                    isWantToCook = false
+                }
+            } else {
+                let source = recipeSource == .custom ? "custom" : "mealDB"
+
+                try await myRecipesInteractor.saveRecipeStatus(
+                    recipeId: recipeId,
+                    status: "wantToCook",
+                    recipeSource: source
+                )
+
+                await MainActor.run {
+                    isWantToCook = true
+                }
+            }
+
+            NotificationCenter.default.post(
+                name: NSNotification.Name("userRecipeDeleted"),
+                object: nil
+            )
+
         } catch {
-            errorMessage = L10n.addToCartError
+            await MainActor.run {
+                errorMessage = L10n.addToCartError
+            }
         }
     }
     
@@ -77,7 +100,7 @@ final class RecipeDetailPresenter: ObservableObject {
         do {
             try await myRecipesInteractor.updateRecipeStatus(recipeId: recipeId, newStatus: "cooked")
             isInCooked = true
-            isInWantToCook = false
+            isWantToCook = false
         } catch {
             errorMessage = L10n.markAsCookedError
         }
